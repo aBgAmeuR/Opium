@@ -22,3 +22,12 @@ export const fetchSpreadsheets = async (
 
   return data;
 };
+
+export const parseDate = (dateString: string | null): Date | null => {
+  if (!dateString) return null;
+
+  const match = dateString.match(/Date\((\d+),(\d+),(\d+)\)/);
+  if (!match) return null;
+
+  return new Date(Number(match[1]), Number(match[2]), Number(match[3]));
+};

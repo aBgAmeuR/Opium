@@ -1,15 +1,20 @@
-import { env } from '@/env.mjs';
+import { Icons } from '@/components/icons';
+import { MusicPlayer } from '@/components/music-player/music-player';
+import { RecentSongsList } from '@/components/recent-songs-list';
+import { getRecentTracks } from '@/lib/fetch-data';
 
 export default async function Page() {
-  const response = await fetch(env.APP_URL + '/api/recent', {
-    cache: 'no-cache',
-  });
-  const data = await response.json();
+  const data = await getRecentTracks();
 
   return (
     <>
-      <h1>Test</h1>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <div className="mx-8 mt-4 flex items-center gap-2">
+        <Icons.logo size={48} />
+        <h1 className="text-2xl">Carti Tracker</h1>
+      </div>
+
+      <RecentSongsList data={data} />
+      <MusicPlayer />
     </>
   );
 }

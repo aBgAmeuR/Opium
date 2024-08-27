@@ -11,8 +11,8 @@ const config = {
   prefix: '',
   theme: {
     fontFamily: {
-      sans: ['var(--font-geist-sans)'],
-      mono: ['var(--font-geist-sans)'],
+      sans: ['var(--font-sans)'],
+      mono: ['var(--font-mono)'],
     },
     screens: {
       sm: '640px',
@@ -63,6 +63,9 @@ const config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+      },
+      backgroundImage: {
+        'gradient-to-topleft': 'linear-gradient(to top left,#e52d27,#b31217)',
       },
       borderRadius: {
         lg: 'var(--radius)',
