@@ -1,6 +1,4 @@
-# Porfolio
-
-![App screenshot](https://github.com/aBgAmeuR/Portfolio/assets/113059124/ee3616c0-5cce-4082-ba1a-f761fed8aaab)
+# CartiTracker
 
 ## Built with
 
