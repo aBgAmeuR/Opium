@@ -50,13 +50,15 @@ const RootLayout = ({ children }: PropsWithChildren) => {
     <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
-          'min-h-screen bg-neutral-50 font-sans antialiased dark:bg-neutral-950',
+          'min-h-screen bg-neutral-50 font-mono antialiased dark:bg-neutral-950',
           fonts
         )}
       >
         <ThemeProvider attribute="class">
           <TooltipProvider delayDuration={10}>
-            <main className="h-screen min-h-screen font-mono">{children}</main>
+            <main className="h-screen min-h-screen overflow-x-hidden font-mono">
+              {children}
+            </main>
             <SpeedInsights />
             <Analytics />
           </TooltipProvider>

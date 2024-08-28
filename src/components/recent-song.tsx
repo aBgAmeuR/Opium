@@ -37,7 +37,7 @@ export const RecentSong = ({ song }: RecentSongProps) => {
         <p>{song.era}</p>
         <p>{song.leakDate.toLocaleDateString()}</p>
       </div>
-      <h1 className="line-clamp-3 w-2/6 whitespace-pre-line break-all">
+      <h1 className="line-clamp-3 flex flex-1 whitespace-pre-line break-all">
         {song.name}
       </h1>
       <p className="w-20">{song.notice}</p>
@@ -45,16 +45,18 @@ export const RecentSong = ({ song }: RecentSongProps) => {
         <p>{song.quality}</p>
         <p>{song.availability}</p>
       </div>
-      {links.map((link, index) => (
-        <Button
-          key={index}
-          size="iconXs"
-          variant="ghost"
-          onClick={() => setSong({ ...song, links: [link] })}
-        >
-          <Play size={20} />
-        </Button>
-      ))}
+      <div className="w-24">
+        {links.slice(0, 3).map((link, index) => (
+          <Button
+            key={index}
+            size="iconXs"
+            variant="ghost"
+            onClick={() => setSong({ ...song, links: [link] })}
+          >
+            <Play size={20} />
+          </Button>
+        ))}
+      </div>
     </div>
   );
 };
