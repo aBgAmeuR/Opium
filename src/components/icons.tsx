@@ -10,8 +10,14 @@ export const Icons = {
       ></path>
     </svg>
   ),
-  logo: ({ size }: { size: number }) => (
-    <Image src="/images/logo_white.png" alt="Logo" width={size} height={size} />
+  logo: ({ size, className }: { size: number; className?: string }) => (
+    <Image
+      src="/images/logo_white.png"
+      alt="Logo"
+      width={size}
+      height={size}
+      className={className}
+    />
   ),
   spotify: (props: LucideProps) => (
     <svg viewBox="0 0 168 168" {...props}>

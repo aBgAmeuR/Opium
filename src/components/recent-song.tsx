@@ -44,20 +44,34 @@ export const RecentSong = ({ song }: RecentSongProps) => {
   const links = getLinks(song.links);
 
   return (
-    <div className="flex items-center gap-2 rounded-md px-4 py-2 hover:bg-zinc-900">
-      <div className="w-48">
+    <div className="flex items-center gap-2 rounded-md p-2 hover:bg-zinc-900 md:px-4">
+      <div className="hidden w-48 md:block">
         <p>{song.era}</p>
         <p>{song.leakDate.toLocaleDateString()}</p>
       </div>
-      <h1 className="line-clamp-3 flex flex-1 whitespace-pre-line break-all">
-        {song.name}
-      </h1>
-      <p className="w-20">{song.notice}</p>
-      <div className="w-32">
+      <div className="line-clamp-3 flex flex-1 flex-col whitespace-pre-line break-all">
+        <p>
+          <span className="lg:hidden">
+            {song.notice === 'Best Of' ? '⭐' : null}
+            {song.notice === 'Grails' ? '🏆' : null}
+            {song.notice === 'Special' ? '✨' : null}
+            {song.notice === 'Worst Of' ? '🗑️' : null}
+          </span>
+          {song.name.split('\n')[0]}
+        </p>
+        <p>{song.name.split('\n')[1]}</p>
+        <p>{song.name.split('\n')[2]}</p>
+      </div>
+      <p className="hidden w-20 lg:block">{song.notice}</p>
+      <div className="hidden w-32 lg:block">
         <p>{song.quality}</p>
         <p>{song.availability}</p>
       </div>
-      <div className="w-24">
+      <div className="flex flex-col items-end md:hidden">
+        <p>{song.era}</p>
+        <p>{song.leakDate.toLocaleDateString()}</p>
+      </div>
+      <div className="flex w-8 flex-col md:flex-row lg:w-24">
         {links.slice(0, 3).map((link, index) => (
           <Button
             key={index}

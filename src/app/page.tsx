@@ -9,9 +9,9 @@ export default async function Page() {
 
   return (
     <>
-      <div className="mx-8 mt-4 flex items-center gap-2">
-        <Icons.logo size={48} />
-        <h1 className="text-2xl">Carti Tracker</h1>
+      <div className="mx-4 mt-2 flex items-center gap-2 md:mx-8 md:mt-4">
+        <Icons.logo size={48} className="h-[50px] w-8 md:h-[75px] md:w-12" />
+        <h1 className="text-xl md:text-2xl">Carti Tracker</h1>
       </div>
       <RecentSongsFilters data={data} />
       <RecentSongsList data={data} />

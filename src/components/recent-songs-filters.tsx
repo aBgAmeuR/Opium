@@ -56,7 +56,7 @@ export const RecentSongsFilters = ({ data }: RecentSongsFiltersProps) => {
   } = useRecentSongsFiltersStore();
 
   return (
-    <div className="flex justify-between gap-2 px-6 pt-4">
+    <div className="flex justify-between gap-2 px-4 pt-2 md:px-6 md:pt-4">
       <div className="flex gap-2">
         <Input
           className="h-8 max-w-64 px-2 lg:px-3"
@@ -73,7 +73,7 @@ export const RecentSongsFilters = ({ data }: RecentSongsFiltersProps) => {
         <Button
           aria-label="Reset filters"
           variant="ghost"
-          className="h-8 px-2 lg:px-3"
+          className="hidden h-8 px-2 sm:flex lg:px-3"
           onClick={resetFilters}
         >
           Reset
@@ -145,7 +145,7 @@ export const RecentSongsFilters = ({ data }: RecentSongsFiltersProps) => {
             >
               Reset
             </Button>
-            <SheetClose asChild>
+            <SheetClose asChild autoFocus>
               <Button variant="secondary" className="h-8 px-2 lg:px-3">
                 Apply
               </Button>

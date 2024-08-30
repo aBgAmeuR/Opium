@@ -38,7 +38,7 @@ export const RecentSongsList = ({ data, className }: RecentSongsListProps) => {
   }, [data, search, eras, notices, types, qualities, availabilities]);
 
   return (
-    <div className={cn('h-5/6 overflow-hidden p-4', className)}>
+    <div className={cn('h-5/6 overflow-hidden p-2 md:p-4', className)}>
       <Virtuoso
         data={tracks}
         itemContent={(index, track) => <RecentSong key={index} song={track} />}
