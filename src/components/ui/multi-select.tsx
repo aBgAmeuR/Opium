@@ -33,7 +33,7 @@ export function MultiSelect({
   setSelectedValues,
 }: MultiSelectProps) {
   return (
-    <Popover>
+    <Popover modal>
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-8 border-dashed">
           <PlusCircle className="mr-2 size-4" />

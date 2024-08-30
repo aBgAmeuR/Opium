@@ -1,9 +1,21 @@
 'use client';
 
-import { Play } from 'lucide-react';
+import { EllipsisVertical, Play } from 'lucide-react';
 
-import { Button } from './ui/button';
+import { RecentSongLinkInfo } from './recent-song-link-info';
 
+import { Button } from '@/components/ui/button';
+import {
+  Credenza,
+  CredenzaBody,
+  CredenzaClose,
+  CredenzaContent,
+  CredenzaDescription,
+  CredenzaFooter,
+  CredenzaHeader,
+  CredenzaTitle,
+  CredenzaTrigger,
+} from '@/components/ui/credenza';
 import { useSongPlayStore } from '@/lib/store';
 import { RecentTrack } from '@/types/recent-tracks';
 
@@ -57,6 +69,47 @@ export const RecentSong = ({ song }: RecentSongProps) => {
           </Button>
         ))}
       </div>
+      <Credenza>
+        <CredenzaTrigger asChild>
+          <Button size="iconXs" variant="ghost">
+            <EllipsisVertical size={20} />
+          </Button>
+        </CredenzaTrigger>
+        <CredenzaContent>
+          <CredenzaHeader>
+            <CredenzaTitle>{song.name.split('\n')[0]}</CredenzaTitle>
+            <CredenzaDescription>{song.notes}</CredenzaDescription>
+            <CredenzaDescription>
+              {song.trackLength ? `${song.trackLength} | ` : null}
+              {song.links.length} links
+            </CredenzaDescription>
+          </CredenzaHeader>
+          <CredenzaBody>
+            <div className="flex w-full flex-col gap-6">
+              {/* {links.map((link, index) => (
+                <div
+                  className="border-border-color relative flex w-full flex-col gap-8 rounded-3xl border px-24 py-12 pb-24"
+                  key={index}
+                >
+                  <div className="bg-background text-muted-foreground absolute -top-3 left-6 flex items-start justify-center gap-4 px-4 text-sm">
+                    Info
+                  </div>
+                  <div className="flex w-full flex-col gap-4"></div>
+                  <div className="flex w-full flex-col gap-8"></div>
+                </div>
+              ))} */}
+              {song.links.map((link, index) => (
+                <RecentSongLinkInfo key={index} link={link} />
+              ))}
+            </div>
+          </CredenzaBody>
+          <CredenzaFooter>
+            <CredenzaClose asChild>
+              <button>Close</button>
+            </CredenzaClose>
+          </CredenzaFooter>
+        </CredenzaContent>
+      </Credenza>
     </div>
   );
 };
