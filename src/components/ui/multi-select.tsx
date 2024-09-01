@@ -119,6 +119,7 @@ export function MultiSelect({
                   <CommandItem
                     onSelect={() => setSelectedValues([])}
                     className="justify-center text-center"
+                    autoFocus
                   >
                     Clear filters
                   </CommandItem>

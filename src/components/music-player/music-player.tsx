@@ -1,27 +1,32 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { FastForward, Pause, Play } from 'lucide-react';
+import { Pause, Play } from 'lucide-react';
 
-import { Button } from '../ui/button';
-import { Marquee } from '../ui/marquee';
-import { VolumeSlider } from './volume-slider';
+import { MusicPlayerSongInfos } from './music-player-song-infos';
 
+import { Button } from '@/components/ui/button';
+import {
+  Credenza,
+  CredenzaBody,
+  CredenzaClose,
+  CredenzaContent,
+  CredenzaDescription,
+  CredenzaFooter,
+  CredenzaHeader,
+  CredenzaTitle,
+  CredenzaTrigger,
+} from '@/components/ui/credenza';
 import { useWaveSurfer } from '@/hooks/use-wavesurfer';
 import { useSongPlayStore } from '@/lib/store';
 
 export const MusicPlayer = () => {
   const track = useSongPlayStore((s) => s.song);
-  const {
-    handlePlayPause,
-    isPlaying,
-    containerRef,
-    handleBackward,
-    handleForward,
-    handleVolume,
-  } = useWaveSurfer({
+  const { handlePlayPause, isPlaying } = useWaveSurfer({
     track,
   });
+
+  if (!track) return null;
 
   return (
     <motion.div
@@ -40,35 +45,30 @@ export const MusicPlayer = () => {
           <Pause size={20} fill="white" />
         )}
       </button>
-      <motion.div
-        className="ml-2 flex w-24 items-center gap-2 overflow-hidden pr-4"
-        animate={
-          track
-            ? { width: 'auto' }
-            : { width: 0, marginLeft: 0, paddingRight: 0 }
-        }
-        transition={{ duration: 0.5 }}
-      >
-        <div className="w-32">
-          <Marquee
-            className="text-primary line-clamp-1 text-xs"
-            text={track?.name}
-          />
-        </div>
-        <div id="waveform" className="w-60" ref={containerRef} />
-        <div className="controls flex gap-1">
-          <Button variant="ghost" size="icon" onClick={handleBackward}>
-            <FastForward fill="white" className="rotate-180" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={handlePlayPause}>
-            {!isPlaying ? <Play fill="white" /> : <Pause fill="white" />}
-          </Button>
-          <Button variant="ghost" size="icon" onClick={handleForward}>
-            <FastForward onClick={handleForward} fill="white" />
-          </Button>
-        </div>
-        <VolumeSlider handleVolume={handleVolume} />
-      </motion.div>
+      <Credenza>
+        <CredenzaTrigger asChild>
+          <MusicPlayerSongInfos track={track} />
+        </CredenzaTrigger>
+        <CredenzaContent>
+          <CredenzaHeader>
+            <CredenzaTitle>{track.name.split('\n')[0]}</CredenzaTitle>
+            <CredenzaDescription>
+              {track.name.split('\n')[1]}
+            </CredenzaDescription>
+            <CredenzaDescription>
+              {track.name.split('\n')[2]}
+            </CredenzaDescription>
+          </CredenzaHeader>
+          <CredenzaBody>
+            <div className="flex w-full flex-col gap-6"></div>
+          </CredenzaBody>
+          <CredenzaFooter>
+            <CredenzaClose asChild>
+              <Button>Close</Button>
+            </CredenzaClose>
+          </CredenzaFooter>
+        </CredenzaContent>
+      </Credenza>
     </motion.div>
   );
 };
