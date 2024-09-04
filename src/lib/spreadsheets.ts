@@ -11,7 +11,7 @@ export const fetchSpreadsheets = async (
   sheetName: string
 ) => {
   const url = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
-  const res = await fetch(url);
+  const res = await fetch(url, { next: { revalidate: 3600 } }); // Cache for 1 hour
   let text = await res.text();
 
   text = text.replace('/*O_o*/\ngoogle.visualization.Query.setResponse(', '');
