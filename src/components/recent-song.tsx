@@ -20,7 +20,7 @@ import { useSongPlayStore } from '@/lib/store';
 import { RecentTrack } from '@/types/recent-tracks';
 
 const getLinks = (links: string[]) => {
-  const returnLinks: string[] = [];
+  const returnLinks: { link: string; isPillowcase: boolean }[] = [];
   links.forEach((link) => {
     if (
       link.includes('https://pillowcase.su') ||
@@ -28,9 +28,13 @@ const getLinks = (links: string[]) => {
     ) {
       const id = link.match(/\/f\/([a-f0-9]{32})/)?.[1];
       if (id) {
-        returnLinks.push(`https://api.plwcse.top/api/download/${id}`);
+        return returnLinks.push({
+          link: `https://api.plwcse.top/api/download/${id}`,
+          isPillowcase: true,
+        });
       }
     }
+    return returnLinks.push({ link, isPillowcase: false });
   });
   return returnLinks;
 };
@@ -71,17 +75,20 @@ export const RecentSong = ({ song }: RecentSongProps) => {
         <p>{song.era}</p>
         <p>{song.leakDate.toLocaleDateString()}</p>
       </div>
-      <div className="flex w-8 flex-col md:flex-row lg:w-24">
-        {links.slice(0, 3).map((link, index) => (
-          <Button
-            key={index}
-            size="iconXs"
-            variant="ghost"
-            onClick={() => setSong({ ...song, links: [link] })}
-          >
-            <Play size={20} />
-          </Button>
-        ))}
+      <div className="flex w-8 flex-col md:w-auto md:flex-row lg:w-24">
+        {links
+          .filter((link) => link.isPillowcase)
+          .slice(0, 3)
+          .map((link, index) => (
+            <Button
+              key={index}
+              size="iconXs"
+              variant="ghost"
+              onClick={() => setSong({ ...song, links: [link.link] })}
+            >
+              <Play size={20} />
+            </Button>
+          ))}
       </div>
       <Credenza>
         <CredenzaTrigger asChild>
@@ -100,26 +107,16 @@ export const RecentSong = ({ song }: RecentSongProps) => {
           </CredenzaHeader>
           <CredenzaBody>
             <div className="flex w-full flex-col gap-6">
-              {/* {links.map((link, index) => (
-                <div
-                  className="border-border-color relative flex w-full flex-col gap-8 rounded-3xl border px-24 py-12 pb-24"
-                  key={index}
-                >
-                  <div className="bg-background text-muted-foreground absolute -top-3 left-6 flex items-start justify-center gap-4 px-4 text-sm">
-                    Info
-                  </div>
-                  <div className="flex w-full flex-col gap-4"></div>
-                  <div className="flex w-full flex-col gap-8"></div>
-                </div>
-              ))} */}
-              {song.links.map((link, index) => (
-                <RecentSongLinkInfo key={index} link={link} />
+              {links.map((link, index) => (
+                <RecentSongLinkInfo key={index} {...link} />
               ))}
             </div>
           </CredenzaBody>
           <CredenzaFooter>
             <CredenzaClose asChild>
-              <button>Close</button>
+              <Button variant="secondary" size="sm">
+                Close
+              </Button>
             </CredenzaClose>
           </CredenzaFooter>
         </CredenzaContent>
