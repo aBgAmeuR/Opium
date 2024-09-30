@@ -27,6 +27,13 @@ export const RecentSongLinkInfo = ({
       </div>
       <div className="flex w-full flex-col gap-4">
         <Wavesurfer url={link} />
+        <a
+          href={link}
+          target="_blank"
+          className="hover:text-muted-foreground line-clamp-1 break-all"
+        >
+          {link}
+        </a>
       </div>
       <div className="flex w-full flex-col gap-8"></div>
     </div>

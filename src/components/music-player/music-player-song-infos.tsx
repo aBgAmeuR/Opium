@@ -25,7 +25,7 @@ export const MusicPlayerSongInfos = ({ track }: MusicPlayerSongInfosProps) => {
 
   return (
     <motion.div
-      className="ml-2 flex w-24 items-center gap-2 overflow-hidden pr-4 md:hidden"
+      className="ml-2 flex w-24 items-center gap-2 overflow-hidden pr-4"
       animate={
         track ? { width: 'auto' } : { width: 0, marginLeft: 0, paddingRight: 0 }
       }

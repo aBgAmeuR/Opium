@@ -27,6 +27,7 @@ export const createWaveSurferOptions = ({
   height: 32,
   width: 240,
   normalize: true,
+  minPxPerSec: 1,
 });
 
 type UseWaveSurferProps = {

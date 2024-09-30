@@ -28,6 +28,8 @@ export const MusicPlayer = () => {
 
   if (!track) return null;
 
+  console.log(track);
+
   return (
     <motion.div
       className="bg-primary-foreground fixed bottom-3 left-1/2 flex -translate-x-1/2 items-center rounded-full p-2"
