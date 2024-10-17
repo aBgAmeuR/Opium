@@ -1,5 +1,13 @@
 # CartiTracker
 
+## Overview
+
+CartiTracker is a Playboi Carti leaks song tracker. It is a web application that allows users to track and listen to Playboi Carti leaks.
+
+## Screenshots
+
+![CartiTracker](https://github.com/user-attachments/assets/ca4dbfdd-cea4-473a-b591-05709fb16be2)
+
 ## Built with
 
 [![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
