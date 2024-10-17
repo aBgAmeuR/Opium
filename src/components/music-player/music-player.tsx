@@ -22,13 +22,18 @@ import { useSongPlayStore } from '@/lib/store';
 
 export const MusicPlayer = () => {
   const track = useSongPlayStore((s) => s.song);
-  const { handlePlayPause, isPlaying } = useWaveSurfer({
+  const {
+    handlePlayPause,
+    isPlaying,
+    containerRef,
+    handleBackward,
+    handleForward,
+    handleVolume,
+  } = useWaveSurfer({
     track,
   });
 
   if (!track) return null;
-
-  console.log(track);
 
   return (
     <motion.div
@@ -47,9 +52,19 @@ export const MusicPlayer = () => {
           <Pause size={20} fill="white" />
         )}
       </button>
+      <MusicPlayerSongInfos
+        track={track}
+        isPlaying={isPlaying}
+        handlePlayPause={handlePlayPause}
+        containerRef={containerRef}
+        handleBackward={handleBackward}
+        handleForward={handleForward}
+        handleVolume={handleVolume}
+      />
+      {/*
       <Credenza>
         <CredenzaTrigger asChild>
-          <MusicPlayerSongInfos track={track} />
+
         </CredenzaTrigger>
         <CredenzaContent>
           <CredenzaHeader>
@@ -70,7 +85,7 @@ export const MusicPlayer = () => {
             </CredenzaClose>
           </CredenzaFooter>
         </CredenzaContent>
-      </Credenza>
+      </Credenza>*/}
     </motion.div>
   );
 };

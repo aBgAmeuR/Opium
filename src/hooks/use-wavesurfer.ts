@@ -44,13 +44,14 @@ export const useWaveSurfer = ({ track }: UseWaveSurferProps) => {
   useEffect(() => {
     if (!containerRef.current || !url) return;
 
-    const options = createWaveSurferOptions({
+    const options = createWaveSurferOptions(<WaveSurferProps>{
       container: containerRef.current,
       url,
     });
     wavesurferRef.current = WaveSurfer.create(options);
 
     const wavesurfer = wavesurferRef.current;
+    if (!wavesurfer) return;
 
     wavesurfer.on('play', () => setIsPlaying(true));
     wavesurfer.on('pause', () => setIsPlaying(false));
@@ -71,7 +72,7 @@ export const useWaveSurfer = ({ track }: UseWaveSurferProps) => {
   const handlePlayPause = () => {
     if (!wavesurferRef.current) return;
     setIsPlaying(!isPlaying);
-    wavesurferRef.current.playPause();
+    wavesurferRef.current?.playPause();
   };
 
   const handleForward = () => {
