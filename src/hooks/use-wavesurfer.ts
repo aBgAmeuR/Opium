@@ -67,6 +67,7 @@ export const useWaveSurfer = ({ track }: UseWaveSurferProps) => {
     return () => {
       wavesurfer.destroy();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url]);
 
   const handlePlayPause = () => {

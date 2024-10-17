@@ -2,8 +2,6 @@
 
 import { EllipsisVertical, Play } from 'lucide-react';
 
-import { RecentSongLinkInfo } from './recent-song-link-info';
-
 import { Button } from '@/components/ui/button';
 import {
   Credenza,

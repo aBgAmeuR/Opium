@@ -16,7 +16,7 @@ export const VolumeSlider = ({ handleVolume }: VolumeSliderProps) => {
 
   React.useEffect(() => {
     handleVolume(muted ? 0 : volume);
-  }, [muted, volume]);
+  }, [handleVolume, muted, volume]);
 
   return (
     <div className="group flex items-center gap-1">
@@ -25,7 +25,7 @@ export const VolumeSlider = ({ handleVolume }: VolumeSliderProps) => {
           min={0}
           max={1}
           step={0.02}
-          value={muted === true ? [0] : [volume]}
+          value={muted ? [0] : [volume]}
           onValueChange={(value) => {
             setMuted(false);
             setVolume(value[0]);

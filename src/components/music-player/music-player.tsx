@@ -5,18 +5,6 @@ import { Pause, Play } from 'lucide-react';
 
 import { MusicPlayerSongInfos } from './music-player-song-infos';
 
-import { Button } from '@/components/ui/button';
-import {
-  Credenza,
-  CredenzaBody,
-  CredenzaClose,
-  CredenzaContent,
-  CredenzaDescription,
-  CredenzaFooter,
-  CredenzaHeader,
-  CredenzaTitle,
-  CredenzaTrigger,
-} from '@/components/ui/credenza';
 import { useWaveSurfer } from '@/hooks/use-wavesurfer';
 import { useSongPlayStore } from '@/lib/store';
 
