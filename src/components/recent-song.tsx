@@ -107,13 +107,13 @@ export const RecentSong = ({ song }: RecentSongProps) => {
             </CredenzaDescription>
           </CredenzaHeader>
           <CredenzaBody>
-            {/*
             <div className="flex w-full flex-col gap-6">
+              {/*
               {links.map((link, index) => (
                 <RecentSongLinkInfo key={index} {...link} />
               ))}
-            </div>
             */}
+            </div>
           </CredenzaBody>
           <CredenzaFooter>
             <CredenzaClose asChild>
