@@ -60,6 +60,7 @@ export const RecentSong = ({ song }: RecentSongProps) => {
             {song.notice === 'Grails' ? '🏆' : null}
             {song.notice === 'Special' ? '✨' : null}
             {song.notice === 'Worst Of' ? '🗑️' : null}
+            {song.notice === 'AI Ref Track' ? '🤖' : null}
           </span>
           {song.name.split('\n')[0]}
         </p>

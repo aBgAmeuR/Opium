@@ -9,6 +9,7 @@ export const extractNoticeAndName = (name: string | null) => {
     '✨': 'Special',
     '🏆': 'Grails',
     '🗑️': 'Worst Of',
+    '🤖': 'AI Ref Track',
   } as const;
   const notice =
     Object.entries(notices).find(([notice]) => name?.startsWith(notice))?.[1] ??
@@ -16,7 +17,7 @@ export const extractNoticeAndName = (name: string | null) => {
 
   return {
     notice,
-    name: name?.replace(/^(?:⭐|✨|🏆|🗑️) ?/, '') ?? '',
+    name: name?.replace(/^(?:⭐|✨|🏆|🗑|🤖) ?/, '') ?? '',
   };
 };
 
