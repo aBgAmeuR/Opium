@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import WaveSurfer, { WaveSurferOptions } from 'wavesurfer.js';
 
+import { env } from '@/env.mjs';
 import { RecentTrack } from '@/types/recent-tracks';
 
 type WaveSurferProps = {
@@ -28,6 +29,11 @@ export const createWaveSurferOptions = ({
   width: 240,
   normalize: true,
   minPxPerSec: 1,
+  fetchParams: {
+    mode: 'cors',
+    cache: 'no-cache',
+    credentials: 'omit',
+  },
 });
 
 type UseWaveSurferProps = {
@@ -44,9 +50,10 @@ export const useWaveSurfer = ({ track }: UseWaveSurferProps) => {
   useEffect(() => {
     if (!containerRef.current || !url) return;
 
+    const proxyUrl = `${env.NEXT_PUBLIC_APP_URL}/api/proxy?url=${encodeURIComponent(url)}`;
     const options = createWaveSurferOptions(<WaveSurferProps>{
       container: containerRef.current,
-      url,
+      url: proxyUrl,
     });
     wavesurferRef.current = WaveSurfer.create(options);
 
