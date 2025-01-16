@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { DatePicker } from './date-picker';
 import { Button } from './ui/button';
 
 import { Calendars } from '@/components/calendars';
@@ -41,7 +42,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavUser />
       </SidebarHeader>
       <SidebarContent>
-        {/* <DatePicker /> */}
+        <DatePicker />
         <SidebarSeparator className="mx-0" />
         <Calendars calendars={data.calendars} />
       </SidebarContent>
