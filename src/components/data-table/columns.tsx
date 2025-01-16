@@ -83,20 +83,20 @@ export const columns: ColumnDef<Item>[] = [
     accessorKey: 'notice',
     cell: ({ row }) =>
       row.getValue('notice') ? (
-        <Badge
-        // className={cn(
-        //   row.getValue('notice') === 'Inactive' &&
-        //     'bg-muted-foreground/60 text-primary-foreground'
-        // )}
-        >
-          {row.getValue('notice')}
-        </Badge>
-      ) : null,
+        <Badge>{row.getValue('notice')}</Badge>
+      ) : (
+        <div className="text-muted-foreground">-</div>
+      ),
   },
   {
     header: 'Availability',
     accessorKey: 'availability',
-    cell: ({ row }) => <div>{row.getValue('availability')}</div>,
+    cell: ({ row }) =>
+      row.getValue('availability') ? (
+        <div>{row.getValue('availability')}</div>
+      ) : (
+        <div className="text-muted-foreground">-</div>
+      ),
   },
   {
     header: 'Quality',

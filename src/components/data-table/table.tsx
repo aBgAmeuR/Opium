@@ -215,7 +215,7 @@ export const Table = ({ columns, data }: DataTableProps) => {
                               strokeWidth={2}
                             />
                           </span>
-                          <p className="text-sm">{row.original.note}</p>
+                          {row.original.note}
                         </div>
                       </TableCell>
                     </TableRow>
