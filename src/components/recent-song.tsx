@@ -2,6 +2,8 @@
 
 import { EllipsisVertical, Play } from 'lucide-react';
 
+import { RecentSongLinkInfo } from './recent-song-link-info';
+
 import { Button } from '@/components/ui/button';
 import {
   Credenza,
@@ -106,11 +108,9 @@ export const RecentSong = ({ song }: RecentSongProps) => {
           </CredenzaHeader>
           <CredenzaBody>
             <div className="flex w-full flex-col gap-6">
-              {/*
               {links.map((link, index) => (
                 <RecentSongLinkInfo key={index} {...link} />
               ))}
-            */}
             </div>
           </CredenzaBody>
           <CredenzaFooter>

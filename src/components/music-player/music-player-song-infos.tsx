@@ -1,8 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { motion } from 'framer-motion';
-import { FastForward, Pause, Play } from 'lucide-react';
 
 import { VolumeSlider } from '@/components/music-player/volume-slider';
-import { Button } from '@/components/ui/button';
 import { Marquee } from '@/components/ui/marquee';
 import { RecentTrack } from '@/types/recent-tracks';
 
@@ -41,15 +40,15 @@ export const MusicPlayerSongInfos = ({
       </div>
       <div id="waveform" className="w-60" ref={containerRef} />
       <div className="controls flex gap-1">
-        <Button variant="ghost" size="icon" onClick={handleBackward}>
+        {/* <Button variant="ghost" size="icon" onClick={handleBackward}>
           <FastForward fill="white" className="rotate-180" />
-        </Button>
-        <Button variant="ghost" size="icon" onClick={handlePlayPause}>
+        </Button> */}
+        {/* <Button variant="ghost" size="icon" onClick={handlePlayPause}>
           {!isPlaying ? <Play fill="white" /> : <Pause fill="white" />}
-        </Button>
-        <Button variant="ghost" size="icon" onClick={handleForward}>
+        </Button> */}
+        {/* <Button variant="ghost" size="icon" onClick={handleForward}>
           <FastForward onClick={handleForward} fill="white" />
-        </Button>
+        </Button> */}
       </div>
       <VolumeSlider handleVolume={handleVolume} />
     </motion.div>

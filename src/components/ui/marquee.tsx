@@ -16,19 +16,19 @@ export const Marquee = ({ text, className }: MarqueeProps) => {
         {texts[0] ? (
           <p className="text-primary line-clamp-1 text-xs">
             {texts[0]}
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;
           </p>
         ) : null}
         {texts[1] ? (
           <p className="text-muted-foreground line-clamp-1 text-xs">
             {texts[1]}
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;
           </p>
         ) : null}
         {texts[2] ? (
           <p className="text-muted-foreground line-clamp-1 text-xs">
             {texts[2]}
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;
           </p>
         ) : null}
       </div>
