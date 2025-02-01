@@ -20,6 +20,7 @@ model Song {
   album     String?
   duration  Int // Duration in seconds
   type      String
+  year      Int?
   genre     String?
   bpm       Int?
   key       String?

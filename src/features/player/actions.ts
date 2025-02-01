@@ -168,7 +168,8 @@ export async function updateTrackImageAction(_: any, formData: FormData) {
 export async function addSongAction(
   formData: FormData,
   overideAlbum: string | null,
-  type: string
+  type: string,
+  defaultCoverUrl?: string
 ) {
   if (process.env.VERCEL_ENV === 'production') {
     return;
@@ -190,8 +191,12 @@ export async function addSongAction(
     }
 
     // Upload cover to Cloudinary if available
-    let coverUrl = null;
-    if (metadata.common.picture && metadata.common.picture.length > 0) {
+    let coverUrl = defaultCoverUrl;
+    if (
+      metadata.common.picture &&
+      metadata.common.picture.length > 0 &&
+      !defaultCoverUrl
+    ) {
       const cover = metadata.common.picture[0];
       const coverData = `data:${cover.format};base64,${Buffer.from(
         cover.data
@@ -208,6 +213,7 @@ export async function addSongAction(
         return { success: false, error: 'Failed to upload cover image' };
       }
     }
+    console.log('coverUrl', coverUrl);
 
     // Upload audio file to Cloudinary
     const uploadPromise = new Promise<string>((resolve, reject) => {
@@ -250,7 +256,11 @@ export async function addSongAction(
       },
     });
 
-    return { success: true, message: 'Song added successfully!' };
+    return {
+      success: true,
+      message: 'Song added successfully!',
+      coverUrl: coverUrl,
+    };
   } catch (error) {
     console.error('Error processing file:', error);
     return { success: false, error: 'Failed to process file' };

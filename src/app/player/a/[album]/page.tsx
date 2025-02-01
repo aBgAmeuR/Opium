@@ -1,31 +1,27 @@
+/* eslint-disable @next/next/no-img-element */
 import { ChevronLeft, ChevronRight, Shuffle } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { CoverImage } from '@/features/player/components/tracks/cover-image';
-import { EditableTitle } from '@/features/player/components/tracks/editable-title';
 import { TrackTable } from '@/features/player/components/tracks/track-table';
-import {
-  getNextPlaylistId,
-  getPlaylistWithSongs,
-} from '@/features/player/queries';
+import { getAlbumsWithSongs } from '@/features/player/queries';
 import { formatDuration } from '@/lib/utils';
 
 export default async function PlaylistPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ album: string }>;
 }) {
-  const id = (await params).id;
-  const playlist = await getPlaylistWithSongs(id);
+  const name = (await params).album;
+  const albumWithSongs = await getAlbumsWithSongs(decodeURIComponent(name));
 
-  if (!playlist) {
+  if (albumWithSongs.duration === 0) {
     notFound();
   }
 
-  const nextPlaylistId = await getNextPlaylistId(playlist.createdAt);
+  const albumDetails = albumWithSongs.songs[0];
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden bg-[#0A0A0A] pb-[69px]">
@@ -36,18 +32,10 @@ export default async function PlaylistPage({
               <ChevronLeft className="size-4" />
             </Button>
           </Link>
-          {nextPlaylistId ? (
-            <Link href={`/player/p/${nextPlaylistId}`} passHref>
-              <Button variant="ghost" size="icon" className="size-7">
-                <ChevronRight className="size-4" />
-              </Button>
-            </Link>
-          ) : (
-            <Button variant="ghost" size="icon" className="size-7" disabled>
-              <ChevronRight className="size-4" />
-            </Button>
-          )}
-          <span className="text-sm">{playlist.name}</span>
+          <Button variant="ghost" size="icon" className="size-7" disabled>
+            <ChevronRight className="size-4" />
+          </Button>
+          <span className="text-sm">{albumDetails.album}</span>
         </div>
         <div className="flex items-center space-x-2">
           <Button
@@ -63,18 +51,29 @@ export default async function PlaylistPage({
       </div>
 
       <div className="flex items-center space-x-3 bg-[#0A0A0A] px-4 py-3">
-        <CoverImage url={playlist.coverUrl} playlistId={playlist.id} />
+        <img
+          src={albumDetails.imageUrl || '/placeholder.svg'}
+          alt="Playlist cover"
+          className="size-16 object-cover sm:size-20"
+        />
         <div>
-          <EditableTitle playlistId={playlist.id} initialName={playlist.name} />
+          <h1
+            className="cursor-pointer text-xl font-bold sm:text-2xl"
+            tabIndex={0}
+          >
+            {albumDetails.album}
+          </h1>
           <p className="text-xs text-gray-400 sm:text-sm">
-            {playlist.trackCount} tracks • {formatDuration(playlist.duration)}
+            {albumWithSongs.trackCount} tracks •{' '}
+            {formatDuration(albumWithSongs.duration)}
           </p>
         </div>
       </div>
 
       <ScrollArea className="mt-3 flex-1">
         <div className="min-w-max">
-          <TrackTable playlist={playlist} />
+          {/* @ts-expect-error songs is not a PlaylistWithSongs */}
+          <TrackTable playlist={{ songs: albumWithSongs.songs }} />
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>

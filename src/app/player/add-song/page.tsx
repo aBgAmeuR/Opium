@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { addSongAction } from '@/features/player/actions';
+import { formatDuration } from '@/lib/utils';
 
 export default function AddSongPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -37,6 +38,7 @@ export default function AddSongPage() {
     let errorCount = 0;
     setUploadStates(new Array(files.length).fill(null));
 
+    let coverUrl = undefined;
     for (const [index, file] of files.entries()) {
       const formData = new FormData();
       formData.append('file', file);
@@ -50,8 +52,10 @@ export default function AddSongPage() {
       const result = await addSongAction(
         formData,
         overideAlbum !== '' ? overideAlbum : null,
-        type
+        type,
+        coverUrl
       );
+
       setUploadStates((prevStates) => {
         const newStates = [...prevStates];
         newStates[index] = result?.success ? 'success' : 'error';
@@ -60,6 +64,7 @@ export default function AddSongPage() {
 
       if (result?.success) {
         successCount++;
+        coverUrl = result.coverUrl;
       } else {
         errorCount++;
       }
@@ -90,7 +95,7 @@ export default function AddSongPage() {
     <div className="flex flex-1 flex-col overflow-hidden bg-[#0A0A0A] pb-[69px]">
       <div className="flex items-center justify-between bg-[#0A0A0A] p-3">
         <div className="flex items-center space-x-1">
-          <Link href="/" passHref>
+          <Link href="/player" passHref>
             <Button variant="ghost" size="icon" className="size-7">
               <ChevronLeft className="size-4" />
             </Button>
@@ -171,19 +176,19 @@ export default function AddSongPage() {
             </Button>
           </div>
         </div>
-
-        <ScrollArea className="mt-3 flex-1">
-          <div className="min-w-max">
-            <TrackTable
-              files={files}
-              removeFile={removeFile}
-              getMetadata={getMetadata}
-              uploadStates={uploadStates}
-            />
-          </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
       </form>
+
+      <ScrollArea className="flex-1 px-4 py-3">
+        <div className="min-w-max">
+          <TrackTable
+            files={files}
+            removeFile={removeFile}
+            getMetadata={getMetadata}
+            uploadStates={uploadStates}
+          />
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     </div>
   );
 }
@@ -259,7 +264,9 @@ const TrackRow = ({
       <td className="hidden p-2 sm:table-cell">{metadata.common.artist}</td>
       <td className="hidden p-2 md:table-cell">{metadata.common.album}</td>
       <td className="p-2">
-        {metadata.format.duration ? Math.round(metadata.format.duration) : 0}
+        {metadata.format.duration
+          ? formatDuration(metadata.format.duration)
+          : 0}
       </td>
       <td className="w-8 p-2">
         <Button

@@ -1,7 +1,15 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { MoreHorizontal, Pause, Play, Plus, Trash } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ArrowUpAZ,
+  ArrowUpZA,
+  MoreHorizontal,
+  Pause,
+  Play,
+  Plus,
+  Trash,
+} from 'lucide-react';
 import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
@@ -21,7 +29,7 @@ import {
 import { usePlayback } from '@/features/player/components/playback/playback-context';
 import { usePlaylist } from '@/features/player/hooks/use-playlist';
 import { PlaylistWithSongs, Song } from '@/features/player/types';
-import { formatDuration, highlightText } from '@/lib/utils';
+import { cn, formatDuration, highlightText } from '@/lib/utils';
 
 function TrackRow({
   track,
@@ -111,7 +119,7 @@ function TrackRow({
           <div className="max-w-[180px] truncate font-medium text-[#d1d5db] sm:max-w-[200px]">
             {highlightText(track.name, query)}
             <span className="ml-1 text-gray-400 sm:hidden">
-              • {highlightText(track.artist, query)}
+              • {highlightText(track.album!, query)}
             </span>
           </div>
         </div>
@@ -220,6 +228,10 @@ export function TrackTable({
   const tableRef = useRef<HTMLTableElement>(null);
   const { registerPanelRef, setActivePanel, setPlaylist } = usePlayback();
   const [selectedTrackId, setSelectedTrackId] = useState<string | null>(null);
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof Song;
+    direction: 'asc' | 'desc';
+  } | null>(null);
 
   useEffect(() => {
     registerPanelRef('tracklist', tableRef as React.RefObject<HTMLElement>);
@@ -228,6 +240,42 @@ export function TrackTable({
   useEffect(() => {
     setPlaylist(playlist.songs);
   }, [playlist.songs, setPlaylist]);
+
+  const sortedTracks = useMemo(() => {
+    const sortableTracks: Song[] = [...playlist.songs];
+    if (sortConfig !== null) {
+      sortableTracks.sort((a, b) => {
+        if (!a || !b || !sortConfig || !sortConfig.key) return 0;
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+        if (aValue == null || bValue == null) return 0;
+        if (aValue < bValue) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableTracks;
+  }, [playlist.songs, sortConfig]);
+
+  const requestSort = (key: keyof Song) => {
+    if (sortConfig?.direction === 'desc') {
+      setSortConfig(null);
+      return;
+    }
+    let direction: 'asc' | 'desc' = 'asc';
+    if (
+      sortConfig &&
+      sortConfig.key === key &&
+      sortConfig.direction === 'asc'
+    ) {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
 
   return (
     <table
@@ -238,16 +286,43 @@ export function TrackTable({
       <thead className="sticky top-0 z-10 border-b border-[#282828] bg-[#0A0A0A]">
         <tr className="text-left text-gray-400">
           <th className="w-10 py-2 pl-3 pr-2 font-medium">#</th>
-          <th className="p-2 font-medium">Title</th>
-          <th className="hidden p-2 font-medium sm:table-cell">Artist</th>
-          <th className="hidden p-2 font-medium md:table-cell">Album</th>
-          <th className="hidden p-2 font-medium md:table-cell">Type</th>
-          <th className="p-2 font-medium">Duration</th>
-          <th className="w-8 p-2 font-medium"></th>
+          <ColumnHeader
+            title="Title"
+            sortConfig={sortConfig}
+            requestSort={requestSort}
+            columnKey="name"
+          />
+          <ColumnHeader
+            title="Artist"
+            sortConfig={sortConfig}
+            requestSort={requestSort}
+            columnKey="artist"
+            className="hidden sm:table-cell"
+          />
+          <ColumnHeader
+            title="Album"
+            sortConfig={sortConfig}
+            requestSort={requestSort}
+            columnKey="album"
+            className="hidden md:table-cell"
+          />
+          <ColumnHeader
+            title="Type"
+            sortConfig={sortConfig}
+            requestSort={requestSort}
+            columnKey="type"
+            className="hidden md:table-cell"
+          />
+          <ColumnHeader
+            title="Duration"
+            sortConfig={sortConfig}
+            requestSort={requestSort}
+            columnKey="duration"
+          />
         </tr>
       </thead>
       <tbody className="mt-px">
-        {playlist.songs.map((track: Song, index: number) => (
+        {sortedTracks.map((track: Song, index: number) => (
           <TrackRow
             key={track.id}
             track={track}
@@ -261,3 +336,35 @@ export function TrackTable({
     </table>
   );
 }
+
+const ColumnHeader = ({
+  title,
+  sortConfig,
+  requestSort,
+  columnKey,
+  className,
+}: {
+  title: string;
+  sortConfig: { key: keyof Song; direction: 'asc' | 'desc' } | null;
+  requestSort: (key: keyof Song) => void;
+  columnKey: keyof Song;
+  className?: string;
+}) => {
+  return (
+    <th
+      className={cn(' cursor-pointer select-none p-2 font-medium', className)}
+      onClick={() => requestSort(columnKey)}
+    >
+      <p className="flex items-center">
+        {title}
+        {sortConfig?.key === columnKey ? (
+          sortConfig.direction === 'asc' ? (
+            <ArrowUpAZ className="ml-1 size-4" />
+          ) : (
+            <ArrowUpZA className="ml-1 size-4" />
+          )
+        ) : null}
+      </p>
+    </th>
+  );
+};

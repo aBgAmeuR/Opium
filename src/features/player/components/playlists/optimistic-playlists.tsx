@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { use, useEffect, useRef } from 'react';
 import { ObjectId } from 'bson';
 import { MoreVertical, Plus, Trash } from 'lucide-react';
 import Link from 'next/link';
@@ -20,7 +20,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
 
@@ -81,8 +80,33 @@ function PlaylistRow({ playlist }: { playlist: Playlist }) {
   );
 }
 
-export function OptimisticPlaylists() {
+const AlbumRow = ({ album }: { album: string }) => {
+  const pathname = usePathname();
+
+  return (
+    <li className="group relative">
+      <Link
+        href={`/player/a/${album}`}
+        className={`block cursor-pointer px-4 py-1 text-[#d1d5db] hover:bg-[#1A1A1A] focus:outline-none focus:ring-[0.5px] focus:ring-gray-400 ${
+          pathname === `/player/a/${encodeURIComponent(album)}`
+            ? 'bg-[#1A1A1A]'
+            : ''
+        }`}
+        tabIndex={0}
+      >
+        {album}
+      </Link>
+    </li>
+  );
+};
+
+export function OptimisticPlaylists({
+  albumsPromise,
+}: {
+  albumsPromise: Promise<{ album: string | null }[]>;
+}) {
   const { playlists, updatePlaylist } = usePlaylist();
+  const albums = use(albumsPromise);
   const playlistsContainerRef = useRef<HTMLUListElement>(null);
   const pathname = usePathname();
   const router = useRouter();
@@ -135,33 +159,49 @@ export function OptimisticPlaylists() {
             href="/player"
             className="text-xs font-semibold text-gray-400 transition-colors hover:text-white"
           >
-            Playlists
+            Albums
           </Link>
-          <form action={addPlaylistAction}>
-            <Button
-              disabled={isProduction}
-              variant="ghost"
-              size="icon"
-              className="size-5"
-              type="submit"
-            >
-              <Plus className="size-3 text-gray-400" />
-              <span className="sr-only">Add new playlist</span>
-            </Button>
-          </form>
         </div>
       </div>
-      <ScrollArea className="h-[calc(100dvh-180px)]">
-        <ul
-          ref={playlistsContainerRef}
-          className="mt-px space-y-0.5 text-xs"
-          onKeyDown={(e) => handleKeyNavigation(e, 'sidebar')}
+
+      <ul
+        ref={playlistsContainerRef}
+        className="mb-8 mt-px space-y-0.5 text-xs"
+        onKeyDown={(e) => handleKeyNavigation(e, 'sidebar')}
+      >
+        {albums.map(({ album }) =>
+          album ? <AlbumRow key={album} album={album} /> : null
+        )}
+      </ul>
+      <div className="mx-4 mb-4 flex items-center justify-between">
+        <Link
+          href="/player"
+          className="text-xs font-semibold text-gray-400 transition-colors hover:text-white"
         >
-          {playlists.map((playlist) => (
-            <PlaylistRow key={playlist.id} playlist={playlist} />
-          ))}
-        </ul>
-      </ScrollArea>
+          Playlists
+        </Link>
+        <form action={addPlaylistAction}>
+          <Button
+            disabled={isProduction}
+            variant="ghost"
+            size="icon"
+            className="size-5"
+            type="submit"
+          >
+            <Plus className="size-3 text-gray-400" />
+            <span className="sr-only">Add new playlist</span>
+          </Button>
+        </form>
+      </div>
+      <ul
+        ref={playlistsContainerRef}
+        className="mt-px space-y-0.5 text-xs"
+        onKeyDown={(e) => handleKeyNavigation(e, 'sidebar')}
+      >
+        {playlists.map((playlist) => (
+          <PlaylistRow key={playlist.id} playlist={playlist} />
+        ))}
+      </ul>
     </div>
   );
 }

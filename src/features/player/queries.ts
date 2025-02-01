@@ -120,3 +120,23 @@ export const getNextPlaylistId = async (createdAt: Date) => {
   if (result.length) return result[0].id;
   return null;
 };
+
+export const getAllAlbums = async () => {
+  return db.song.findMany({
+    select: { album: true },
+    orderBy: { createdAt: 'desc' },
+    distinct: ['album'],
+  });
+};
+
+export const getAlbumsWithSongs = async (name: string) => {
+  const songs = await db.song.findMany({
+    where: { album: name },
+    orderBy: { createdAt: 'asc' },
+  });
+
+  const trackCount = songs.length;
+  const duration = songs.reduce((total, song) => total + song.duration, 0);
+
+  return { songs, trackCount, duration };
+};
