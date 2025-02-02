@@ -1,4 +1,6 @@
+import TailwindTypography from '@tailwindcss/typography';
 import type { Config } from 'tailwindcss';
+import TailwindAnimate from 'tailwindcss-animate';
 
 const config = {
   darkMode: ['class'],
@@ -99,14 +101,29 @@ const config = {
             height: '0',
           },
         },
+        'now-playing-1': {
+          '0%, 100%': { height: '0.2rem' },
+          '50%': { height: '0.5rem' },
+        },
+        'now-playing-2': {
+          '0%, 100%': { height: '0.25rem' },
+          '50%': { height: '0.55rem' },
+        },
+        'now-playing-3': {
+          '0%, 100%': { height: '0.3rem' },
+          '50%': { height: '0.6rem' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'now-playing-1': 'now-playing-1 0.8s ease-in-out infinite',
+        'now-playing-2': 'now-playing-2 1s ease-in-out infinite',
+        'now-playing-3': 'now-playing-3 1.2s ease-in-out infinite',
       },
     },
   },
-  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
+  plugins: [TailwindAnimate, TailwindTypography],
 } satisfies Config;
 
 export default config;

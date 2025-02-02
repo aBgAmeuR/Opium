@@ -276,3 +276,18 @@ export async function deleteSongAction(id: string) {
 
   revalidatePath('/player', 'layout');
 }
+
+export async function deleteSongFromPlaylistAction(
+  playlistId: string,
+  songId: string
+) {
+  if (process.env.VERCEL_ENV === 'production') {
+    return;
+  }
+
+  await db.playlistSong.deleteMany({
+    where: { playlistId, songId },
+  });
+
+  revalidatePath('/player', 'layout');
+}

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ArrowUpAZ,
   ArrowUpZA,
+  ListMinus,
   MoreHorizontal,
   Pause,
   Play,
@@ -26,6 +27,7 @@ import { env } from '@/env.mjs';
 import {
   addToPlaylistAction,
   deleteSongAction,
+  deleteSongFromPlaylistAction,
 } from '@/features/player/actions';
 import { usePlayback } from '@/features/player/components/playback/playback-context';
 import { usePlaylist } from '@/features/player/hooks/use-playlist';
@@ -40,12 +42,14 @@ function TrackRow({
   query,
   isSelected,
   onSelect,
+  playlistId,
 }: {
   track: Song;
   index: number;
   query?: string;
   isSelected: boolean;
   onSelect: () => void;
+  playlistId?: string;
 }) {
   const {
     currentTrack,
@@ -58,7 +62,6 @@ function TrackRow({
   const { playlists } = usePlaylist();
 
   const [isFocused, setIsFocused] = useState(false);
-  const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
   const isCurrentTrack = currentTrack?.name === track.name;
 
   function onClickTrackRow(e: React.MouseEvent) {
@@ -144,7 +147,6 @@ function TrackRow({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                disabled={isProduction}
                 variant="ghost"
                 size="icon"
                 className="size-5 text-gray-400 hover:text-white focus:text-white"
@@ -189,6 +191,18 @@ function TrackRow({
                     <Trash className="mr-2 size-3" />
                     Delete
                   </DropdownMenuItem>
+                  {playlistId ? (
+                    <DropdownMenuItem
+                      className="text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteSongFromPlaylistAction(playlistId, track.id);
+                      }}
+                    >
+                      <ListMinus className="mr-2 size-3" />
+                      Delete from Playlist
+                    </DropdownMenuItem>
+                  ) : null}
                   <DropdownMenuSub>
                     <DropdownMenuSubTrigger className="text-xs">
                       <Plus className="mr-2 size-3" />
@@ -337,6 +351,7 @@ export function TrackTable({
             query={query}
             isSelected={selectedTrackId === track.id}
             onSelect={() => setSelectedTrackId(track.id)}
+            playlistId={playlist?.id}
           />
         ))}
       </tbody>
