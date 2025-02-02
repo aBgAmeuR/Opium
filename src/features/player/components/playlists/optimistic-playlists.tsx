@@ -199,7 +199,7 @@ export function OptimisticPlaylists({
       </div>
       <ul
         ref={playlistsContainerRef}
-        className="mt-px space-y-0.5 text-xs"
+        className="mb-20 mt-px space-y-0.5 text-xs"
         onKeyDown={(e) => handleKeyNavigation(e, 'sidebar')}
       >
         {playlists.map((playlist) => (
