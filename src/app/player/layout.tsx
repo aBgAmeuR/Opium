@@ -9,8 +9,8 @@ import { PlaylistProvider } from '@/features/player/hooks/use-playlist';
 import { getAllAlbums, getAllPlaylists } from '@/features/player/queries';
 
 export const metadata: Metadata = {
-  title: 'Next.js Music Player',
-  description: 'A music player built with Next.js.',
+  title: 'Player',
+  description: 'Playboi Carti Music player',
 };
 
 export const viewport: Viewport = {
