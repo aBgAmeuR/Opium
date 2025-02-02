@@ -9,7 +9,7 @@ type MusicPlayerSongInfosProps = {
   track: RecentTrack;
   handlePlayPause: () => void;
   isPlaying: boolean;
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   handleBackward: () => void;
   handleForward: () => void;
   handleVolume: (volume: number) => void;
