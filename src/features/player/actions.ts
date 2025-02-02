@@ -213,7 +213,6 @@ export async function addSongAction(
         return { success: false, error: 'Failed to upload cover image' };
       }
     }
-    console.log('coverUrl', coverUrl);
 
     // Upload audio file to Cloudinary
     const uploadPromise = new Promise<string>((resolve, reject) => {
@@ -273,12 +272,7 @@ export async function deleteSongAction(id: string) {
   }
 
   await db.playlistSong.deleteMany({ where: { songId: id } });
-  const track = await db.song.delete({ where: { id } });
-
-  if (track.imageUrl) {
-    const publicId = track.imageUrl.split('/').pop();
-    await cloudinary.v2.uploader.destroy(publicId!);
-  }
+  await db.song.delete({ where: { id } });
 
   revalidatePath('/player', 'layout');
 }

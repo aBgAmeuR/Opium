@@ -3,7 +3,10 @@
 import { useActionState } from 'react';
 import { Loader2, Upload } from 'lucide-react';
 
+import { env } from '@/env.mjs';
 import { uploadPlaylistCoverAction } from '@/features/player/actions';
+
+const isDevelopment = env.NEXT_PUBLIC_DEVELOPMENT;
 
 export function CoverImage({
   url,
@@ -22,11 +25,11 @@ export function CoverImage({
 
   const currentUrl = state?.success ? state.coverUrl : url;
 
-  if (currentUrl) {
+  if (currentUrl || !isDevelopment) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={currentUrl}
+        src={currentUrl || '/placeholder.svg'}
         alt="Playlist cover"
         className="size-16 object-cover sm:size-20"
       />

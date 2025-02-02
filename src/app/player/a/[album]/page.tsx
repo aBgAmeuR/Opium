@@ -50,23 +50,25 @@ export default async function PlaylistPage({
         </div>
       </div>
 
-      <div className="flex items-center space-x-3 bg-[#0A0A0A] px-4 py-3">
-        <img
-          src={albumDetails.imageUrl || '/placeholder.svg'}
-          alt="Playlist cover"
-          className="size-16 object-cover sm:size-20"
-        />
-        <div>
-          <h1
-            className="cursor-pointer text-xl font-bold sm:text-2xl"
-            tabIndex={0}
-          >
-            {albumDetails.album}
-          </h1>
-          <p className="text-xs text-gray-400 sm:text-sm">
-            {albumWithSongs.trackCount} tracks •{' '}
-            {formatDuration(albumWithSongs.duration)}
-          </p>
+      <div className="itens-center flex justify-between">
+        <div className="flex items-center space-x-3 bg-[#0A0A0A] px-4 py-3">
+          <img
+            src={albumDetails.imageUrl || '/placeholder.svg'}
+            alt="Playlist cover"
+            className="size-16 object-cover sm:size-20"
+          />
+          <div>
+            <h1
+              className="cursor-pointer text-xl font-bold sm:text-2xl"
+              tabIndex={0}
+            >
+              {albumDetails.album}
+            </h1>
+            <p className="text-xs text-gray-400 sm:text-sm">
+              {albumWithSongs.trackCount} tracks •{' '}
+              {formatDuration(albumWithSongs.duration)}
+            </p>
+          </div>
         </div>
       </div>
 

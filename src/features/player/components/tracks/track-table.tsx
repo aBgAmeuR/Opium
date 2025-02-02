@@ -22,6 +22,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { env } from '@/env.mjs';
 import {
   addToPlaylistAction,
   deleteSongAction,
@@ -30,6 +31,8 @@ import { usePlayback } from '@/features/player/components/playback/playback-cont
 import { usePlaylist } from '@/features/player/hooks/use-playlist';
 import { PlaylistWithSongs, Song } from '@/features/player/types';
 import { cn, formatDuration, highlightText } from '@/lib/utils';
+
+const isDevelopment = env.NEXT_PUBLIC_DEVELOPMENT;
 
 function TrackRow({
   track,
@@ -174,36 +177,40 @@ function TrackRow({
                   </>
                 )}
               </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-xs"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteSongAction(track.id);
-                }}
-              >
-                <Trash className="mr-2 size-3" />
-                Delete
-              </DropdownMenuItem>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="text-xs">
-                  <Plus className="mr-2 size-3" />
-                  Add to Playlist
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent className="w-48">
-                  {playlists.map((playlist) => (
-                    <DropdownMenuItem
-                      className="text-xs"
-                      key={playlist.id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addToPlaylistAction(playlist.id, track.id);
-                      }}
-                    >
-                      {playlist.name}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
+              {isDevelopment ? (
+                <>
+                  <DropdownMenuItem
+                    className="text-xs"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteSongAction(track.id);
+                    }}
+                  >
+                    <Trash className="mr-2 size-3" />
+                    Delete
+                  </DropdownMenuItem>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger className="text-xs">
+                      <Plus className="mr-2 size-3" />
+                      Add to Playlist
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent className="w-48">
+                      {playlists.map((playlist) => (
+                        <DropdownMenuItem
+                          className="text-xs"
+                          key={playlist.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addToPlaylistAction(playlist.id, track.id);
+                          }}
+                        >
+                          {playlist.name}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+                </>
+              ) : null}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

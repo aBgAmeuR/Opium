@@ -15,8 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { env } from '@/env.mjs';
 import { addSongAction } from '@/features/player/actions';
 import { formatDuration } from '@/lib/utils';
+
+const isDevelopment = env.NEXT_PUBLIC_DEVELOPMENT;
 
 export default function AddSongPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -91,6 +94,10 @@ export default function AddSongPage() {
     return await mm.parseBuffer(buffer, file.type);
   }
 
+  if (!isDevelopment) {
+    return <div>Upload is disabled in production.</div>;
+  }
+
   return (
     <div className="flex flex-1 flex-col overflow-hidden bg-[#0A0A0A] pb-[69px]">
       <div className="flex items-center justify-between bg-[#0A0A0A] p-3">
@@ -151,6 +158,7 @@ export default function AddSongPage() {
                 <SelectItem value="Official Project">
                   Official Project
                 </SelectItem>
+                <SelectItem value="Demo">Demo</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -3,8 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { Input } from '@/components/ui/input';
+import { env } from '@/env.mjs';
 import { updatePlaylistNameAction } from '@/features/player/actions';
 import { usePlaylist } from '@/features/player/hooks/use-playlist';
+
+const isDevelopment = env.NEXT_PUBLIC_DEVELOPMENT;
 
 export function EditableTitle({
   playlistId,
@@ -23,6 +26,13 @@ export function EditableTitle({
       inputRef.current?.focus();
     }
   }, [isEditing]);
+
+  if (!isDevelopment)
+    return (
+      <h1 className="text-xl font-bold sm:text-2xl" tabIndex={0}>
+        {initialName}
+      </h1>
+    );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

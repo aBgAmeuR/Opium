@@ -8,7 +8,10 @@ import { CheckIcon, Loader2, PencilIcon } from 'lucide-react';
 import { updateTrackAction, updateTrackImageAction } from '../actions';
 import { usePlayback } from './playback/playback-context';
 
+import { env } from '@/env.mjs';
 import { cn } from '@/lib/utils';
+
+const isDevelopment = env.NEXT_PUBLIC_DEVELOPMENT;
 
 export function NowPlaying() {
   const { currentTrack } = usePlayback();
@@ -53,47 +56,49 @@ export function NowPlaying() {
           alt={currentTrack.name}
           className="size-full object-cover"
         />
-        <form action={imageFormAction} className="absolute inset-0">
-          <input type="hidden" name="trackId" value={currentTrack.id} />
-          <label
-            htmlFor="imageUpload"
-            className="absolute inset-0 flex cursor-pointer items-center justify-center"
-          >
-            <input
-              id="imageUpload"
-              type="file"
-              name="file"
-              className="hidden"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  if (file.size <= 5 * 1024 * 1024) {
-                    e.target.form?.requestSubmit();
-                  } else {
-                    alert('File size exceeds 5MB limit');
-                    e.target.value = '';
-                  }
-                }
-              }}
-            />
-            <div
-              // eslint-disable-next-line tailwindcss/migration-from-tailwind-2
-              className={cn(
-                'rounded-full p-2 group-hover:bg-black group-hover:bg-opacity-50',
-                imagePending && 'bg-opacity-50'
-              )}
+        {isDevelopment ? (
+          <form action={imageFormAction} className="absolute inset-0">
+            <input type="hidden" name="trackId" value={currentTrack.id} />
+            <label
+              htmlFor="imageUpload"
+              className="absolute inset-0 flex cursor-pointer items-center justify-center"
             >
-              {imagePending ? (
-                <Loader2 className="size-6 animate-spin text-white" />
-              ) : (
-                showPencil && (
-                  <PencilIcon className="size-6 text-white opacity-0 transition-opacity group-hover:opacity-100" />
-                )
-              )}
-            </div>
-          </label>
-        </form>
+              <input
+                id="imageUpload"
+                type="file"
+                name="file"
+                className="hidden"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    if (file.size <= 5 * 1024 * 1024) {
+                      e.target.form?.requestSubmit();
+                    } else {
+                      alert('File size exceeds 5MB limit');
+                      e.target.value = '';
+                    }
+                  }
+                }}
+              />
+              <div
+                // eslint-disable-next-line tailwindcss/migration-from-tailwind-2
+                className={cn(
+                  'rounded-full p-2 group-hover:bg-black group-hover:bg-opacity-50',
+                  imagePending && 'bg-opacity-50'
+                )}
+              >
+                {imagePending ? (
+                  <Loader2 className="size-6 animate-spin text-white" />
+                ) : (
+                  showPencil && (
+                    <PencilIcon className="size-6 text-white opacity-0 transition-opacity group-hover:opacity-100" />
+                  )
+                )}
+              </div>
+            </label>
+          </form>
+        ) : null}
       </div>
       <div className="w-full space-y-1">
         <EditableInput
@@ -206,6 +211,24 @@ export function EditableInput({
       setIsEditing(false);
       setValue(initialValue);
     }
+  }
+
+  if (!isDevelopment) {
+    return (
+      <div className="group space-y-1">
+        <label
+          htmlFor={`${field}-input`}
+          className="text-muted-foreground text-xs"
+        >
+          {label}
+        </label>
+        <div className="flex h-3 w-full items-center justify-between border-b border-transparent text-xs transition-colors focus-within:border-white">
+          <span className={cn(value ? '' : 'text-muted-foreground')}>
+            {value || '-'}
+          </span>
+        </div>
+      </div>
+    );
   }
 
   return (

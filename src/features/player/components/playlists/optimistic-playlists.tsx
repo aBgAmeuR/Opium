@@ -20,8 +20,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { env } from '@/env.mjs';
 
-const isProduction = process.env.NEXT_PUBLIC_VERCEL_ENV === 'production';
+const isDevelopment = env.NEXT_PUBLIC_DEVELOPMENT;
 
 function PlaylistRow({ playlist }: { playlist: Playlist }) {
   const pathname = usePathname();
@@ -53,28 +54,30 @@ function PlaylistRow({ playlist }: { playlist: Playlist }) {
         {playlist.name}
       </Link>
       <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="size-6 text-gray-400 hover:text-white focus:text-white"
-            >
-              <MoreVertical className="size-4" />
-              <span className="sr-only">Playlist options</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-36">
-            <DropdownMenuItem
-              disabled={isProduction}
-              onClick={() => handleDeletePlaylist(playlist.id)}
-              className="text-xs"
-            >
-              <Trash className="mr-2 size-3" />
-              Delete Playlist
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {isDevelopment ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-6 text-gray-400 hover:text-white focus:text-white"
+              >
+                <MoreVertical className="size-4" />
+                <span className="sr-only">Playlist options</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-36">
+              <DropdownMenuItem
+                disabled={!isDevelopment}
+                onClick={() => handleDeletePlaylist(playlist.id)}
+                className="text-xs"
+              >
+                <Trash className="mr-2 size-3" />
+                Delete Playlist
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : null}
       </div>
     </li>
   );
@@ -143,7 +146,7 @@ export function OptimisticPlaylists({
       onClick={() => setActivePanel('sidebar')}
     >
       <div className="m-4">
-        {/* <SearchInput /> */}
+        <SearchInput />
         <div className="mb-6">
           <Link
             href="/player"
@@ -180,18 +183,19 @@ export function OptimisticPlaylists({
         >
           Playlists
         </Link>
-        <form action={addPlaylistAction}>
-          <Button
-            disabled={isProduction}
-            variant="ghost"
-            size="icon"
-            className="size-5"
-            type="submit"
-          >
-            <Plus className="size-3 text-gray-400" />
-            <span className="sr-only">Add new playlist</span>
-          </Button>
-        </form>
+        {isDevelopment ? (
+          <form action={addPlaylistAction}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-5"
+              type="submit"
+            >
+              <Plus className="size-3 text-gray-400" />
+              <span className="sr-only">Add new playlist</span>
+            </Button>
+          </form>
+        ) : null}
       </div>
       <ul
         ref={playlistsContainerRef}

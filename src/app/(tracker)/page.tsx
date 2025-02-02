@@ -1,5 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { AppSidebar } from '@/components/app-sidebar';
 import { DataTable } from '@/components/data-table';
+import { Icons } from '@/components/icons';
+import { MusicPlayer } from '@/components/music-player/music-player';
+import { RecentSongsFilters } from '@/components/recent-songs-filters';
+import { RecentSongsList } from '@/components/recent-songs-list';
 import SearchInput from '@/components/search-input';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -7,12 +12,13 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
+import { getRecentTracks } from '@/lib/fetch-data';
 
 export default async function Page() {
-  // const data = await getRecentTracks();
+  const data = await getRecentTracks();
   return (
     <>
-      <SidebarProvider>
+      {/* <SidebarProvider>
         <AppSidebar />
         <SidebarInset className="w-full">
           <header className="bg-background sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b px-4">
@@ -26,7 +32,14 @@ export default async function Page() {
             </div>
           </div>
         </SidebarInset>
-      </SidebarProvider>
+      </SidebarProvider> */}
+      <div className="mx-4 mt-2 flex items-center gap-2 md:mx-8 md:mt-4">
+        <Icons.logo size={48} className="h-[50px] w-8 md:h-[75px] md:w-12" />
+        <h1 className="text-xl md:text-2xl">Carti Tracker</h1>
+      </div>
+      <RecentSongsFilters data={data} />
+      <RecentSongsList data={data} />
+      <MusicPlayer />
     </>
   );
 }
