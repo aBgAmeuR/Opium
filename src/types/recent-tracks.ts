@@ -1,6 +1,13 @@
 export type RecentTrack = {
   era: string;
-  notice: 'Best Of' | 'Special' | 'Grails' | 'Worst Of' | 'AI Ref Track' | null;
+  notice:
+    | 'Best Of'
+    | 'Special'
+    | 'Grails'
+    | 'Wanted'
+    | 'Worst Of'
+    | 'AI Ref Track'
+    | null;
   name: string;
   notes: string;
   trackLength: string;

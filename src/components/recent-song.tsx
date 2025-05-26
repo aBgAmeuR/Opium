@@ -17,27 +17,8 @@ import {
   CredenzaTrigger,
 } from '@/components/ui/credenza';
 import { useSongPlayStore } from '@/lib/store';
+import { getLinks } from '@/lib/utils';
 import { RecentTrack } from '@/types/recent-tracks';
-
-const getLinks = (links: string[]) => {
-  const returnLinks: { link: string; isPillowcase: boolean }[] = [];
-  links.forEach((link) => {
-    if (
-      link.includes('https://pillowcase.su') ||
-      link.includes('https://plwcse.top')
-    ) {
-      const id = link.match(/\/f\/([a-f0-9]{32})/)?.[1];
-      if (id) {
-        return returnLinks.push({
-          link: `https://api.plwcse.top/api/download/${id}`,
-          isPillowcase: true,
-        });
-      }
-    }
-    return returnLinks.push({ link, isPillowcase: false });
-  });
-  return returnLinks;
-};
 
 type RecentSongProps = {
   song: RecentTrack;

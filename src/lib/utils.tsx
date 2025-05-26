@@ -8,6 +8,9 @@ export const extractNoticeAndName = (name: string | null) => {
     '⭐': 'Best Of',
     '✨': 'Special',
     '🏆': 'Grails',
+    '🥇': 'Wanted',
+    '🥈': 'Wanted',
+    '🥉': 'Wanted',
     '🗑️': 'Worst Of',
     '🤖': 'AI Ref Track',
   } as const;
@@ -17,7 +20,7 @@ export const extractNoticeAndName = (name: string | null) => {
 
   return {
     notice,
-    name: name?.replace(/^(?:⭐|✨|🏆|🗑|🤖) ?/, '') ?? '',
+    name: name?.replace(/^(?:⭐|✨|🏆|🥇|🥈|🥉|🗑|🤖) ?/, '') ?? '',
   };
 };
 
@@ -38,6 +41,9 @@ export const getLinks = (links: string[]) => {
           isPillowcase: true,
         });
       }
+    } else if (link.includes('https://music.froste.lol/')) {
+      console.log(link);
+      return returnLinks.push({ link: `${link}/file`, isPillowcase: true });
     }
     return returnLinks.push({ link, isPillowcase: false });
   });
