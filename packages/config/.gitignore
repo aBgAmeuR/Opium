@@ -1,0 +1,43 @@
+# Build outputs
+build/
+dist/
+lib/
+
+# TypeScript
+*.tsbuildinfo
+*.d.ts
+!src/**/*.d.ts
+
+# Dependencies
+node_modules/
+
+# Testing
+coverage/
+
+# Cache
+.eslintcache
+.prettiercache
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated config files (if any)
+generated/
+
+# Temporary files
+*.tmp
+*.temp
+*~

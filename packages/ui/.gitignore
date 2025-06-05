@@ -1,0 +1,46 @@
+# Build outputs
+build/
+dist/
+lib/
+esm/
+cjs/
+
+# TypeScript
+*.tsbuildinfo
+*.d.ts
+!src/**/*.d.ts
+
+# Dependencies
+node_modules/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Cache
+.eslintcache
+.prettiercache
+
+# Storybook
+storybook-static/
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*~
