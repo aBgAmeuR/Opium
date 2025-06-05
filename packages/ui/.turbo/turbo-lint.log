@@ -1,0 +1,7 @@
+
+
+> @carti-tracker/ui@1.0.0 lint
+> eslint . --max-warnings 0
+
+[1G[0KPages directory cannot be found at /workspace/packages/ui/pages or /workspace/packages/ui/src/pages. If using a custom path, please configure with the `no-html-link-for-pages` rule in your eslint config file.
+[1G[0K⠙[1G[0K

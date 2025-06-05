@@ -1,0 +1,9 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/proxy/route": "app/api/proxy/route.js",
+  "/(tracker)/page": "app/(tracker)/page.js",
+  "/player/add-song/page": "app/player/add-song/page.js",
+  "/player/p/[id]/page": "app/player/p/[id]/page.js",
+  "/player/a/[album]/page": "app/player/a/[album]/page.js",
+  "/player/page": "app/player/page.js"
+}

@@ -1,0 +1,7 @@
+
+
+> @carti-tracker/ui@1.0.0 format:write
+> prettier --write "**/*.{ts,tsx}" --cache
+
+[1G[0Kindex.ts[2K[1Gindex.ts 46ms
+[1G[0K⠙[1G[0K

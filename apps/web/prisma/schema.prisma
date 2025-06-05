@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Song {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  artist    String
+  album     String?
+  duration  Int // Duration in seconds
+  type      String
+  year      Int?
+  genre     String?
+  bpm       Int?
+  key       String?
+  imageUrl  String?
+  audioUrl  String
+  isLocal   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  playlistSongs PlaylistSong[]
+}
+
+model Playlist {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  coverUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  playlistSongs PlaylistSong[]
+}
+
+model PlaylistSong {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  playlistId String @db.ObjectId
+  songId     String @db.ObjectId
+  order      Int
+
+  playlist Playlist @relation(fields: [playlistId], references: [id])
+  song     Song     @relation(fields: [songId], references: [id])
+
+  @@unique([playlistId, songId])
+}

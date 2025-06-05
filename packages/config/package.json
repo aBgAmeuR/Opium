@@ -1,0 +1,29 @@
+{
+  "name": "@carti-tracker/config",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js}\" --cache",
+    "format:write": "prettier --write \"**/*.{ts,tsx,js}\" --cache",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/parser": "^8.20.0",
+    "eslint-config-next": "15.1.6",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-prettier": "^5.2.2",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-tailwindcss": "^3.17.5",
+    "prettier": "^3.4.2",
+    "tailwindcss": "^3.4.17"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "typescript": "^5.7.3"
+  }
+}
