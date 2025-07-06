@@ -41,8 +41,10 @@ export const getLinks = (links: string[]) => {
           isPillowcase: true,
         });
       }
-    } else if (link.includes('https://music.froste.lol/')) {
-      console.log(link);
+    } else if (
+      link.includes('https://music.froste.lol/') ||
+      link.includes('http://music.froste.lol/')
+    ) {
       return returnLinks.push({ link: `${link}/file`, isPillowcase: true });
     }
     return returnLinks.push({ link, isPillowcase: false });
