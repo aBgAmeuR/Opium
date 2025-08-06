@@ -1,18 +1,78 @@
-# CartiTracker
+# my-better-t-app
 
-## Overview
+This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines Nuxt, Elysia, ORPC, and more.
 
-CartiTracker is a Playboi Carti leaks song tracker. It is a web application that allows users to track and listen to Playboi Carti leaks.
+## Features
 
-## Screenshots
+- **TypeScript** - For type safety and improved developer experience
+- **Nuxt** - The Intuitive Vue Framework
+- **TailwindCSS** - Utility-first CSS for rapid UI development
+- **shadcn/ui** - Reusable UI components
+- **Elysia** - Type-safe, high-performance framework
+- **oRPC** - End-to-end type-safe APIs with OpenAPI integration
+- **Node.js** - Runtime environment
+- **Drizzle** - TypeScript-first ORM
+- **SQLite/Turso** - Database engine
+- **Authentication** - Email & password authentication with Better Auth
+- **Biome** - Linting and formatting
+- **Tauri** - Build native desktop applications
+- **Turborepo** - Optimized monorepo build system
 
-![CartiTracker](https://github.com/user-attachments/assets/ca4dbfdd-cea4-473a-b591-05709fb16be2)
+## Getting Started
 
-## Built with
+First, install the dependencies:
 
-[![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![ShadcnUI](https://img.shields.io/badge/shadcn%2Fui-000?style=for-the-badge&logo=shadcnui&logoColor=fff)](https://ui.shadcn.com/)
-![Jest](https://img.shields.io/badge/-jest-%23C21325?style=for-the-badge&logo=jest&logoColor=white)
+```bash
+pnpm install
+```
+## Database Setup
+
+This project uses SQLite with Drizzle ORM.
+
+1. Start the local SQLite database:
+```bash
+cd apps/server && pnpm db:local
+```
+
+
+2. Update your `.env` file in the `apps/server` directory with the appropriate connection details if needed.
+
+3. Apply the schema to your database:
+```bash
+pnpm db:push
+```
+
+
+Then, run the development server:
+
+```bash
+pnpm dev
+```
+
+Open [http://localhost:3001](http://localhost:3001) in your browser to see the web application.
+The API is running at [http://localhost:3000](http://localhost:3000).
+
+
+
+## Project Structure
+
+```
+my-better-t-app/
+├── apps/
+│   ├── web/         # Frontend application (Nuxt)
+│   └── server/      # Backend API (Elysia, ORPC)
+```
+
+## Available Scripts
+
+- `pnpm dev`: Start all applications in development mode
+- `pnpm build`: Build all applications
+- `pnpm dev:web`: Start only the web application
+- `pnpm dev:server`: Start only the server
+- `pnpm check-types`: Check TypeScript types across all apps
+- `pnpm db:push`: Push schema changes to database
+- `pnpm db:studio`: Open database studio UI
+- `cd apps/server && pnpm db:local`: Start the local SQLite database
+- `pnpm check`: Run Biome formatting and linting
+- `cd apps/web && pnpm desktop:dev`: Start Tauri desktop app in development
+- `cd apps/web && pnpm desktop:build`: Build Tauri desktop app

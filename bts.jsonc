@@ -1,0 +1,26 @@
+// Better-T-Stack configuration file
+// safe to delete
+
+{
+  "$schema": "https://r2.better-t-stack.dev/schema.json",
+  "version": "2.29.2",
+  "createdAt": "2025-08-05T18:22:55.197Z",
+  "database": "sqlite",
+  "orm": "drizzle",
+  "backend": "elysia",
+  "runtime": "node",
+  "frontend": [
+    "nuxt"
+  ],
+  "addons": [
+    "biome",
+    "tauri",
+    "turborepo"
+  ],
+  "examples": [],
+  "auth": true,
+  "packageManager": "pnpm",
+  "dbSetup": "turso",
+  "api": "orpc",
+  "webDeploy": "none"
+}
