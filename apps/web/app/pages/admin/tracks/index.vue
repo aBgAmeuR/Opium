@@ -1,0 +1,146 @@
+<script setup lang="ts">
+import { h, resolveComponent } from 'vue'
+import type { TableColumn } from '#ui/types'
+import TrackVersionsRow from '~/components/TrackVersionsRow.vue'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
+
+definePageMeta({ middleware: ['auth', 'admin'] })
+
+const { $orpc } = useNuxtApp()
+
+const search = ref('')
+const sortBy = ref<'createdAt'>('createdAt')
+const sortDir = ref<'asc' | 'desc'>('desc')
+
+const versions = ["official", "remix", "performance", "remastered", "remastered AI", "AI", "fan made", "feature", "leak", "other"] as const
+const versionType = ref<'all' | typeof versions[number]>('all')
+
+const { data: tracks, isPending, refetch } = useQuery({
+    queryKey: ["tracks", "list", search, sortBy, sortDir, versionType],
+    queryFn: () =>
+        $orpc.tracks.list.call({
+            query: search.value || undefined,
+            sortBy: sortBy.value,
+            sortDir: sortDir.value,
+            versionType: versionType.value === 'all' ? undefined : versionType.value,
+            limit: 100,
+            offset: 0,
+        }),
+})
+
+type TrackRow = {
+    id: number
+    title: string
+    artistsCsv: string
+    createdAt: string | Date
+    versions: Array<{ id: number; type: string; title: string; artists: string[]; fileUrl?: string }>
+}
+
+const rows = computed<TrackRow[]>(() =>
+    (tracks.value?.items ?? []).map((t: any) => ({
+        id: t.id,
+        title: t.primaryVersion?.title ?? '(untitled)',
+        artistsCsv: Array.isArray(t.primaryVersion?.artists) ? t.primaryVersion.artists.join(', ') : '',
+        createdAt: t.createdAt,
+        versions: t.versions,
+    }))
+)
+
+const NuxtLink = resolveComponent('NuxtLink')
+const UButton = resolveComponent('UButton')
+const UCheckbox = resolveComponent('UCheckbox')
+const UDropdownMenu = resolveComponent('UDropdownMenu')
+
+const columns: TableColumn<TrackRow>[] = [
+    {
+        id: 'select',
+        header: ({ table }) => h(UCheckbox as any, {
+            modelValue: table.getIsSomePageRowsSelected() ? 'indeterminate' : table.getIsAllPageRowsSelected(),
+            'onUpdate:modelValue': (value: boolean | 'indeterminate') => table.toggleAllPageRowsSelected(!!value),
+            'aria-label': 'Select all',
+        }),
+        cell: ({ row }) => h(UCheckbox as any, {
+            modelValue: row.getIsSelected(),
+            'onUpdate:modelValue': (value: boolean | 'indeterminate') => row.toggleSelected(!!value),
+            'aria-label': 'Select row',
+        }),
+        enableSorting: false,
+        enableHiding: false,
+    },
+    {
+        accessorKey: 'title',
+        header: 'Title',
+        cell: ({ row }) => h(NuxtLink as any, { to: `/admin/tracks/${row.original.id}`, class: 'underline' }, () => row.getValue('title')),
+    },
+    {
+        accessorKey: 'artistsCsv',
+        header: 'Artists',
+        cell: ({ row }) => h('div', { class: 'lowercase' }, row.getValue('artistsCsv')),
+    },
+    {
+        accessorKey: 'createdAt',
+        header: 'Added',
+        cell: ({ row }) => h('div', {}, new Date(row.getValue('createdAt') as any).toLocaleString()),
+    },
+    {
+        id: 'actions',
+        header: '',
+        enableHiding: false,
+        cell: ({ row }) => {
+            const items = [
+                { type: 'label', label: 'Actions' },
+                { label: row.getIsExpanded() ? 'Collapse' : 'Expand', onSelect: () => row.toggleExpanded() },
+                { type: 'separator' },
+                { label: 'Edit', onSelect: () => navigateTo(`/admin/tracks/${row.original.id}`) },
+                { label: 'Delete', onSelect: () => onDelete(row.original.id) },
+            ]
+            return h('div', { class: 'text-right' },
+                h(UDropdownMenu, { content: { align: 'end' }, items, 'aria-label': 'Actions dropdown' }, () =>
+                    h(UButton, { icon: 'i-lucide-ellipsis-vertical', color: 'neutral', variant: 'ghost', class: 'ml-auto', 'aria-label': 'Actions dropdown' }),
+                ),
+            )
+        },
+    },
+]
+
+const queryClient = useQueryClient()
+const removeTrack = useMutation({
+    mutationFn: (id: number) => $orpc.tracks.remove.call({ id }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tracks", "list"] }),
+})
+
+const onDelete = async (id: number) => {
+    if (!confirm('Delete this track? This cannot be undone.')) return
+    await removeTrack.mutateAsync(id)
+}
+</script>
+
+<template>
+    <UContainer>
+        <div class="flex items-center justify-between mb-4">
+            <h1 class="text-2xl font-bold">Tracks</h1>
+            <NuxtLink to="/admin/tracks/new">
+                <UButton icon="i-lucide-plus">New Track</UButton>
+            </NuxtLink>
+        </div>
+
+        <div class="flex items-center gap-2 mb-3">
+            <UInput v-model="search" placeholder="Search by title or artist" @change="refetch()" />
+            <USelect v-model="sortBy" :items="[{ label: 'Title', value: 'title' }, { label: 'Created', value: 'createdAt' }]" />
+            <USelect v-model="sortDir" :items="[{ label: 'Asc', value: 'asc' }, { label: 'Desc', value: 'desc' }]" />
+            <USelect v-model="versionType"
+                :items="[{ label: 'All', value: 'all' }, ...versions.map(v => ({ label: v.charAt(0).toUpperCase() + v.slice(1), value: v }))]" class="w-40" />
+        </div>
+
+        <UCard>
+            <UTable :data="rows" :columns="columns" :loading="isPending" loading-animation="carousel" :empty-state="{
+                icon: 'i-lucide-search',
+                label: 'No tracks found',
+            }">
+                <template #expanded="{ row }">
+                    <TrackVersionsRow :versions="row.original.versions" />
+                </template> 
+            </UTable>
+        </UCard>
+    </UContainer>
+</template>

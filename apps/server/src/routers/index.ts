@@ -1,4 +1,6 @@
 import { protectedProcedure, publicProcedure } from "../lib/orpc";
+import { tracksRouter } from "./tracks";
+import { albumsRouter } from "./albums";
 
 export const appRouter = {
   healthCheck: publicProcedure.handler(() => {
@@ -10,5 +12,7 @@ export const appRouter = {
       user: context.session?.user,
     };
   }),
+  tracks: tracksRouter,
+  albums: albumsRouter,
 };
 export type AppRouter = typeof appRouter;
