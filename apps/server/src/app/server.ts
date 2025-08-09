@@ -11,7 +11,7 @@ import { Hono } from "hono";
 const handler = new RPCHandler(appRouter);
 
 export function buildServer() {
-  const elysia = new Elysia({ adapter: node() })
+  const elysia = new Elysia()
     .use(
       cors({
         origin: env.CORS_ORIGIN,
@@ -37,7 +37,7 @@ export function buildServer() {
     .get("/", () => "OK");
 
   const app = new Hono()
-    .mount('/', elysia.fetch)
+    .mount('/hono', elysia.fetch)
 
   return app;
 }
