@@ -6,12 +6,11 @@ import { appRouter } from "./routes";
 import { createContext } from "../core/context";
 import { env } from "../config/env";
 import { auth } from "../lib/auth";
-import { Hono } from "hono";
 
 const handler = new RPCHandler(appRouter);
 
 export function buildServer() {
-  const elysia = new Elysia()
+  const app = new Elysia({ adapter: node() })
     .use(
       cors({
         origin: env.CORS_ORIGIN,
@@ -35,9 +34,6 @@ export function buildServer() {
       return response ?? new Response("Not Found", { status: 404 });
     })
     .get("/", () => "OK");
-
-  const app = new Hono()
-    .mount('/hono', elysia.fetch)
 
   return app;
 }
