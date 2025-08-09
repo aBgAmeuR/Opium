@@ -63,7 +63,7 @@ const local = reactive({
 watchEffect(() => {
   const t = trackQuery.data.value
   if (!t) return
-  local.albumId = t.albumId
+  local.albumId = t.albumId ?? null
   local.alternateTitlesInput = (t.alternateTitles || []).join(', ')
 })
 
@@ -93,7 +93,7 @@ const onDrop = (id: number) => {
   const from = ids.indexOf(draggingId.value!)
   const to = ids.indexOf(id)
   if (from < 0 || to < 0) return
-  ids.splice(to, 0, ids.splice(from, 1)[0])
+  ids.splice(to, 0, ids.splice(from, 1)[0]!)
   reorderVersions.mutate(ids)
   draggingId.value = null
 }
