@@ -47,3 +47,32 @@ CREATE TABLE `verification` (
 	`created_at` integer,
 	`updated_at` integer
 );
+--> statement-breakpoint
+CREATE TABLE `albums` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`title` text NOT NULL,
+	`cover_url` text NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE `track_versions` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`track_id` integer NOT NULL,
+	`type` text NOT NULL,
+	`title` text NOT NULL,
+	`artists` text DEFAULT (json_array()) NOT NULL,
+	`file_url` text NOT NULL,
+	`order_index` integer NOT NULL,
+	`created_at` integer NOT NULL,
+	FOREIGN KEY (`track_id`) REFERENCES `tracks`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `tracks` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`artists` text DEFAULT (json_array()) NOT NULL,
+	`title` text NOT NULL,
+	`producers` text DEFAULT (json_array()) NOT NULL,
+	`alternate_titles` text DEFAULT (json_array()) NOT NULL,
+	`album_id` integer NOT NULL,
+	`created_at` integer NOT NULL,
+	FOREIGN KEY (`album_id`) REFERENCES `albums`(`id`) ON UPDATE no action ON DELETE no action
+);

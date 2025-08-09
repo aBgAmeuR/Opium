@@ -103,7 +103,7 @@ export const tracksRouter = {
       .where(eq(trackVersions.trackId, input.id))
       .orderBy(asc(trackVersions.orderIndex));
     const album = await db.select().from(albums).where(eq(albums.id, row[0].albumId)).limit(1);
-    return { ...row[0], album: album[0] ?? null, versions: vers } as any;
+    return { ...row[0], album: album[0] ?? null, versions: vers };
   }),
 
   create: protectedProcedure
@@ -129,11 +129,17 @@ export const tracksRouter = {
         throw new Error("UNAUTHORIZED");
       }
 
+      const derivedTitle = input.versions[0]?.title ?? "Untitled";
+      const derivedArtists = Array.from(
+        new Set(input.versions.flatMap((v) => v.artists))
+      );
       const newTrack = await db
         .insert(tracks)
         .values({
+          title: derivedTitle,
           albumId: input.albumId,
-          alternateTitles: input.alternateTitles as any,
+          artists: derivedArtists,
+          alternateTitles: input.alternateTitles,
         })
         .returning();
       const track = newTrack[0];
@@ -142,7 +148,7 @@ export const tracksRouter = {
         trackId: track.id,
         type: v.type as VersionType,
         title: v.title,
-        artists: v.artists as any,
+        artists: v.artists,
         fileUrl: v.fileUrl,
         orderIndex: idx,
       }));
@@ -167,7 +173,7 @@ export const tracksRouter = {
         .update(tracks)
         .set({
           albumId: input.albumId,
-          alternateTitles: input.alternateTitles as any,
+          alternateTitles: input.alternateTitles,
         })
         .where(eq(tracks.id, input.id));
       const updated = await db.select().from(tracks).where(eq(tracks.id, input.id)).limit(1);

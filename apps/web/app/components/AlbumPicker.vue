@@ -18,15 +18,16 @@ const isOpen = computed({
 const { $orpc } = useNuxtApp()
 const search = ref('')
 
-const list = useQuery({
-  queryKey: ['albums', 'list', search],
-  queryFn: () => $orpc.albums.list.call({ query: search.value || undefined, limit: 100, offset: 0 })
-})
+const listOptions = computed(() =>
+  $orpc.albums.list.queryOptions({ input: { query: search.value || undefined, limit: 100, offset: 0 } }),
+)
+const list = useQuery(listOptions)
 
-const createAlbum = useMutation({
-  mutationFn: (data: { title: string; coverUrl: string }) => $orpc.albums.create.call(data),
-  onSuccess: () => list.refetch(),
-})
+const createAlbum = useMutation(
+  $orpc.albums.create.mutationOptions({
+    onSuccess: () => list.refetch(),
+  }),
+)
 
 const newAlbum = reactive({ title: '', coverUrl: '' })
 

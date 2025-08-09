@@ -83,8 +83,8 @@ importers:
         specifier: ^1.5.0
         version: 1.7.9(crossws@0.3.5)(ws@8.18.3)
       '@orpc/tanstack-query':
-        specifier: ^1.5.0
-        version: 1.7.9(@orpc/client@1.7.9)(@tanstack/query-core@5.83.1)
+        specifier: ^1.7.11
+        version: 1.7.11(@orpc/client@1.7.9)(@tanstack/query-core@5.83.1)
       '@tanstack/vue-query':
         specifier: ^5.83.0
         version: 5.83.1(vue@3.5.18(typescript@5.9.2))
@@ -1118,6 +1118,9 @@ packages:
       ws:
         optional: true
 
+  '@orpc/shared@1.7.11':
+    resolution: {integrity: sha512-7kNNSlC+McDpqGLLDnNubUqcxmxiHNPY5aBoAGQPgswUW1ycgGtGIo2h+1vSs7HFA6RcKqrp6s6EtbyxPac0qg==}
+
   '@orpc/shared@1.7.9':
     resolution: {integrity: sha512-G9wKRhwjvOQG+Scs4TI4GbPIrsFXMqd7AMVbn0ycB6xVMc9OE39Sjoilo/wBshLdMWs/bszzoqgvYHjG0y76wQ==}
 
@@ -1136,10 +1139,10 @@ packages:
   '@orpc/standard-server@1.7.9':
     resolution: {integrity: sha512-KPF5EAaVM2ghaJgD8iAG5BZNferliEbcS/LCS6gK9Ao56oOaA9JlwpZSIy68zATSLGS5sqvyn9O55mLUbWw3WQ==}
 
-  '@orpc/tanstack-query@1.7.9':
-    resolution: {integrity: sha512-T8JMr7+Zwj6VFJ3pPwuoYXIfofFn32bYai8OfET52L8dl5lIDgkifQArYPPUw7T4upMR6k2SXyVKukTYYQq+9A==}
+  '@orpc/tanstack-query@1.7.11':
+    resolution: {integrity: sha512-k5jihgerz4JPhXfJ7KEd0BPyp+kPL8YGzyUJCusoIA+Odwgys7I5Xp/Tl2LI08s0QLPJqJOuqj8/hQ667SdeNA==}
     peerDependencies:
-      '@orpc/client': 1.7.9
+      '@orpc/client': 1.7.11
       '@tanstack/query-core': '>=5.80.2'
 
   '@oxc-minify/binding-android-arm64@0.80.0':
@@ -6590,6 +6593,11 @@ snapshots:
       crossws: 0.3.5
       ws: 8.18.3
 
+  '@orpc/shared@1.7.11':
+    dependencies:
+      radash: 12.1.1
+      type-fest: 4.41.0
+
   '@orpc/shared@1.7.9':
     dependencies:
       radash: 12.1.1
@@ -6622,10 +6630,10 @@ snapshots:
     dependencies:
       '@orpc/shared': 1.7.9
 
-  '@orpc/tanstack-query@1.7.9(@orpc/client@1.7.9)(@tanstack/query-core@5.83.1)':
+  '@orpc/tanstack-query@1.7.11(@orpc/client@1.7.9)(@tanstack/query-core@5.83.1)':
     dependencies:
       '@orpc/client': 1.7.9
-      '@orpc/shared': 1.7.9
+      '@orpc/shared': 1.7.11
       '@tanstack/query-core': 5.83.1
 
   '@oxc-minify/binding-android-arm64@0.80.0':

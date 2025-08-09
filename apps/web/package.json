@@ -16,7 +16,7 @@
     "@nuxt/ui": "3.3.0",
     "@orpc/client": "^1.5.0",
     "@orpc/server": "^1.5.0",
-    "@orpc/tanstack-query": "^1.5.0",
+    "@orpc/tanstack-query": "^1.7.11",
     "@tanstack/vue-query": "^5.83.0",
     "@tanstack/vue-query-devtools": "^5.83.0",
     "@tauri-apps/plugin-http": "~2",

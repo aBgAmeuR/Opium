@@ -12,48 +12,46 @@ const { $orpc } = useNuxtApp()
 const versionTypes = ["official", "remix", "performance", "remastered", "remastered AI", "AI", "fan made", "feature", "leak", "other"] as const
 type VersionType = (typeof versionTypes)[number]
 
-const trackQuery = useQuery({
-  queryKey: ['tracks', 'byId', id],
-  queryFn: () => $orpc.tracks.byId.call({ id }),
-})
+const trackQuery = useQuery($orpc.tracks.byId.queryOptions({ input: { id } }))
 const qc = useQueryClient()
 
-const updateTrack = useMutation({
-  mutationFn: (input: { albumId: number; alternateTitlesInput: string }) =>
-    $orpc.tracks.update.call({
-      id: Number(id),
-      albumId: input.albumId,
-      alternateTitles: input.alternateTitlesInput.split(',').map(s=>s.trim()).filter(Boolean),
-    }),
-  onSuccess: () => qc.invalidateQueries({ queryKey: ['tracks', 'byId', id] }),
-})
+const updateTrack = useMutation(
+  $orpc.tracks.update.mutationOptions({
+    onSuccess: () => qc.invalidateQueries({ queryKey: $orpc.tracks.byId.key({ input: { id } }) }),
+  }),
+)
 
-const deleteTrack = useMutation({
-  mutationFn: () => $orpc.tracks.remove.call({ id: Number(id) }),
-  onSuccess: () => {
-    qc.invalidateQueries({ queryKey: ['tracks', 'list'] })
-    navigateTo('/admin/tracks')
+const deleteTrack = useMutation(
+  $orpc.tracks.remove.mutationOptions({
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: $orpc.tracks.list.key() })
+      navigateTo('/admin/tracks')
     },
-})
-const addVersion = useMutation({
-  mutationFn: (input: { type: VersionType; title: string; fileUrl: string }) => $orpc.tracks.addVersion.call({ trackId: id, ...input }),
-  onSuccess: () => qc.invalidateQueries({ queryKey: ['tracks', 'byId', id] }),
-})
+  }),
+)
+const addVersion = useMutation(
+  $orpc.tracks.addVersion.mutationOptions({
+    onSuccess: () => qc.invalidateQueries({ queryKey: $orpc.tracks.byId.key({ input: { id } }) }),
+  }),
+)
 
-const updateVersion = useMutation({
-  mutationFn: (input: { id: number; type: VersionType; title: string; fileUrl: string }) => $orpc.tracks.updateVersion.call(input),
-  onSuccess: () => qc.invalidateQueries({ queryKey: ['tracks', 'byId', id] }),
-})
+const updateVersion = useMutation(
+  $orpc.tracks.updateVersion.mutationOptions({
+    onSuccess: () => qc.invalidateQueries({ queryKey: $orpc.tracks.byId.key({ input: { id } }) }),
+  }),
+)
 
-const removeVersion = useMutation({
-  mutationFn: (versionId: number) => $orpc.tracks.removeVersion.call({ id: versionId }),
-  onSuccess: () => qc.invalidateQueries({ queryKey: ['tracks', 'byId', id] }),
-})
+const removeVersion = useMutation(
+  $orpc.tracks.removeVersion.mutationOptions({
+    onSuccess: () => qc.invalidateQueries({ queryKey: $orpc.tracks.byId.key({ input: { id } }) }),
+  }),
+)
 
-const reorderVersions = useMutation({
-  mutationFn: (orderedIds: number[]) => $orpc.tracks.reorderVersions.call({ trackId: id, orderedIds }),
-  onSuccess: () => qc.invalidateQueries({ queryKey: ['tracks', 'byId', id] }),
-})
+const reorderVersions = useMutation(
+  $orpc.tracks.reorderVersions.mutationOptions({
+    onSuccess: () => qc.invalidateQueries({ queryKey: $orpc.tracks.byId.key({ input: { id } }) }),
+  }),
+)
 
 const local = reactive({
   albumId: null as number | null,
@@ -68,17 +66,21 @@ watchEffect(() => {
 })
 
 const onSave = async () => {
-  await updateTrack.mutateAsync({ albumId: local.albumId!, alternateTitlesInput: local.alternateTitlesInput })
+  await updateTrack.mutateAsync({
+    id: Number(id),
+    albumId: local.albumId!,
+    alternateTitles: local.alternateTitlesInput.split(',').map(s => s.trim()).filter(Boolean),
+  })
 }
 
 const onDelete = async () => {
   if (!confirm('Delete this track?')) return
-  await deleteTrack.mutateAsync()
+  await deleteTrack.mutateAsync({ id: Number(id) })
 }
 
 const newVersion = reactive({ type: versionTypes[0], title: '', fileUrl: '' })
 const addVersionNow = async () => {
-  await addVersion.mutateAsync({ type: newVersion.type, title: newVersion.title, fileUrl: newVersion.fileUrl })
+  await addVersion.mutateAsync({ trackId: id, type: newVersion.type, title: newVersion.title, fileUrl: newVersion.fileUrl })
   newVersion.type = versionTypes[0]
   newVersion.title = ''
 }
@@ -94,7 +96,7 @@ const onDrop = (id: number) => {
   const to = ids.indexOf(id)
   if (from < 0 || to < 0) return
   ids.splice(to, 0, ids.splice(from, 1)[0]!)
-  reorderVersions.mutate(ids)
+  reorderVersions.mutate({ trackId: id, orderedIds: ids })
   draggingId.value = null
 }
 </script>
@@ -142,9 +144,9 @@ const onDrop = (id: number) => {
               @drop="onDrop(v.id)"
               class="flex items-center gap-2 p-2 border rounded">
             <span class="cursor-move i-lucide-grip-vertical" />
-            <USelect v-model="v.type" :items="versionTypes.map(v => ({label:v, value:v}))" @change="updateVersion.mutate({ id: v.id, type: v.type, title: v.title, fileUrl: v.fileUrl })" />
-            <UInput v-model="v.title" placeholder="Title" @change="updateVersion.mutate({ id: v.id, type: v.type, title: v.title, fileUrl: v.fileUrl })" />
-            <UButton size="xs" color="warning" variant="soft" icon="i-lucide-trash" @click="removeVersion.mutate(v.id)" />
+            <USelect v-model="v.type" :items="versionTypes.map(v => ({label:v, value:v}))" @change="updateVersion.mutate({ id: v.id, type: v.type, title: v.title, fileUrl: v.fileUrl, artists: v.artists })" />
+            <UInput v-model="v.title" placeholder="Title" @change="updateVersion.mutate({ id: v.id, type: v.type, title: v.title, fileUrl: v.fileUrl, artists: v.artists })" />
+            <UButton size="xs" color="warning" variant="soft" icon="i-lucide-trash" @click="removeVersion.mutate({ id: v.id })" />
           </li>
         </ul>
       </UCard>

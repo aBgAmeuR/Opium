@@ -11,6 +11,15 @@ export const albums = sqliteTable("albums", {
 
 export const tracks = sqliteTable("tracks", {
     id: integer({ mode: 'number' }).primaryKey({ autoIncrement: true }),
+    artists: text({ mode: 'json' })
+        .notNull()
+        .$type<string[]>()
+        .default(sql`(json_array())`),
+    title: text().notNull(),
+    producers: text({ mode: 'json' })
+        .notNull()
+        .$type<string[]>()
+        .default(sql`(json_array())`),
     alternateTitles: text('alternate_titles', { mode: 'json' })
         .notNull()
         .$type<string[]>()
@@ -27,7 +36,7 @@ export const trackVersions = sqliteTable("track_versions", {
         .references(() => tracks.id, { onDelete: "cascade" }).notNull(),
     type: text({ enum: versionTypes }).notNull(),
     title: text().notNull(),
-    artists: text('artists', { mode: 'json' })
+    artists: text({ mode: 'json' })
         .notNull()
         .$type<string[]>()
         .default(sql`(json_array())`),

@@ -5,6 +5,7 @@ import UserMenu from './UserMenu.vue'
 const links = [
     { to: "/", label: "Home" },
     { to: "/dashboard", label: "Dashboard" },
+    { to: "/admin", label: "Admin" },
 ];
 </script>
 

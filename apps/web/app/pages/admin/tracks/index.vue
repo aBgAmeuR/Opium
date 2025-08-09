@@ -15,18 +15,18 @@ const sortDir = ref<'asc' | 'desc'>('desc')
 const versions = ["official", "remix", "performance", "remastered", "remastered AI", "AI", "fan made", "feature", "leak", "other"] as const
 const versionType = ref<'all' | typeof versions[number]>('all')
 
-const { data: tracks, isPending, refetch } = useQuery({
-    queryKey: ["tracks", "list", search, sortBy, sortDir, versionType],
-    queryFn: () =>
-        $orpc.tracks.list.call({
+const { data: tracks, isPending, refetch } = useQuery(computed(() =>
+    $orpc.tracks.list.queryOptions({
+        input: {
             query: search.value || undefined,
             sortBy: sortBy.value,
             sortDir: sortDir.value,
             versionType: versionType.value === 'all' ? undefined : versionType.value,
             limit: 100,
             offset: 0,
-        }),
-})
+        },
+    })),
+)
 
 type TrackRow = {
     id: number
@@ -39,8 +39,8 @@ type TrackRow = {
 const rows = computed<TrackRow[]>(() =>
     (tracks.value?.items ?? []).map((t: any) => ({
         id: t.id,
-        title: t.primaryVersion?.title ?? '(untitled)',
-        artistsCsv: Array.isArray(t.primaryVersion?.artists) ? t.primaryVersion.artists.join(', ') : '',
+        title: t.title ?? 'untitled',
+        artistsCsv: Array.isArray(t.artists) ? t.artists.join(', ') : '',
         createdAt: t.createdAt,
         versions: t.versions,
     }))
@@ -75,12 +75,12 @@ const columns: TableColumn<TrackRow>[] = [
     {
         accessorKey: 'artistsCsv',
         header: 'Artists',
-        cell: ({ row }) => h('div', { class: 'lowercase' }, row.getValue('artistsCsv')),
+        cell: ({ row }) => h('div', row.getValue('artistsCsv')),
     },
     {
         accessorKey: 'createdAt',
         header: 'Added',
-        cell: ({ row }) => h('div', {}, new Date(row.getValue('createdAt') as any).toLocaleString()),
+        cell: ({ row }) => h('div', {}, new Date(row.getValue('createdAt')).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })),
     },
     {
         id: 'actions',
@@ -94,24 +94,37 @@ const columns: TableColumn<TrackRow>[] = [
                 { label: 'Edit', onSelect: () => navigateTo(`/admin/tracks/${row.original.id}`) },
                 { label: 'Delete', onSelect: () => onDelete(row.original.id) },
             ]
-            return h('div', { class: 'text-right' },
-                h(UDropdownMenu, { content: { align: 'end' }, items, 'aria-label': 'Actions dropdown' }, () =>
-                    h(UButton, { icon: 'i-lucide-ellipsis-vertical', color: 'neutral', variant: 'ghost', class: 'ml-auto', 'aria-label': 'Actions dropdown' }),
-                ),
-            )
+            const versionCount = Array.isArray(row.original.versions) ? row.original.versions.length : 0
+            const isExpanded = row.getIsExpanded()
+            return h('div', { class: 'flex items-center justify-end gap-2' }, [
+                h(UButton, {
+                    icon: isExpanded ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down',
+                    color: 'neutral',
+                    variant: 'ghost',
+                    class: 'mr-1',
+                    'aria-label': isExpanded ? 'Collapse row' : 'Expand row',
+                    onClick: () => row.toggleExpanded(),
+                }, () => [
+                    h('span', { class: 'ml-1 text-xs text-gray-500' }, `(${versionCount})`),
+                ]),
+                h(UDropdownMenu, { content: { align: 'end' }, items, 'aria-label': 'Actions dropdown' }, {
+                    default: () => h(UButton, { icon: 'i-lucide-ellipsis-vertical', color: 'neutral', variant: 'ghost', 'aria-label': 'Actions dropdown' }),
+                }),
+            ])
         },
     },
 ]
 
 const queryClient = useQueryClient()
-const removeTrack = useMutation({
-    mutationFn: (id: number) => $orpc.tracks.remove.call({ id }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tracks", "list"] }),
-})
+const removeTrack = useMutation(
+    $orpc.tracks.remove.mutationOptions({
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: $orpc.tracks.list.key() }),
+    }),
+)
 
 const onDelete = async (id: number) => {
     if (!confirm('Delete this track? This cannot be undone.')) return
-    await removeTrack.mutateAsync(id)
+    await removeTrack.mutateAsync({ id })
 }
 </script>
 
@@ -126,10 +139,12 @@ const onDelete = async (id: number) => {
 
         <div class="flex items-center gap-2 mb-3">
             <UInput v-model="search" placeholder="Search by title or artist" @change="refetch()" />
-            <USelect v-model="sortBy" :items="[{ label: 'Title', value: 'title' }, { label: 'Created', value: 'createdAt' }]" />
+            <USelect v-model="sortBy"
+                :items="[{ label: 'Title', value: 'title' }, { label: 'Created', value: 'createdAt' }]" />
             <USelect v-model="sortDir" :items="[{ label: 'Asc', value: 'asc' }, { label: 'Desc', value: 'desc' }]" />
             <USelect v-model="versionType"
-                :items="[{ label: 'All', value: 'all' }, ...versions.map(v => ({ label: v.charAt(0).toUpperCase() + v.slice(1), value: v }))]" class="w-40" />
+                :items="[{ label: 'All', value: 'all' }, ...versions.map(v => ({ label: v.charAt(0).toUpperCase() + v.slice(1), value: v }))]"
+                class="w-40" />
         </div>
 
         <UCard>
@@ -139,7 +154,7 @@ const onDelete = async (id: number) => {
             }">
                 <template #expanded="{ row }">
                     <TrackVersionsRow :versions="row.original.versions" />
-                </template> 
+                </template>
             </UTable>
         </UCard>
     </UContainer>

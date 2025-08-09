@@ -4,8 +4,6 @@ import { db } from "../db";
 import { publicProcedure, protectedProcedure } from "../lib/orpc";
 import { albums } from "../db/schema/tracks";
 
-const zId = z.number().int().positive();
-
 export const albumsRouter = {
   list: publicProcedure
     .input(z.object({ query: z.string().optional(), limit: z.number().int().min(1).max(100).default(50), offset: z.number().int().min(0).default(0) }))
