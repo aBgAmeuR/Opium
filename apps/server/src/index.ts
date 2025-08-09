@@ -1,11 +1,13 @@
 import "dotenv/config";
 import { buildServer } from "./app/server";
+import { serve } from '@hono/node-server'
 import { env } from "./config/env";
 
 const app = buildServer();
 
-app.listen(env.PORT, () => {
-  console.log(`Server is running on http://localhost:${env.PORT}`);
-});
+serve({
+  fetch: app.fetch,
+  port: env.PORT,
+})
 
-module.exports = app;
+export default app
