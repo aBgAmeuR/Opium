@@ -23,13 +23,18 @@ jobs:
         with:
           deno-version: v2.x
 
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
       - name: Install step
-        run: "npm install pnpm@latest-10 && pnpm i"
+        run: "pnpm install"
 
       - name: Build step
         run: "pnpm turbo run build --filter=server"
