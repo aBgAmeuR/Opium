@@ -2,7 +2,27 @@
 export default defineNuxtConfig({
   imports: {
     autoImport: true,
+    presets: [
+      {
+        from: '@tanstack/vue-query',
+        imports: ['useQuery', 'useMutation', 'useQueryClient']
+      },
+      {
+        from: "zod",
+        imports: [
+          "z",
+          {
+            name: "infer",
+            as: "zInfer",
+            type: true
+          }
+        ]
+      }
+    ]
   },
+  dir: {
+		modules: "app/modules"
+	},
   compatibilityDate: "latest",
   devtools: { enabled: true },
   modules: ["@nuxt/ui"],

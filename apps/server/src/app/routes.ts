@@ -1,4 +1,4 @@
-import { publicProcedure, protectedProcedure } from "../core/orpc";
+import { publicProcedure, protectedProcedure } from "../lib/orpc";
 import { tracksRouter } from "../modules/tracks/router";
 import { albumsRouter } from "../modules/albums/router";
 

@@ -1,24 +1,10 @@
 <script setup lang="ts">
-const { $orpc } = useNuxtApp()
-import { useQuery } from '@tanstack/vue-query'
+const { $orpc, $authClient } = useNuxtApp()
 
-const TITLE_TEXT = `
- ██████╗ ███████╗████████╗████████╗███████╗██████╗
- ██╔══██╗██╔════╝╚══██╔══╝╚══██╔══╝██╔════╝██╔══██╗
- ██████╔╝█████╗     ██║      ██║   █████╗  ██████╔╝
- ██╔══██╗██╔══╝     ██║      ██║   ██╔══╝  ██╔══██╗
- ██████╔╝███████╗   ██║      ██║   ███████╗██║  ██║
- ╚═════╝ ╚══════╝   ╚═╝      ╚═╝   ╚══════╝╚═╝  ╚═╝
-
- ████████╗    ███████╗████████╗ █████╗  ██████╗██╗  ██╗
- ╚══██╔══╝    ██╔════╝╚══██╔══╝██╔══██╗██╔════╝██║ ██╔╝
-    ██║       ███████╗   ██║   ███████║██║     █████╔╝
-    ██║       ╚════██║   ██║   ██╔══██║██║     ██╔═██╗
-    ██║       ███████║   ██║   ██║  ██║╚██████╗██║  ██╗
-    ╚═╝       ╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
- `;
+const TITLE_TEXT = `CartiVault`;
 const healthCheck = useQuery($orpc.healthCheck.queryOptions())
 const serverUrl = useRuntimeConfig().public.serverURL
+const session = $authClient.useSession()
 </script>
 
 <template>
@@ -54,6 +40,7 @@ const serverUrl = useRuntimeConfig().public.serverURL
           </div>
           <span>{{ serverUrl }}</span>
         </div>
+        <pre class="overflow-x-auto font-mono text-sm whitespace-pre-wrap">{{ session }}</pre>
       </section>
     </div>
   </div>

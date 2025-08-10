@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
-import AlbumPicker from '~/components/AlbumPicker.vue'
-
 definePageMeta({ middleware: ['auth','admin'] })
 
 const route = useRoute()
@@ -10,7 +7,6 @@ const id = Number(route.params.id)
 const { $orpc } = useNuxtApp()
 
 const versionTypes = ["official", "remix", "performance", "remastered", "remastered AI", "AI", "fan made", "feature", "leak", "other"] as const
-type VersionType = (typeof versionTypes)[number]
 
 const trackQuery = useQuery($orpc.tracks.byId.queryOptions({ input: { id } }))
 const qc = useQueryClient()

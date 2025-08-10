@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import z from 'zod'
 import type { FormSubmitEvent } from '#ui/types'
-const {$authClient} = useNuxtApp()
+const { $authClient } = useNuxtApp()
 
 const emit = defineEmits(['switchToSignIn'])
 
@@ -14,7 +13,7 @@ const schema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
 })
 
-type Schema = z.output<typeof schema>
+type Schema = zInfer<typeof schema>
 
 const state = reactive({
   name: '',
@@ -22,7 +21,7 @@ const state = reactive({
   password: '',
 })
 
-async function onSubmit (event: FormSubmitEvent<Schema>) {
+async function onSubmit(event: FormSubmitEvent<Schema>) {
   loading.value = true
   try {
     await $authClient.signUp.email(
@@ -32,7 +31,14 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
         password: event.data.password,
       },
       {
-        onSuccess: () => {
+        onSuccess: async (ctx) => {
+          const { $store } = useNuxtApp()
+          try {
+            const token = (ctx as any)?.data?.token || (ctx as any)?.data?.accessToken || (ctx as any)?.data?.session?.token
+            if (token) {
+              await $store.set('bearer_token', token)
+            }
+          } catch {}
           toast.add({ title: 'Sign up successful' })
           navigateTo('/dashboard', { replace: true })
         },
@@ -42,7 +48,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
       },
     )
   } catch (error: any) {
-     toast.add({ title: 'An unexpected error occurred', description: error.message || 'Please try again.' })
+    toast.add({ title: 'An unexpected error occurred', description: error.message || 'Please try again.' })
   } finally {
     loading.value = false
   }
@@ -54,7 +60,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
     <h1 class="mb-6 text-center text-3xl font-bold">Create Account</h1>
 
     <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
-       <UFormField label="Name" name="name">
+      <UFormField label="Name" name="name">
         <UInput v-model="state.name" class="w-full" />
       </UFormField>
 
@@ -72,11 +78,7 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
     </UForm>
 
     <div class="mt-4 text-center">
-      <UButton
-        variant="link"
-        @click="$emit('switchToSignIn')"
-        class="text-primary hover:text-primary-dark"
-      >
+      <UButton variant="link" @click="$emit('switchToSignIn')" class="text-primary hover:text-primary-dark">
         Already have an account? Sign In
       </UButton>
     </div>

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useQuery, useMutation } from '@tanstack/vue-query'
-
 const props = defineProps<{
   modelValue: number | null
   open: boolean

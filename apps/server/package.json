@@ -16,6 +16,7 @@
     "db:migrate": "dotenv -e ../../.env -- drizzle-kit migrate"
   },
   "dependencies": {
+    "@bogeychan/elysia-logger": "^0.1.10",
     "@elysiajs/cors": "^1.2.0",
     "@elysiajs/node": "^1.2.6",
     "@libsql/client": "^0.15.9",

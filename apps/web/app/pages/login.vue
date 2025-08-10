@@ -1,7 +1,5 @@
 <script setup lang="ts">
 const { $authClient } = useNuxtApp();
-import SignInForm from "~/components/SignInForm.vue";
-import SignUpForm from "~/components/SignUpForm.vue";
 
 const session = $authClient.useSession();
 const showSignIn = ref(true);

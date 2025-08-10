@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  middleware: ['auth','admin']
+  middleware: ['auth', 'admin']
 })
 </script>
 
@@ -15,7 +15,5 @@ definePageMeta({
       </div>
     </UCard>
   </div>
-  
+
 </template>
-
-

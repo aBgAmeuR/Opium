@@ -14,10 +14,10 @@ export default defineNuxtPlugin(() => {
   const rpcLink = new RPCLink({
     url: rpcUrl,
     fetch(url, options) {
-        return fetch(url, {
+      return fetch(url, {
         ...options,
         credentials: "include",
-        });
+      });
     },
   })
 

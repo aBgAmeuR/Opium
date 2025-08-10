@@ -7,7 +7,7 @@ const EnvSchema = z.object({
     .default("3000")
     .transform((v) => Number(v))
     .pipe(z.number().int().positive()),
-  CORS_ORIGIN: z.string().default(""),
+  CORS_ORIGIN: z.string().default(process.env.NODE_ENV === "development" ? "http://localhost:3001, http://127.0.0.1:3001" : ""),
   DATABASE_URL: z.string().default(""),
   DATABASE_AUTH_TOKEN: z.string().optional(),
   BETTER_AUTH_SECRET: z.string().optional(),

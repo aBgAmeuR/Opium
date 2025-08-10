@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import z from 'zod'
 const {$authClient} = useNuxtApp()
 import type { FormSubmitEvent } from '#ui/types'
-
 const emit = defineEmits(['switchToSignUp'])
 
 const toast = useToast()
@@ -13,7 +11,7 @@ const schema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
 })
 
-type Schema = z.output<typeof schema>
+type Schema = zInfer<typeof schema>
 
 const state = reactive({
   email: '',
@@ -29,7 +27,14 @@ async function onSubmit (event: FormSubmitEvent<Schema>) {
         password: event.data.password,
       },
       {
-        onSuccess: () => {
+        onSuccess: async (ctx) => {
+          const { $store } = useNuxtApp()
+          try {
+            const token = (ctx as any)?.data?.token || (ctx as any)?.data?.accessToken || (ctx as any)?.data?.session?.token
+            if (token) {
+              await $store.set('bearer_token', token)
+            }
+          } catch {}
           toast.add({ title: 'Sign in successful' })
           navigateTo('/dashboard', { replace: true })
         },

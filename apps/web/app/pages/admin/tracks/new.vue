@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import type { FormSubmitEvent } from '#ui/types'
-import z from 'zod'
-import AlbumPicker from '~/components/AlbumPicker.vue'
 
 definePageMeta({ middleware: ['auth', 'admin'] })
 
@@ -31,7 +28,7 @@ const schema = z.object({
     .min(1, 'Add at least one version'),
 })
 
-type Schema = z.output<typeof schema>
+type Schema = zInfer<typeof schema>
 
 type State = {
   title: string

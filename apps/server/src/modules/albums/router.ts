@@ -1,4 +1,4 @@
-import { publicProcedure, adminProcedure } from "../../core/orpc";
+import { publicProcedure, adminProcedure } from "../../lib/orpc";
 import { AlbumsService } from "./service";
 import { zCreateAlbumInput, zListAlbumsInput } from "./dto";
 

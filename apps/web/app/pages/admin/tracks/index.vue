@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { h, resolveComponent } from 'vue'
 import type { TableColumn } from '#ui/types'
-import TrackVersionsRow from '~/components/TrackVersionsRow.vue'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 
 definePageMeta({ middleware: ['auth', 'admin'] })
 

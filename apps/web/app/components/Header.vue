@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import ModeToggle from './ModeToggle.vue'
-import UserMenu from './UserMenu.vue'
-
 const links = [
     { to: "/", label: "Home" },
     { to: "/dashboard", label: "Dashboard" },
