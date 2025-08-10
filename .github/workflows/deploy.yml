@@ -44,6 +44,5 @@ jobs:
         with:
           project: "antoine-cartivault"
           entrypoint: "pnpm turbo run start --filter=server"
-          root: "/apps/server"
           
           
