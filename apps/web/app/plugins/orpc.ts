@@ -13,6 +13,9 @@ export default defineNuxtPlugin(() => {
 
   const rpcLink = new RPCLink({
     url: rpcUrl,
+    headers: {
+      authorization: `Bearer ${localStorage.getItem("bearer_token")}`,
+    },
     fetch(url, options) {
       return fetch(url, {
         ...options,
