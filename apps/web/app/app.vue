@@ -9,5 +9,5 @@ import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
             <NuxtPage />
         </NuxtLayout>
     </UApp>
-    <VueQueryDevtools />
+    <!-- <VueQueryDevtools /> -->
 </template>

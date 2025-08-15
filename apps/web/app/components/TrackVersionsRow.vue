@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import type PlayerBar from './PlayerBar.vue';
 
-const props = defineProps<{ versions: Array<{ id: number; type: string; title: string; artists: string[]; fileUrl?: string }> }>()
+const props = defineProps<{ 
+  versions: Array<{ id: number; type: string; title: string; artists: string[]; fileUrl?: string }>,
+  album?: { coverUrl?: string } | null
+}>()
 
 const player = inject<Ref<InstanceType<typeof PlayerBar> | null>>('appPlayer')
 
 function playVersion(v: any) {
   if (!v?.fileUrl || !player?.value) return
-  player.value.load({ title: v.title, artists: v.artists, url: v.fileUrl })
+  player.value.load({ title: v.title, artists: v.artists, url: v.fileUrl, coverUrl: props.album?.coverUrl })
 }
 
 </script>

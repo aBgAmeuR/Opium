@@ -30,6 +30,7 @@ type TrackRow = {
     title: string
     artistsCsv: string
     createdAt: string | Date
+    album: { coverUrl?: string } | null
     versions: Array<{ id: number; type: string; title: string; artists: string[]; fileUrl?: string }>
 }
 
@@ -39,6 +40,7 @@ const rows = computed<TrackRow[]>(() =>
         title: t.title ?? 'untitled',
         artistsCsv: Array.isArray(t.artists) ? t.artists.join(', ') : '',
         createdAt: t.createdAt,
+        album: t.album,
         versions: t.versions,
     }))
 )
@@ -150,7 +152,7 @@ const onDelete = async (id: number) => {
                 label: 'No tracks found',
             }">
                 <template #expanded="{ row }">
-                    <TrackVersionsRow :versions="row.original.versions" />
+                    <TrackVersionsRow :versions="row.original.versions" :album="row.original.album" />
                 </template>
             </UTable>
         </UCard>

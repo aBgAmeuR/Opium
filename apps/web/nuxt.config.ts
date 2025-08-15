@@ -21,11 +21,11 @@ export default defineNuxtConfig({
     ]
   },
   dir: {
-		modules: "app/modules"
-	},
+    modules: "app/modules"
+  },
   compatibilityDate: "latest",
   devtools: { enabled: true },
-  modules: ["@nuxt/ui"],
+  modules: ["@nuxt/ui-pro", "@compodium/nuxt"],
   css: ["~/assets/css/main.css"],
   devServer: {
     host: "0.0.0.0",
