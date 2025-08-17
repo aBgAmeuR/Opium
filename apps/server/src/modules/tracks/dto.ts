@@ -6,7 +6,7 @@ export const zVersionType = z.enum(versionTypes);
 
 export const zListTracksInput = z.object({
   query: z.string().optional(),
-  sortBy: z.enum(["createdAt", "title"]).default("createdAt"),
+  sortBy: z.enum(["createdAt", "title", "albumTitle"]).default("createdAt"),
   sortDir: z.enum(["asc", "desc"]).default("desc"),
   versionType: zVersionType.optional(),
   limit: z.number().int().min(1).max(100).default(50),

@@ -2,12 +2,10 @@ import { computed, ref } from 'vue'
 
 export type QueueTrack = { id?: number | string; title: string; artists?: string[]; url: string; coverUrl?: string }
 
-// Module-scoped singletons so all consumers share the same state
 const queue = ref<QueueTrack[]>([])
 const currentIndex = ref<number>(-1)
 const isQueueOpen = ref(false)
 
-// Callbacks for external components to react to queue changes
 const onQueueChangeCallbacks = ref<Array<() => void>>([])
 const onCurrentTrackRemovedCallbacks = ref<Array<(newIndex: number) => void>>([])
 
@@ -56,14 +54,20 @@ function enqueue(track: QueueTrack) {
   notifyQueueChange()
 }
 
-function load(track: QueueTrack) {
-  const existingIndex = queue.value.findIndex((t) => t.url === track.url)
-  if (existingIndex >= 0) {
-    currentIndex.value = existingIndex
-  } else {
-    queue.value.push(track)
-    currentIndex.value = queue.value.length - 1
+function playNext(track: QueueTrack) {
+  if (currentIndex.value === -1) {
+    load(track)
+    return
   }
+
+  const nextIndex = currentIndex.value + 1
+  queue.value.splice(nextIndex, 0, track)
+  notifyQueueChange()
+}
+
+function load(track: QueueTrack) {
+  queue.value.push(track)
+  currentIndex.value = queue.value.length - 1
   notifyQueueChange()
 }
 
@@ -85,7 +89,7 @@ function reorderQueue(fromIndex: number, toIndex: number) {
 function removeFromQueue(index: number) {
   const wasCurrent = index === currentIndex.value
   queue.value.splice(index, 1)
-  
+
   if (queue.value.length === 0) {
     // Queue is empty, reset everything
     currentIndex.value = -1
@@ -103,7 +107,7 @@ function removeFromQueue(index: number) {
     currentIndex.value = currentIndex.value - 1
   }
   // If we removed a track after the current one, no index adjustment needed
-  
+
   notifyQueueChange()
   notifyCurrentTrackRemoved(currentIndex.value)
 }
@@ -126,6 +130,7 @@ export function useQueue() {
     setQueueOpen,
     enqueue,
     load,
+    playNext,
     reorderQueue,
     removeFromQueue,
     clearQueue,

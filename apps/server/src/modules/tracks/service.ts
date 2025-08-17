@@ -14,28 +14,82 @@ export const TracksService = {
     const whereSearch = await Repo.searchWhereClause(input.query);
     const where = await Repo.filterByVersionType(whereSearch, input.versionType);
 
-    const rows = await Repo.list({ where, limit: input.limit, offset: input.offset, sortDir: input.sortDir, sortBy: input.sortBy });
+    const rows = await Repo.listWithDetails({ 
+      where, 
+      limit: input.limit, 
+      offset: input.offset, 
+      sortDir: input.sortDir, 
+      sortBy: input.sortBy 
+    });
+    
     if (rows.length === 0) {
-      return { items: [] } as const;
+      return { items: [] };
     }
-    const [versions, albumsRows] = await Promise.all([
-      Repo.listVersionsByTrackIds(rows.map((r) => r.id)),
-      Repo.listAlbumsByIds(rows.map((r) => r.albumId)),
-    ]);
-    const albumById = new Map(albumsRows.map((a) => [a.id, a]));
 
-    const items = rows.map((t) => ({
-      id: t.id,
-      title: t.title,
-      artists: t.artists,
-      producers: t.producers,
-      createdAt: t.createdAt,
-      alternateTitles: t.alternateTitles,
-      albumId: t.albumId,
-      album: albumById.get(t.albumId) ?? null,
-      versions: versions.filter((v) => v.trackId === t.id),
-    }));
-    return { items } as const;
+    const tracksMap = new Map<number, {
+      id: number;
+      title: string;
+      artists: string[];
+      producers: string[];
+      createdAt: Date;
+      alternateTitles: string[];
+      album: {
+        id: number;
+        title: string;
+        coverUrl: string;
+      };
+      versions: Array<{
+        id: number;
+        type: string;
+        title: string;
+        artists: string[];
+        fileUrl: string;
+        orderIndex: number;
+        createdAt: Date;
+      }>;
+    }>();
+    
+    for (const row of rows) {
+      const trackId = row.trackId;
+      
+      if (!tracksMap.has(trackId)) {
+        tracksMap.set(trackId, {
+          id: trackId,
+          title: row.trackTitle,
+          artists: row.trackArtists,
+          producers: row.trackProducers,
+          createdAt: row.trackCreatedAt,
+          alternateTitles: row.trackAlternateTitles,
+          album: {
+            id: row.albumId!,
+            title: row.albumTitle!,
+            coverUrl: row.albumCoverUrl!,
+          },
+          versions: [],
+        });
+      }
+      
+      if (row.versionId) {
+        tracksMap.get(trackId)!.versions.push({
+          id: row.versionId,
+          type: row.versionType!,
+          title: row.versionTitle!,
+          artists: row.versionArtists!,
+          fileUrl: row.versionFileUrl!,
+          orderIndex: row.versionOrderIndex!,
+          createdAt: row.versionCreatedAt!,
+        });
+      }
+    }
+
+    const items = Array.from(tracksMap.values())
+      .filter(track => track.versions.length > 0)
+      .map(track => ({
+        ...track,
+        versions: track.versions.sort((a, b) => a.orderIndex - b.orderIndex)
+      }));
+    
+    return { items };
   },
 
   async byId(input: TrackIdInput) {

@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { h, resolveComponent } from 'vue'
+import { h } from 'vue'
 import TrackVersionsRow from '~/components/TrackVersionsRow.vue'
 import type { TableColumn } from '#ui/types'
+import { UBadge, UButton } from '#components'
+import TrackActionsDropdown from '~/components/TrackActionsDropdown.vue'
 
 const { $orpc } = useNuxtApp()
+const { loadAndPlay } = usePlayer()
 
 const search = ref('')
-const sortBy = ref<'createdAt' | 'title'>('createdAt')
+const sortBy = ref<'createdAt' | 'title' | 'albumTitle'>('createdAt')
 const sortDir = ref<'asc' | 'desc'>('desc')
 
 const versions = [
@@ -38,49 +41,70 @@ const { data: tracks, isPending, error, refetch } = useQuery(
   ),
 )
 
-type TrackRow = {
-  id: number
-  title: string
-  artistsCsv: string
-  createdAt: string | Date
-  album: { coverUrl?: string; title?: string } | null
-  versions: Array<{ id: number; type: string; title: string; artists: string[]; fileUrl?: string }>
+type TrackRow = Awaited<ReturnType<typeof $orpc.tracks.list.call>>['items'][number]
+
+const rows = computed<TrackRow[]>(() => tracks.value?.items ?? [])
+
+const playTrack = (track: TrackRow) => {
+  const firstVersion = track.versions[0]
+  if (!firstVersion) return
+  
+  loadAndPlay({
+    id: firstVersion.id,
+    title: firstVersion.title,
+    artists: firstVersion.artists,
+    url: firstVersion.fileUrl,
+    coverUrl: track.album?.coverUrl
+  })
 }
 
-const rows = computed<TrackRow[]>(() =>
-  (tracks.value?.items ?? []).map((t) => ({
-    id: t.id,
-    title: t.title ?? 'untitled',
-    artistsCsv: Array.isArray(t.artists) ? t.artists.join(', ') : '',
-    createdAt: t.createdAt,
-    album: t.album,
-    versions: t.versions,
-  })),
-)
-
 const columns: TableColumn<TrackRow>[] = [
+  {
+    id: 'expand',
+    meta: { class: { td: 'w-4 px-0' } },
+    cell: ({ row }) =>
+      h(UButton, {
+        color: 'neutral',
+        variant: 'ghost',
+        size: 'sm',
+        icon: 'i-lucide-chevron-down',
+        square: true,
+        'aria-label': 'Expand',
+        ui: {
+          leadingIcon: [
+            'transition-transform',
+            row.getIsExpanded() ? 'duration-200 rotate-180' : ''
+          ]
+        },
+        onClick: () => row.toggleExpanded()
+      })
+  },
   {
     accessorKey: 'title',
     header: 'Title',
     cell: ({ row }) => {
       const album = row.original.album
       const coverUrl = album && album.coverUrl
+      const alternateTitles = row.original.alternateTitles ?? []
       return h(
         'div',
         { class: 'flex items-center gap-3 font-medium' },
         [
           coverUrl
             ? h('img', {
-                src: coverUrl,
-                alt: 'cover',
-                class: 'w-8 h-8 rounded object-cover',
-                style: 'min-width:2rem;min-height:2rem;',
-              })
+              src: coverUrl,
+              alt: 'cover',
+              class: 'size-8 rounded object-cover',
+              style: 'min-width:2rem;min-height:2rem;',
+            })
             : h('div', {
-                class: 'w-8 h-8 rounded bg-gray-200 flex items-center justify-center text-xs text-gray-400',
-                style: 'min-width:2rem;min-height:2rem;',
-              }, '—'),
-          h('span', {}, row.getValue('title')),
+              class: 'size-8 rounded bg-gray-200 flex items-center justify-center text-xs text-gray-400',
+              style: 'min-width:2rem;min-height:2rem;',
+            }, '—'),
+          h('div', {}, [
+            h('div', { class: 'font-medium text-highlighted' }, row.original.versions[0]?.title ?? ''),
+            alternateTitles.length > 0 && h('div', { class: 'text-xs text-muted-foreground' }, `Also: ${alternateTitles.slice(0, 2).join(', ')}`),
+          ]),
         ]
       )
     },
@@ -88,53 +112,33 @@ const columns: TableColumn<TrackRow>[] = [
   {
     accessorKey: 'artistsCsv',
     header: 'Artists',
-    cell: ({ row }) => h('div', { class: 'text-muted-foreground' }, row.getValue('artistsCsv')),
+    cell: ({ row }) => h('div', { class: 'text-muted-foreground' }, row.original.versions[0]?.artists.join(', ') ?? ''),
   },
   {
     accessorKey: 'album.title',
     header: 'Album',
-    cell: ({ row }) => h('div', { class: 'text-muted-foreground' }, row.getValue('album.title')),
+    cell: ({ row }) => h('div', { class: 'text-muted-foreground' }, row.original.album.title),
   },
   {
-    accessorKey: 'createdAt',
-    header: 'Added',
-    cell: ({ row }) =>
-      h(
-        'div',
-        {},
-        new Date(row.getValue('createdAt')).toLocaleString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-        }),
-      ),
+    accessorKey: 'versions.type',
+    header: 'Type',
+    cell: ({ row }) => h(UBadge, { color: 'neutral', variant: 'outline' }, row.original.versions[0]?.type ?? ''),
   },
   {
-    id: 'expand',
+    accessorKey: 'actions',
     header: '',
-    enableHiding: false,
-    cell: ({ row }) => {
-      const versionCount = Array.isArray(row.original.versions) ? row.original.versions.length : 0
-      const isExpanded = row.getIsExpanded()
-      return h(
-        'div',
-        { class: 'flex items-center justify-end' },
-        [
-          h(
-            resolveComponent('UButton') as any,
-            {
-              icon: isExpanded ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down',
-              color: 'neutral',
-              variant: 'ghost',
-              'aria-label': isExpanded ? 'Collapse row' : 'Expand row',
-              onClick: () => row.toggleExpanded(),
-            },
-            () => [h('span', { class: 'ml-1 text-xs text-gray-500' }, `(${versionCount})`)],
-          ),
-        ],
-      )
-    },
-  },
+    meta: { class: { td: 'w-16 p-0' } },
+    cell: ({ row }) => h('div', { class: 'text-right' }, [
+      h(UButton, { 
+        color: 'neutral', 
+        variant: 'ghost', 
+        icon: 'i-lucide-play', 
+        size: 'sm',
+        onClick: () => playTrack(row.original)
+      }),
+      h(TrackActionsDropdown, { track: row.original })
+    ])
+  }
 ]
 </script>
 
@@ -156,7 +160,7 @@ const columns: TableColumn<TrackRow>[] = [
           <div class="flex items-center gap-2">
             <UInput v-model="search" placeholder="Search by title or artist" @change="refetch()" />
             <USelect v-model="sortBy"
-              :items="[{ label: 'Title', value: 'title' }, { label: 'Created', value: 'createdAt' }]" />
+              :items="[{ label: 'Title', value: 'title' }, { label: 'Album', value: 'albumTitle' }, { label: 'Created', value: 'createdAt' }]" />
             <USelect v-model="sortDir" :items="[{ label: 'Asc', value: 'asc' }, { label: 'Desc', value: 'desc' }]" />
             <USelect v-model="versionType"
               :items="[{ label: 'All', value: 'all' }, ...versions.map(v => ({ label: v.charAt(0).toUpperCase() + v.slice(1), value: v }))]"
@@ -170,7 +174,7 @@ const columns: TableColumn<TrackRow>[] = [
       <UAlert v-if="error" color="error" icon="i-lucide-alert-triangle" title="Failed to load tracks"
         :description="String(error)" class="mb-4" />
       <UTable :data="rows" :columns="columns" :loading="isPending" loading-animation="carousel"
-        :empty-state="{ icon: 'i-lucide-search', label: 'No tracks found' }">
+        :empty-state="{ icon: 'i-lucide-search', label: 'No tracks found' }" :ui="{ td: 'p-2', th: 'p-2' }">
         <template #expanded="{ row }">
           <TrackVersionsRow :versions="row.original.versions" :album="row.original.album" />
         </template>

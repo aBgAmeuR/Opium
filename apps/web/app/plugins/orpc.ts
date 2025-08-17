@@ -1,6 +1,6 @@
 import { defineNuxtPlugin, useRuntimeConfig } from '#app'
 import type { RouterClient } from '@orpc/server'
-import type { appRouter } from "../../../server/src/routers/index";
+import type { appRouter } from "../../../server/src/app/routes";
 import { createORPCClient } from '@orpc/client'
 import { RPCLink } from '@orpc/client/fetch'
 import { createTanstackQueryUtils } from "@orpc/tanstack-query";

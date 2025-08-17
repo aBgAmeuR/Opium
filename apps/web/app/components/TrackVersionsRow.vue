@@ -16,18 +16,28 @@ function playVersion(v: any) {
 </script>
 
 <template>
-  <div class="p-3 bg-gray-50 dark:bg-gray-900/40 rounded">
+  <div class="py-2 pl-7">
       <div v-if="!versions?.length" class="text-sm text-muted-foreground">No versions yet.</div>
       <ul v-else class="grid gap-3">
         <li v-for="v in versions" :key="v.id" class="grid gap-2">
           <div class="flex items-center gap-2">
-            <UBadge size="md" color="neutral">{{ v.type }}</UBadge>
-            <span class="font-medium">{{ v.title }}</span>
-            <span class="font-medium">-</span>
-            <span v-if="Array.isArray(v.artists) && v.artists.length" class="text-sm text-muted-foreground">{{ v.artists.join(', ') }}</span>
-            <UButton size="sm" icon="i-lucide-play" class="cursor-pointer" variant="soft" @click="playVersion(v)" v-if="v.fileUrl">Play</UButton>
+            <div>
+              <div class="font-medium text-highlighted">{{ v.title }}</div>
+              <div v-if="Array.isArray(v.artists) && v.artists.length" class="text-xs text-muted-foreground">
+                {{ v.artists.join(', ') }}
+              </div>
+            </div>
+            <UBadge size="md" color="neutral" variant="outline">{{ v.type }}</UBadge>
+            <UButton
+              size="sm"
+              icon="i-lucide-play"
+              class="cursor-pointer"
+              variant="soft"
+              @click="playVersion(v)"
+            >
+              Play
+            </UButton>
           </div>
-          <div v-if="!v.fileUrl" class="text-xs text-muted-foreground">No audio file</div>
         </li>
       </ul>
   </div>

@@ -1,6 +1,6 @@
 import { db } from "../../db";
 import { albums, trackVersions, tracks } from "../../db/schema/tracks";
-import { asc, count, desc, eq, inArray, sql } from "drizzle-orm";
+import { asc, count, desc, eq, inArray, SQL, sql } from "drizzle-orm";
 
 export const TracksRepository = {
   findById: async (id: number) => {
@@ -14,20 +14,69 @@ export const TracksRepository = {
   },
 
   list: async (params: {
-    where?: any;
+    where?: SQL;
     limit: number;
     offset: number;
     sortDir: "asc" | "desc";
-    sortBy?: "createdAt" | "title";
+    sortBy?: "createdAt" | "title" | "albumTitle";
   }) => {
     const orderByExpr = params.sortBy === "title"
       ? (params.sortDir === "asc" ? asc(tracks.title) : desc(tracks.title))
+      : params.sortBy === "albumTitle"
+        ? (params.sortDir === "asc" ? asc(albums.title) : desc(albums.title))
       : (params.sortDir === "asc" ? asc(tracks.createdAt) : desc(tracks.createdAt));
     const base = params.where ? db.select().from(tracks).where(params.where) : db.select().from(tracks);
     return base.orderBy(orderByExpr).limit(params.limit).offset(params.offset);
   },
 
-  count: async (where?: any) => {
+  listWithDetails: async (params: {
+    where?: SQL;
+    limit: number;
+    offset: number;
+    sortDir: "asc" | "desc";
+    sortBy?: "createdAt" | "title" | "albumTitle";
+  }) => {
+    const orderByExpr = params.sortBy === "title"
+      ? (params.sortDir === "asc" ? asc(tracks.title) : desc(tracks.title))
+      : params.sortBy === "albumTitle"
+        ? (params.sortDir === "asc" ? asc(albums.title) : desc(albums.title))
+      : (params.sortDir === "asc" ? asc(tracks.createdAt) : desc(tracks.createdAt));
+
+    let baseQuery = db
+      .select({
+        trackId: tracks.id,
+        trackTitle: tracks.title,
+        trackArtists: tracks.artists,
+        trackProducers: tracks.producers,
+        trackCreatedAt: tracks.createdAt,
+        trackAlternateTitles: tracks.alternateTitles,
+        trackAlbumId: tracks.albumId,
+        albumId: albums.id,
+        albumTitle: albums.title,
+        albumCoverUrl: albums.coverUrl,
+        versionId: trackVersions.id,
+        versionType: trackVersions.type,
+        versionTitle: trackVersions.title,
+        versionArtists: trackVersions.artists,
+        versionFileUrl: trackVersions.fileUrl,
+        versionOrderIndex: trackVersions.orderIndex,
+        versionCreatedAt: trackVersions.createdAt,
+      })
+      .from(tracks)
+      .leftJoin(albums, eq(tracks.albumId, albums.id))
+      .leftJoin(trackVersions, eq(tracks.id, trackVersions.trackId));
+
+    if (params.where) {
+      baseQuery = baseQuery.where(params.where) as any;
+    }
+
+    return baseQuery
+      .orderBy(orderByExpr, asc(trackVersions.orderIndex))
+      .limit(params.limit)
+      .offset(params.offset);
+  },
+
+  count: async (where?: SQL) => {
     const totalRow = await (where ? db.select({ c: count() }).from(tracks).where(where) : db.select({ c: count() }).from(tracks));
     return Number(totalRow?.[0]?.c ?? 0);
   },
@@ -50,7 +99,7 @@ export const TracksRepository = {
     if (!q?.trim()) return undefined;
     const tokens = q.trim().split(/\s+/);
 
-    let combined: any | undefined = undefined;
+    let combined: SQL | undefined = undefined;
     for (const token of tokens) {
       const like = `%${token}%`;
       const clause = sql`
@@ -72,15 +121,10 @@ export const TracksRepository = {
     return combined;
   },
 
-  filterByVersionType: async (where: any | undefined, versionType?: typeof trackVersions.$inferSelect["type"]) => {
+  filterByVersionType: async (where: SQL | undefined, versionType?: typeof trackVersions.$inferSelect["type"]) => {
     if (!versionType) return where;
-    const idsRes = await db
-      .select({ id: trackVersions.trackId })
-      .from(trackVersions)
-      .where(eq(trackVersions.type, versionType))
-      .groupBy(trackVersions.trackId);
-    const ids = idsRes.map((r) => r.id);
-    return where ? sql`${where} AND ${inArray(tracks.id, ids)}` : ids.length ? inArray(tracks.id, ids) : sql`1=0`;
+    const versionFilter = sql`${trackVersions.type} = ${versionType}`;
+    return where ? sql`${where} AND ${versionFilter}` : versionFilter;
   },
 
   insertTrack: async (values: typeof tracks.$inferInsert) => {

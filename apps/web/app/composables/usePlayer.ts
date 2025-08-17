@@ -33,6 +33,24 @@ function stopAudio() {
   duration.value = 0
 }
 
+function loadAndPlay(track: QueueTrack) {
+  queue.value = []
+  currentIndex.value = -1
+  
+  queue.value.push(track)
+  currentIndex.value = 0
+
+  nextTick(() => {
+    if (!audio.value) return
+    audio.value.src = track.url
+    audio.value.currentTime = 0
+    progress.value = 0
+    applyVolume()
+    audio.value.play().catch(() => { })
+    isPlaying.value = true
+  })
+}
+
 function playAtIndex(index: number) {
   if (index < 0 || index >= queue.value.length) return
   currentIndex.value = index
@@ -117,32 +135,26 @@ function toggleMute() { isMuted.value = !isMuted.value; if (audio.value) audio.v
 function toggleShuffle() { shuffle.value = !shuffle.value }
 function cycleRepeatMode() { repeatMode.value = repeatMode.value === 'none' ? 'track' : repeatMode.value === 'track' ? 'queue' : 'none' }
 
-// Watch for changes in currentIndex to handle audio stopping
 watch(currentIndex, (newIndex) => {
   if (newIndex === -1 || newIndex >= queue.value.length) {
-    // No valid track, stop audio
     stopAudio()
   }
 })
 
-// Handle queue changes to stop audio when needed
 function handleQueueChange() {
   if (queue.value.length === 0 || currentIndex.value === -1) {
     stopAudio()
   }
 }
 
-// Handle when the current track was removed and we need to resume playback
 function handleCurrentTrackRemoved(newIndex: number) {
   if (newIndex >= 0 && newIndex < queue.value.length) {
-    // Start playing the new track at the new index
     nextTick(() => {
       playAtIndex(newIndex)
     })
   }
 }
 
-// Persistence
 const persistKeyState = 'player.state'
 const persistKeyVolume = 'player.volume'
 
@@ -184,14 +196,12 @@ async function restoreState() {
 onMounted(() => {
   restoreState().catch(() => { })
   window.addEventListener('beforeunload', () => { persistState().catch(() => { }) })
-  // Register callback for queue changes
   addQueueChangeCallback(handleQueueChange)
   addCurrentTrackRemovedCallback(handleCurrentTrackRemoved)
 })
 
 onBeforeUnmount(() => { 
   persistState().catch(() => { })
-  // Remove callback
   removeQueueChangeCallback(handleQueueChange)
   removeCurrentTrackRemovedCallback(handleCurrentTrackRemoved)
 })
@@ -228,6 +238,7 @@ export function usePlayer() {
     toggleShuffle,
     cycleRepeatMode,
     stopAudio,
+    loadAndPlay,
   }
 }
 
