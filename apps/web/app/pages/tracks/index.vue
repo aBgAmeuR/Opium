@@ -48,7 +48,7 @@ const rows = computed<TrackRow[]>(() => tracks.value?.items ?? [])
 const playTrack = (track: TrackRow) => {
   const firstVersion = track.versions[0]
   if (!firstVersion) return
-  
+
   loadAndPlay({
     id: firstVersion.id,
     title: firstVersion.title,
@@ -102,7 +102,7 @@ const columns: TableColumn<TrackRow>[] = [
               style: 'min-width:2rem;min-height:2rem;',
             }, '—'),
           h('div', {}, [
-            h('div', { class: 'font-medium text-highlighted' }, row.original.versions[0]?.title ?? ''),
+            h('div', { class: 'font-medium text-highlighted' }, row.original.versions[0]?.title),
             alternateTitles.length > 0 && h('div', { class: 'text-xs text-muted-foreground' }, `Also: ${alternateTitles.slice(0, 2).join(', ')}`),
           ]),
         ]
@@ -112,7 +112,7 @@ const columns: TableColumn<TrackRow>[] = [
   {
     accessorKey: 'artistsCsv',
     header: 'Artists',
-    cell: ({ row }) => h('div', { class: 'text-muted-foreground' }, row.original.versions[0]?.artists.join(', ') ?? ''),
+    cell: ({ row }) => h('div', { class: 'text-muted-foreground' }, row.original.versions[0]?.artists.join(', ')),
   },
   {
     accessorKey: 'album.title',
@@ -122,17 +122,20 @@ const columns: TableColumn<TrackRow>[] = [
   {
     accessorKey: 'versions.type',
     header: 'Type',
-    cell: ({ row }) => h(UBadge, { color: 'neutral', variant: 'outline' }, row.original.versions[0]?.type ?? ''),
+    cell: ({ row }) => h('div', { class: 'flex gap-1 items-center text-muted-foreground' }, [
+      h(UBadge, { color: 'neutral', variant: 'outline' }, row.original.versions[0]?.type),
+      h('p', { class: 'text-xs' }, row.original.versions.length > 1 ? `+${row.original.versions.length - 1}` : undefined)
+    ]),
   },
   {
     accessorKey: 'actions',
     header: '',
     meta: { class: { td: 'w-16 p-0' } },
     cell: ({ row }) => h('div', { class: 'text-right' }, [
-      h(UButton, { 
-        color: 'neutral', 
-        variant: 'ghost', 
-        icon: 'i-lucide-play', 
+      h(UButton, {
+        color: 'neutral',
+        variant: 'ghost',
+        icon: 'i-lucide-play',
         size: 'sm',
         onClick: () => playTrack(row.original)
       }),

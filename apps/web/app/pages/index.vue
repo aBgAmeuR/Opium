@@ -8,11 +8,22 @@ const session = $authClient.useSession()
 </script>
 
 <template>
-  <div class="container mx-auto max-w-3xl px-4 py-2">
-    <pre class="overflow-x-auto font-mono text-sm whitespace-pre-wrap">{{ TITLE_TEXT }}</pre>
-    <div class="grid gap-6 mt-4">
-      <section class="rounded-lg border p-4">
-        <h2 class="mb-2 font-medium">API Status</h2>
+  <UDashboardPanel id="dashboard" class="min-h-auto">
+    <template #header>
+      <UDashboardNavbar :title="TITLE_TEXT" :ui="{ right: 'gap-3' }">
+        <template #leading>
+          <UDashboardSidebarCollapse />
+        </template>
+
+        <template #right>
+          <UColorModeButton />
+        </template>
+      </UDashboardNavbar>
+    </template>
+
+    <template #body>
+      <UCard>
+      <h2 class="mb-2 font-medium">API Status</h2>
         <div class="flex items-center gap-2">
           <div class="flex items-center gap-2">
             <div class="w-2 h-2 rounded-full" :class="{
@@ -41,7 +52,7 @@ const session = $authClient.useSession()
           <span>{{ serverUrl }}</span>
         </div>
         <pre class="overflow-x-auto font-mono text-sm whitespace-pre-wrap">{{ session }}</pre>
-      </section>
-    </div>
-  </div>
+      </UCard>
+    </template>
+  </UDashboardPanel>
 </template>

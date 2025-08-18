@@ -104,12 +104,21 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 </script>
 
 <template>
-  <UContainer>
-    <div class="flex items-center justify-between mb-4">
-      <h1 class="text-2xl font-bold">New Track</h1>
-    </div>
+  <UDashboardPanel id="new-track" class="min-h-auto">
+    <template #header>
+      <UDashboardNavbar title="New Track" :ui="{ right: 'gap-3' }">
+        <template #leading>
+          <UDashboardSidebarCollapse />
+        </template>
 
-    <UCard>
+        <template #right>
+          <UColorModeButton />
+        </template>
+      </UDashboardNavbar>
+    </template>
+
+    <template #body>
+      <UCard>
       <UForm :schema="schema" :state="form" @submit="onSubmit" class="grid gap-4">
         <div class="grid md:grid-cols-2 gap-3">
           <UFormField label="Title" name="title" required>
@@ -175,5 +184,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       </UForm>
     </UCard>
     <AlbumPicker v-model="albumIdProxy" v-model:open="albumOpen" />
-  </UContainer>
+    </template>
+  </UDashboardPanel>
 </template>
+

@@ -4,3 +4,12 @@
 :root {
   --ui-radius: 0.375rem;
 }
+
+
+@layer base {
+  button,
+  [role="button"] {
+     @apply cursor-pointer;
+     @apply disabled:cursor-not-allowed;
+  }
+}

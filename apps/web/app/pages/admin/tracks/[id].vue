@@ -81,7 +81,6 @@ const addVersionNow = async () => {
   newVersion.title = ''
 }
 
-// Simple drag and drop reorder using HTML5 API
 const draggingId = ref<number | null>(null)
 const onDragStart = (id: number) => { draggingId.value = id }
 const onDragOver = (e: DragEvent) => { e.preventDefault() }
@@ -98,16 +97,22 @@ const onDrop = (id: number) => {
 </script>
 
 <template>
-  <div class="container mx-auto p-4" v-if="trackQuery.data.value">
-    <div class="flex items-center justify-between mb-4">
-      <h1 class="text-2xl font-bold">Edit Track</h1>
-      <div class="flex gap-2">
-        <UButton color="error" variant="soft" icon="i-lucide-trash" @click="onDelete">Delete</UButton>
-        <UButton icon="i-lucide-save" @click="onSave" :loading="updateTrack.status.value === 'pending'">Save</UButton>
-      </div>
-    </div>
+  <UDashboardPanel id="edit-track" class="min-h-auto">
+    <template #header>
+      <UDashboardNavbar title="Edit track" :ui="{ right: 'gap-3' }">
+        <template #leading>
+          <UDashboardSidebarCollapse />
+        </template>
 
-    <div class="grid md:grid-cols-2 gap-4">
+        <template #right>
+          <UColorModeButton />
+          <UButton color="error" variant="soft" icon="i-lucide-trash" @click="onDelete">Delete</UButton>
+        <UButton icon="i-lucide-save" @click="onSave" :loading="updateTrack.status.value === 'pending'">Save</UButton>
+        </template>
+      </UDashboardNavbar>
+    </template>
+
+    <template #body>
       <UCard>
         <div class="grid gap-3">
           <UFormGroup label="Album">
@@ -133,7 +138,7 @@ const onDrop = (id: number) => {
         </div>
 
         <ul class="grid gap-2">
-          <li v-for="v in trackQuery.data.value.versions" :key="v.id"
+          <li v-for="v in trackQuery.data.value?.versions" :key="v.id"
               draggable
               @dragstart="onDragStart(v.id)"
               @dragover.prevent="onDragOver"
@@ -146,14 +151,11 @@ const onDrop = (id: number) => {
           </li>
         </ul>
       </UCard>
-    </div>
-    <AlbumPicker v-model="local.albumId" v-model:open="albumOpen" />
-  </div>
-  <div v-else class="p-4">Loading...</div>
+      <AlbumPicker v-model="local.albumId" v-model:open="albumOpen" />
+    </template>
+  </UDashboardPanel>
 </template>
 
 <script lang="ts">
 export default { data: () => ({ albumOpen: false }) }
 </script>
-
-

@@ -128,33 +128,41 @@ const onDelete = async (id: number) => {
 </script>
 
 <template>
-    <UContainer>
-        <div class="flex items-center justify-between mb-4">
-            <h1 class="text-2xl font-bold">Tracks</h1>
-            <NuxtLink to="/admin/tracks/new">
-                <UButton icon="i-lucide-plus">New Track</UButton>
-            </NuxtLink>
-        </div>
-
-        <div class="flex items-center gap-2 mb-3">
-            <UInput v-model="search" placeholder="Search by title or artist" @change="refetch()" />
-            <USelect v-model="sortBy"
-                :items="[{ label: 'Title', value: 'title' }, { label: 'Created', value: 'createdAt' }]" />
-            <USelect v-model="sortDir" :items="[{ label: 'Asc', value: 'asc' }, { label: 'Desc', value: 'desc' }]" />
-            <USelect v-model="versionType"
+    <UDashboardPanel id="admin-tracks" class="min-h-auto">
+      <template #header>
+        <UDashboardNavbar title="Admin Tracks" :ui="{ right: 'gap-3' }">
+          <template #leading>
+            <UDashboardSidebarCollapse />
+          </template>
+  
+          <template #right>
+            <UColorModeButton />
+            <UButton icon="i-lucide-plus" to="/admin/tracks/new">New Track</UButton>
+          </template>
+        </UDashboardNavbar>
+  
+        <UDashboardToolbar>
+          <template #left>
+            <div class="flex items-center gap-2">
+              <UInput v-model="search" placeholder="Search by title or artist" @change="refetch()" />
+              <USelect v-model="sortBy"
+                :items="[{ label: 'Title', value: 'title' }, { label: 'Album', value: 'albumTitle' }, { label: 'Created', value: 'createdAt' }]" />
+              <USelect v-model="sortDir" :items="[{ label: 'Asc', value: 'asc' }, { label: 'Desc', value: 'desc' }]" />
+              <USelect v-model="versionType"
                 :items="[{ label: 'All', value: 'all' }, ...versions.map(v => ({ label: v.charAt(0).toUpperCase() + v.slice(1), value: v }))]"
                 class="w-40" />
-        </div>
-
-        <UCard>
-            <UTable :data="rows" :columns="columns" :loading="isPending" loading-animation="carousel" :empty-state="{
-                icon: 'i-lucide-search',
-                label: 'No tracks found',
-            }">
-                <template #expanded="{ row }">
-                    <TrackVersionsRow :versions="row.original.versions" :album="row.original.album" />
-                </template>
-            </UTable>
-        </UCard>
-    </UContainer>
-</template>
+            </div>
+          </template>
+        </UDashboardToolbar>
+      </template>
+  
+      <template #body>
+        <UTable :data="rows" :columns="columns" :loading="isPending" loading-animation="carousel"
+          :empty-state="{ icon: 'i-lucide-search', label: 'No tracks found' }" :ui="{ td: 'p-2', th: 'p-2' }">
+          <template #expanded="{ row }">
+            <TrackVersionsRow :versions="row.original.versions" :album="row.original.album" />
+          </template>
+        </UTable>
+      </template>
+    </UDashboardPanel>
+  </template>
