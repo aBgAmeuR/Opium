@@ -33,7 +33,7 @@
     "check": "biome check --write .",
     "ruler:apply": "bunx @intellectronica/ruler@latest apply --local-only",
     "dev": "turbo dev",
-    "build": "turbo build",
+    "build": "turbo db:generate && turbo build",
     "preview": "turbo preview",
     "start": "turbo start",
     "check-types": "turbo check-types",
