@@ -1,6 +1,5 @@
 import { Providers } from "@opium/ui/providers";
 import type { QueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   createRootRouteWithContext,
   HeadContent,
@@ -79,7 +78,7 @@ function RootDocument() {
             {isFetching ? <Loader /> : <Outlet />}
           </div>
           {/* <TanStackRouterDevtools position="bottom-left" /> */}
-          <ReactQueryDevtools buttonPosition="bottom-right" position="bottom" />
+          {/* <ReactQueryDevtools buttonPosition="bottom-right" position="bottom" /> */}
           <Scripts />
         </Providers>
       </body>
