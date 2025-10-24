@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@opium/ui/*": ["./src/*"]
+    },
+    "jsx": "react-jsx"
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
+}

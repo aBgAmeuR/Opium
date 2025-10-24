@@ -1,0 +1,25 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/styles/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true
+  },
+  "iconLibrary": "lucide",
+  "aliases": {
+    "components": "@opium/ui/components",
+    "utils": "@opium/ui/lib/utils",
+    "ui": "@opium/ui/components",
+    "lib": "@opium/ui/lib",
+    "hooks": "@opium/ui/hooks"
+  },
+  "registries": {
+    "@efferd-ui": "https://ui.efferd.com/r/{name}.json",
+    "@coss": "https://coss.com/ui/r/{name}.json",
+    "@magicui": "https://magicui.design/r/{name}.json"
+  }
+}
