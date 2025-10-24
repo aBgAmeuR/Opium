@@ -8,7 +8,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   plugins: [
     tsconfigPaths(),
-    nitroV2Plugin({ preset: "bun", compatibilityDate: "2025-10-24" }),
+    nitroV2Plugin({ compatibilityDate: "2025-10-24" }),
     tailwindcss(),
     tanstackStart(),
     viteReact(),
