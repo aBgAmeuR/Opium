@@ -4,5 +4,4 @@ export default defineConfig({
   entry: ["index.ts"],
   sourcemap: true,
   dts: true,
-  external: [/^\.\/prisma\/generated/, "@prisma/client"],
 });

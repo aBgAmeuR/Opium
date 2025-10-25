@@ -6,7 +6,7 @@
   "tasks": {
     "build": {
       "cache": false,
-      "dependsOn": ["^db:generate", "^build"],
+      "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["dist/**"]
     },
