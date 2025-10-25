@@ -19,17 +19,19 @@ const LibraryItem = ({
   title,
   imageSrc,
   isSidebarOpen,
+  description,
 }: {
   title: string;
   imageSrc: string;
   isSidebarOpen: boolean;
+  description: string;
 }) => {
   const buttonContent = (
     <Button
       className={cn(
-        isSidebarOpen && "relative w-full justify-start gap-2.5 p-2",
+        isSidebarOpen && "relative w-full justify-start gap-2.5 px-2 py-1.5",
         !isSidebarOpen && "w-full justify-center px-0 py-4.5",
-        "items-center text-muted-foreground"
+        "group items-center text-muted-foreground"
       )}
       size={isSidebarOpen ? "sm" : "icon-sm"}
       variant="ghost"
@@ -47,7 +49,14 @@ const LibraryItem = ({
         />
       </div>
       {isSidebarOpen && (
-        <p className="line-clamp-1 text-xs hover:text-foreground">{title}</p>
+        <div className="flex flex-col">
+          <p className="line-clamp-1 text-left text-foreground text-xs">
+            {title}
+          </p>
+          <p className="line-clamp-1 text-left text-muted-foreground text-xs">
+            {description}
+          </p>
+        </div>
       )}
     </Button>
   );
@@ -72,16 +81,19 @@ export const SidebarLibrary = ({ isSidebarOpen }: SidebarLibraryProps) => {
       title: "Whole Lotta Red",
       imageSrc:
         "https://cdn-images.dzcdn.net/images/cover/3c5f5f3f5f41ff96f961afd7df7eb4d9/0x1900-000000-80-0-0.jpg",
+      description: "Album",
     },
     {
       title: "Die Lit",
       imageSrc:
         "https://cdn-images.dzcdn.net/images/cover/f2d66b587ca8d3f0fa222c3501d23564/1900x1900-000000-81-0-0.jpg",
+      description: "Playlist",
     },
     {
       title: "Playboi Carti",
       imageSrc:
         "https://cdn-images.dzcdn.net/images/cover/0ae8e05f734268cbe5aae06f96f2b1f2/0x1900-000000-80-0-0.jpg",
+      description: "Album",
     },
   ];
 
@@ -115,6 +127,7 @@ export const SidebarLibrary = ({ isSidebarOpen }: SidebarLibraryProps) => {
       >
         {libraryItems.map((item) => (
           <LibraryItem
+            description={item.description}
             imageSrc={item.imageSrc}
             isSidebarOpen={isSidebarOpen}
             key={item.title}

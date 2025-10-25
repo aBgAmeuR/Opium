@@ -1,31 +1,28 @@
 {
-  "name": "@opium/icons",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "types": "./dist/*.d.ts",
-      "default": "./src/*.ts"
-    }
-  },
-  "type": "module",
-  "scripts": {
-    "build": "tsdown"
-  },
-  "devDependencies": {
-    "@types/react": "catalog:react",
-    "@types/react-dom": "catalog:react",
-    "tsdown": "catalog:"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "dependencies": {
-    "@phosphor-icons/react": "^2.1.10",
-    "dotenv": "catalog:",
-    "react": "catalog:react",
-    "react-dom": "catalog:react"
-  }
+	"name": "@opium/icons",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "tsdown",
+		"clean": "git clean -xdf .cache .turbo dist node_modules"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./src/index.ts"
+		}
+	},
+	"dependencies": {
+		"@phosphor-icons/react": "^2.1.10",
+		"dotenv": "catalog:",
+		"react": "catalog:react",
+		"react-dom": "catalog:react"
+	},
+	"devDependencies": {
+		"@opium/tsconfig": "workspace:*",
+		"@types/react": "catalog:react",
+		"@types/react-dom": "catalog:react",
+		"tsdown": "catalog:",
+		"typescript": "catalog:"
+	}
 }

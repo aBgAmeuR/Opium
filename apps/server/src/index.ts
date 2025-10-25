@@ -9,6 +9,15 @@ import { RPCHandler } from "@orpc/server/fetch";
 import { ZodToJsonSchemaConverter } from "@orpc/zod/zod4";
 import { Elysia } from "elysia";
 
+const HTTP_STATUS_CODES = {
+  NOT_FOUND: 404,
+  METHOD_NOT_ALLOWED: 405,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  BAD_REQUEST: 400,
+  UNPROCESSABLE_ENTITY: 422,
+} as const;
+
 const rpcHandler = new RPCHandler(appRouter, {
   interceptors: [
     onError((error) => {
@@ -16,6 +25,7 @@ const rpcHandler = new RPCHandler(appRouter, {
     }),
   ],
 });
+
 const apiHandler = new OpenAPIHandler(appRouter, {
   plugins: [
     new OpenAPIReferencePlugin({
@@ -35,14 +45,17 @@ export const app = new Elysia({ prefix: "/api" })
     if (["POST", "GET"].includes(request.method)) {
       return auth.handler(request);
     }
-    return status(405);
+    return status(HTTP_STATUS_CODES.METHOD_NOT_ALLOWED);
   })
   .all("/rpc*", async (context) => {
     const { response } = await rpcHandler.handle(context.request, {
       prefix: "/api/rpc",
       context: await createContext({ context }),
     });
-    return response ?? new Response("Not Found", { status: 404 });
+    return (
+      response ??
+      new Response("Not Found", { status: HTTP_STATUS_CODES.NOT_FOUND })
+    );
   })
   .get("/health", () => "OK")
   .all("/*", async (context) => {
@@ -50,5 +63,8 @@ export const app = new Elysia({ prefix: "/api" })
       prefix: "/api-reference",
       context: await createContext({ context }),
     });
-    return response ?? new Response("Not Found", { status: 404 });
+    return (
+      response ??
+      new Response("Not Found", { status: HTTP_STATUS_CODES.NOT_FOUND })
+    );
   });

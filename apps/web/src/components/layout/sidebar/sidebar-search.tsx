@@ -37,9 +37,7 @@ export const SidebarSearch = ({ isSidebarOpen }: SidebarSearchProps) => {
         variant="outline"
       >
         <SearchIcon className={cn(isSidebarOpen, "size-3.5")} />
-        {isSidebarOpen && (
-          <p className="line-clamp-1 text-xs hover:text-foreground">Search</p>
-        )}
+        {isSidebarOpen && <p className="line-clamp-1 text-xs">Search</p>}
         {isSidebarOpen && <div className="flex-1" />}
         {isSidebarOpen && (
           <div className="flex flex-row items-center gap-0.5">

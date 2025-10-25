@@ -1,5 +1,4 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import "@opium/tailwind-config/styles";
 @source "../**/*.{ts,tsx}";
 
 @import "@fontsource-variable/inter";
@@ -116,7 +115,11 @@ body {
 .dark {
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.967 0.001 286.375);
-  --card: color-mix(in srgb, oklch(0.21 0.006 285.885) 80%, oklch(0.141 0.005 285.823));
+  --card: color-mix(
+    in srgb,
+    oklch(0.21 0.006 285.885) 80%,
+    oklch(0.141 0.005 285.823)
+  );
   --card-foreground: oklch(0.967 0.001 286.375);
   --popover: oklch(0.21 0.006 285.885);
   --popover-foreground: oklch(0.967 0.001 286.375);

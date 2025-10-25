@@ -1,35 +1,36 @@
 {
-  "name": "@opium/db",
-  "type": "module",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./src/index.ts"
-    },
-    "./*": {
-      "types": "./dist/*.d.ts",
-      "default": "./src/*.ts"
-    }
-  },
-  "scripts": {
-    "build": "tsdown",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
-  },
-  "devDependencies": {
-    "drizzle-kit": "^0.31.2",
-    "@types/pg": "^8.11.11",
-    "tsdown": "catalog:"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "dependencies": {
-    "drizzle-orm": "catalog:",
-    "pg": "^8.14.1",
-    "dotenv": "catalog:",
-    "zod": "catalog:"
-  }
+	"name": "@opium/db",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "tsdown",
+		"db:push": "drizzle-kit push",
+		"db:studio": "drizzle-kit studio",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"clean": "git clean -xdf .cache .turbo dist node_modules"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./src/index.ts"
+		},
+		"./*": {
+			"types": "./dist/*.d.ts",
+			"default": "./src/*.ts"
+		}
+	},
+	"dependencies": {
+		"drizzle-orm": "catalog:",
+		"pg": "^8.14.1",
+		"dotenv": "catalog:",
+		"zod": "catalog:"
+	},
+	"devDependencies": {
+		"@opium/tsconfig": "workspace:*",
+		"drizzle-kit": "^0.31.2",
+		"@types/pg": "^8.11.11",
+		"tsdown": "catalog:",
+		"typescript": "catalog:"
+	}
 }

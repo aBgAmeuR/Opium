@@ -6,6 +6,7 @@ import {
   TooltipTrigger,
 } from "@opium/ui/components/tooltip";
 import { cn } from "@opium/ui/lib/utils";
+import { Link } from "@tanstack/react-router";
 
 type SidebarNavigationProps = {
   isSidebarOpen: boolean;
@@ -15,23 +16,28 @@ const NavigationItem = ({
   icon: Icon,
   label,
   isSidebarOpen,
+  to,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   isSidebarOpen: boolean;
+  to: string;
 }) => {
   const buttonContent = (
     <Button
       className={cn(
         isSidebarOpen && "relative w-full justify-start",
-        "items-center px-2 text-muted-foreground"
+        "group items-center px-2 text-muted-foreground"
       )}
+      render={<Link to={to} />}
       size={isSidebarOpen ? "sm" : "icon-sm"}
       variant="ghost"
     >
       <Icon className={cn(isSidebarOpen, "size-3.5")} />
       {isSidebarOpen && (
-        <p className="line-clamp-1 text-xs hover:text-foreground">{label}</p>
+        <p className="line-clamp-1 text-xs group-hover:text-foreground">
+          {label}
+        </p>
       )}
     </Button>
   );
@@ -63,12 +69,14 @@ export function SidebarNavigation({ isSidebarOpen }: SidebarNavigationProps) {
             icon={HomeIcon}
             isSidebarOpen={isSidebarOpen}
             label="Home"
+            to="/dashboard"
           />
 
           <NavigationItem
             icon={ExploreIcon}
             isSidebarOpen={isSidebarOpen}
             label="Explore"
+            to="/explore"
           />
         </div>
       </div>
