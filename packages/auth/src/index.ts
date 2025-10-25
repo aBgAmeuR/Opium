@@ -1,13 +1,17 @@
-import prisma from "@opium/db";
+import { db } from "@opium/db";
+// biome-ignore lint/performance/noNamespaceImport: drizzle schema
+import * as schema from "@opium/db/schema/auth";
 import { sendEmail } from "@opium/email";
 import { MagicLinkTemplate } from "@opium/email/templates";
-import { type Auth, betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
+import { type BetterAuthOptions, betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { magicLink } from "better-auth/plugins";
 
-export const auth: Auth = betterAuth({
-  database: prismaAdapter(prisma, {
-    provider: "mongodb",
+export const auth = betterAuth<BetterAuthOptions>({
+  database: drizzleAdapter(db, {
+    provider: "pg",
+
+    schema,
   }),
   plugins: [
     magicLink({
@@ -21,6 +25,9 @@ export const auth: Auth = betterAuth({
     }),
   ],
   trustedOrigins: [process.env.CORS_ORIGIN || ""],
+  emailAndPassword: {
+    enabled: true,
+  },
   advanced: {
     defaultCookieAttributes: {
       sameSite: "none",
