@@ -1,9 +1,7 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: "src/**/*.ts",
+  entry: ["src/**/*.ts", "prisma/generated/*.ts"],
   sourcemap: true,
   dts: true,
-  external: ["@prisma/client", "./prisma/generated"],
-  platform: "node",
 });
