@@ -5,7 +5,11 @@ import { AngryIcon } from "lucide-react";
 import type { PropsWithChildren } from "react";
 import { Sidebar } from "./sidebar";
 
-export const RootLayout = ({ children }: PropsWithChildren) => {
+type RootLayoutProps = PropsWithChildren<{
+  isAdmin?: boolean;
+}>;
+
+export const RootLayout = ({ children, isAdmin = false }: RootLayoutProps) => {
   //   const { isSidebarOpen, isMobileSidebarOpen, setIsMobileSidebarOpen } =
   //     useRootContext();
   const isSidebarOpen = true;
@@ -26,7 +30,7 @@ export const RootLayout = ({ children }: PropsWithChildren) => {
         </div>
       </div>
       <div className="hidden md:flex">
-        <AnimatePresence>{isSidebarOpen && <Sidebar />}</AnimatePresence>
+        <AnimatePresence>{isSidebarOpen && <Sidebar isAdmin={isAdmin} />}</AnimatePresence>
       </div>
 
       {/* <Drawer.Root

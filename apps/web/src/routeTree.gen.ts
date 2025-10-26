@@ -16,6 +16,7 @@ import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as AppStatusRouteImport } from './routes/_app/status'
 import { Route as AppExploreRouteImport } from './routes/_app/explore'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as AppAdminArtistsRouteImport } from './routes/_app/admin/artists'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -51,6 +52,11 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminArtistsRoute = AppAdminArtistsRouteImport.update({
+  id: '/admin/artists',
+  path: '/admin/artists',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/explore': typeof AppExploreRoute
   '/status': typeof AppStatusRoute
   '/api/$': typeof ApiSplatRoute
+  '/admin/artists': typeof AppAdminArtistsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/explore': typeof AppExploreRoute
   '/status': typeof AppStatusRoute
   '/api/$': typeof ApiSplatRoute
+  '/admin/artists': typeof AppAdminArtistsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,12 +85,27 @@ export interface FileRoutesById {
   '/_app/explore': typeof AppExploreRoute
   '/_app/status': typeof AppStatusRoute
   '/api/$': typeof ApiSplatRoute
+  '/_app/admin/artists': typeof AppAdminArtistsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/dashboard' | '/explore' | '/status' | '/api/$'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/dashboard'
+    | '/explore'
+    | '/status'
+    | '/api/$'
+    | '/admin/artists'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/dashboard' | '/explore' | '/status' | '/api/$'
+  to:
+    | '/'
+    | '/login'
+    | '/dashboard'
+    | '/explore'
+    | '/status'
+    | '/api/$'
+    | '/admin/artists'
   id:
     | '__root__'
     | '/'
@@ -92,6 +115,7 @@ export interface FileRouteTypes {
     | '/_app/explore'
     | '/_app/status'
     | '/api/$'
+    | '/_app/admin/artists'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -152,6 +176,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/admin/artists': {
+      id: '/_app/admin/artists'
+      path: '/admin/artists'
+      fullPath: '/admin/artists'
+      preLoaderRoute: typeof AppAdminArtistsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -159,12 +190,14 @@ interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
   AppExploreRoute: typeof AppExploreRoute
   AppStatusRoute: typeof AppStatusRoute
+  AppAdminArtistsRoute: typeof AppAdminArtistsRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
   AppExploreRoute: AppExploreRoute,
   AppStatusRoute: AppStatusRoute,
+  AppAdminArtistsRoute: AppAdminArtistsRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

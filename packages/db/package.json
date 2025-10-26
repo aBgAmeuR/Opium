@@ -15,6 +15,10 @@
 			"types": "./dist/index.d.ts",
 			"default": "./src/index.ts"
 		},
+		"./drizzle": {
+			"types": "./dist/drizzle.d.ts",
+			"default": "./src/drizzle.ts"
+		},
 		"./*": {
 			"types": "./dist/*.d.ts",
 			"default": "./src/*.ts"

@@ -11,21 +11,22 @@
 			"types": "./dist/index.d.ts",
 			"default": "./src/index.ts"
 		},
-		"./*": {
-			"types": "./dist/*.d.ts",
-			"default": "./src/*.ts"
+		"./context": {
+			"types": "./dist/context.d.ts",
+			"default": "./src/context.ts"
 		}
 	},
 	"dependencies": {
-		"@orpc/server": "catalog:",
+		"@opium/auth": "workspace:*",
+		"@opium/db": "workspace:*",
+		"@opium/storage": "workspace:*",
 		"@orpc/client": "catalog:",
 		"@orpc/openapi": "catalog:",
+		"@orpc/server": "catalog:",
 		"@orpc/zod": "catalog:",
-		"elysia": "catalog:",
 		"dotenv": "catalog:",
-		"zod": "catalog:",
-		"@opium/auth": "workspace:*",
-		"@opium/db": "workspace:*"
+		"elysia": "catalog:",
+		"zod": "catalog:"
 	},
 	"devDependencies": {
 		"@opium/tsconfig": "workspace:*",

@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@opium/ui/lib/utils";
+import { useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
 import { SidebarHeader } from "./sidebar/sidebar-header";
 import { SidebarLibrary } from "./sidebar/sidebar-library";
@@ -8,32 +9,39 @@ import { SidebarNavigation } from "./sidebar/sidebar-navigation";
 import { SidebarSearch } from "./sidebar/sidebar-search";
 import { SidebarUserMenu } from "./sidebar/sidebar-user-menu";
 
-export const Sidebar = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+type SidebarProps = {
+	isAdmin: boolean;
+};
 
-  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+export const Sidebar = ({ isAdmin }: SidebarProps) => {
+	const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  return (
-    <div
-      className={cn(
-        "relative top-0 bottom-0 left-0 z-50 flex h-dvh shrink-0 flex-col py-2 transition-all duration-200",
-        isSidebarOpen ? "top-0 h-full w-[200px]" : "w-[50px]"
-      )}
-    >
-      <div className="flex w-full flex-1 flex-col items-start overflow-hidden">
-        <SidebarHeader isSidebarOpen={isSidebarOpen} onToggle={toggleSidebar} />
+	const { location } = useRouterState();
+	const pathname = location.pathname.replace(/\/$/, "");
 
-        <SidebarSearch isSidebarOpen={isSidebarOpen} />
+	const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
-        <SidebarNavigation isSidebarOpen={isSidebarOpen} />
+	return (
+		<div
+			className={cn(
+				"relative top-0 bottom-0 left-0 z-50 flex h-dvh shrink-0 flex-col py-2 transition-all duration-200",
+				isSidebarOpen ? "top-0 h-full w-[200px]" : "w-[50px]",
+			)}
+		>
+			<div className="flex w-full flex-1 flex-col items-start overflow-hidden">
+				<SidebarHeader isSidebarOpen={isSidebarOpen} onToggle={toggleSidebar} />
 
-        <SidebarLibrary isSidebarOpen={isSidebarOpen} />
+				<SidebarSearch isSidebarOpen={isSidebarOpen} />
 
-        <SidebarUserMenu
-          isSidebarOpen={isSidebarOpen}
-          onToggle={toggleSidebar}
-        />
-      </div>
-    </div>
-  );
+				<SidebarNavigation isSidebarOpen={isSidebarOpen} pathname={pathname} isAdmin={isAdmin} />
+
+				<SidebarLibrary isSidebarOpen={isSidebarOpen} />
+
+				<SidebarUserMenu
+					isSidebarOpen={isSidebarOpen}
+					onToggle={toggleSidebar}
+				/>
+			</div>
+		</div>
+	);
 };
