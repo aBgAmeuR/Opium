@@ -1,4 +1,4 @@
-import { ExploreIcon, HomeIcon } from "@opium/icons";
+import { AdminIcon, ExploreIcon, HomeIcon } from "@opium/icons";
 import { Button } from "@opium/ui/components/button";
 import {
 	Tooltip,
@@ -7,7 +7,6 @@ import {
 } from "@opium/ui/components/tooltip";
 import { cn } from "@opium/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
-import { UsersIcon } from "lucide-react";
 
 type SidebarNavigationProps = {
 	isSidebarOpen: boolean;
@@ -104,11 +103,11 @@ export function SidebarNavigation({
 
 					{isAdmin && (
 						<NavigationItem
-							icon={UsersIcon}
+							icon={AdminIcon}
 							isSidebarOpen={isSidebarOpen}
-							label="Manage Artists"
-							to="/admin/artists"
-							isActive={pathname === "/admin/artists"}
+							label="Admin"
+							to="/admin"
+							isActive={pathname.startsWith("/admin")}
 						/>
 					)}
 				</div>

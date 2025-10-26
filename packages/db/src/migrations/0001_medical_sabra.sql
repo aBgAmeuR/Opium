@@ -1,0 +1,1 @@
+ALTER TABLE "song" ALTER COLUMN "producers" SET DATA TYPE text;

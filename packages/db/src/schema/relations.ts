@@ -7,6 +7,7 @@ import {
 	playlist,
 	playlistsToSongs,
 	song,
+	songsToFeaturedArtists,
 } from "./music";
 
 export const userRelations = relations(user, ({ many }) => ({
@@ -17,6 +18,7 @@ export const userRelations = relations(user, ({ many }) => ({
 export const artistRelations = relations(artist, ({ many }) => ({
 	albums: many(album),
 	songs: many(song),
+	featuredOnSongs: many(songsToFeaturedArtists),
 }));
 
 export const albumRelations = relations(album, ({ one, many }) => ({
@@ -36,6 +38,7 @@ export const songRelations = relations(song, ({ one, many }) => ({
 		fields: [song.artistId],
 		references: [artist.id],
 	}),
+	featuredArtists: many(songsToFeaturedArtists),
 	playlistSongs: many(playlistsToSongs),
 	interactions: many(interaction),
 }));
@@ -58,6 +61,20 @@ export const playlistsToSongsRelations = relations(
 		song: one(song, {
 			fields: [playlistsToSongs.songId],
 			references: [song.id],
+		}),
+	}),
+);
+
+export const songsToFeaturedArtistsRelations = relations(
+	songsToFeaturedArtists,
+	({ one }) => ({
+		song: one(song, {
+			fields: [songsToFeaturedArtists.songId],
+			references: [song.id],
+		}),
+		artist: one(artist, {
+			fields: [songsToFeaturedArtists.artistId],
+			references: [artist.id],
 		}),
 	}),
 );

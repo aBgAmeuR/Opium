@@ -23,7 +23,7 @@ export const trackTypesEnum = [
 export const playlistVisibilitiesEnum = ["public", "private"] as const;
 
 export const artist = pgTable("artist", {
-	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+	id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
 	name: varchar("name", { length: 255 }).notNull(),
 	image: varchar("image", { length: 255 }).notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -34,7 +34,7 @@ export const artist = pgTable("artist", {
 });
 
 export const album = pgTable("album", {
-	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+	id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
 	artistId: integer("artist_id")
 		.notNull()
 		.references(() => artist.id, { onDelete: "cascade" }),
@@ -56,7 +56,8 @@ export const song = pgTable("song", {
 		.notNull()
 		.references(() => artist.id, { onDelete: "cascade" }),
 	title: varchar("title", { length: 255 }).notNull(),
-	producers: text("producers").array(),
+	fileUrl: varchar("file_url", { length: 255 }).notNull(),
+	producers: text("producers").$type<string[]>(),
 	type: text("type", { enum: trackTypesEnum }).notNull(),
 	length: integer("length").notNull(),
 	createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -66,8 +67,21 @@ export const song = pgTable("song", {
 		.notNull(),
 });
 
+export const songsToFeaturedArtists = pgTable(
+	"songs_to_featured_artists",
+	{
+		songId: varchar("song_id", { length: 255 })
+			.notNull()
+			.references(() => song.id, { onDelete: "cascade" }),
+		artistId: integer("artist_id")
+			.notNull()
+			.references(() => artist.id, { onDelete: "cascade" }),
+	},
+	(table) => [primaryKey({ columns: [table.songId, table.artistId] })],
+);
+
 export const playlist = pgTable("playlist", {
-	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+	id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
 	userId: text("user_id")
 		.notNull()
 		.references(() => user.id, { onDelete: "cascade" }),

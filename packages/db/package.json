@@ -25,9 +25,10 @@
 		}
 	},
 	"dependencies": {
+		"@neondatabase/serverless": "^1.0.2",
+		"dotenv": "catalog:",
 		"drizzle-orm": "catalog:",
 		"pg": "^8.14.1",
-		"dotenv": "catalog:",
 		"zod": "catalog:"
 	},
 	"devDependencies": {

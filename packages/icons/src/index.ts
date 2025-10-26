@@ -1,4 +1,5 @@
 export * from "@phosphor-icons/react";
+export { AdminIcon } from "./icons/admin";
 export { ExploreIcon } from "./icons/explore";
 export { HomeIcon } from "./icons/home";
 export { MoonIcon } from "./icons/moon";
