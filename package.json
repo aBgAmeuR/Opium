@@ -1,6 +1,7 @@
 {
 	"name": "opium",
 	"private": true,
+	"license" : "GPL-3.0",
 	"type": "module",
 	"workspaces": {
 		"packages": [
