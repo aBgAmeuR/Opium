@@ -1,46 +1,54 @@
 # Better-T-Stack Project Rules
 
-This is a opium project created with Better-T-Stack CLI.
+This is an opium project.
 
 ## Project Structure
 
-This is a monorepo with the following structure:
+This is a Turborepo monorepo with the following structure:
 
 - **`apps/web/`** - Frontend application
-
 - **`apps/server/`** - Backend server (Elysia)
-
 - **`packages/api/`** - Shared API logic and types
 - **`packages/auth/`** - Authentication logic and utilities
-- **`packages/db/`** - Database schema and utilities
+- **`packages/db/`** - Database schema and utilities (Drizzle ORM)
+- **`packages/email/`** - Email-related utilities
+- **`packages/icons/`** - Icon set/package
+- **`packages/storage/`** - Storage utilities
+- **`packages/ui/`** - Shared UI components
 
+## Available Scripts (root)
 
-## Available Scripts
+- `bun run dev` - Run `turbo dev` across workspaces (starts dev tasks that exist)
+- `bun run build` - Generate DB types then build all workspaces
+- `bun run preview` - Run `turbo preview`
+- `bun run db:push` - Run Drizzle push in `@opium/db`
+- `bun run db:studio` - Open Drizzle Studio for `@opium/db`
+- `bun run db:generate` - Run Drizzle generate in `@opium/db`
+- `bun run db:migrate` - Run Drizzle migrate in `@opium/db`
 
-- `bun run dev` - Start all apps in development mode
-- `bun run dev:web` - Start only the web app
-- `bun run dev:server` - Start only the server
+## Database (Drizzle ORM)
 
-## Database Commands
+All database operations are managed in the `@opium/db` workspace (Drizzle ORM). From the repository root, use the provided scripts which target `@opium/db` via Turbo:
 
-All database operations should be run from the server workspace:
-
-- `bun run db:push` - Push schema changes to database
-- `bun run db:studio` - Open database studio
-- `bun run db:generate` - Generate Prisma files
+- `bun run db:push` - Push schema changes to the database
+- `bun run db:studio` - Open Drizzle Studio
+- `bun run db:generate` - Generate Drizzle artifacts
 - `bun run db:migrate` - Run database migrations
 
-Database schema is located in `apps/server/prisma/schema.prisma`
+Configuration: `packages/db/drizzle.config.ts`
+
+Schemas: `packages/db/src/schema/`
 
 ## API Structure
 
 - oRPC endpoints are in `apps/server/src/api/`
-- Client-side API utils are in `apps/web/src/utils/api.ts`
+- Client-side API utils are in `apps/web/src/utils/orpc.ts`
 
 ## Authentication
 
 Authentication is enabled in this project:
-- Server auth logic is in `apps/server/src/lib/auth.ts`
+
+- Server-side auth utilities are in `packages/auth`
 - Web app auth client is in `apps/web/src/lib/auth-client.ts`
 
 ## Adding More Features
@@ -53,6 +61,7 @@ add
 ```
 
 Available addons you can add:
+
 - **Documentation**: Starlight, Fumadocs
 - **Linting**: Biome, Oxlint, Ultracite
 - **Other**: Ruler, Turborepo, PWA, Tauri, Husky
@@ -70,10 +79,8 @@ This project includes a `bts.jsonc` configuration file that stores your Better-T
 
 ## Key Points
 
-- This is a Turborepo monorepo using bun workspaces
-- Each app has its own `package.json` and dependencies
+- This is a Turborepo monorepo using Bun workspaces
+- Workspaces are defined under `apps/*`, `packages/*`, and `tooling/*`
+- Each workspace has its own `package.json` and dependencies
 - Run commands from the root to execute across all workspaces
-- Run workspace-specific commands with `bun run command-name`
 - Turborepo handles build caching and parallel execution
-- Use `bunx
-create-better-t-stack add` to add more features later

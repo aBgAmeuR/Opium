@@ -16,24 +16,9 @@ merge_strategy = "merge"
 command = "npx"
 args = ["-y", "@upstash/context7-mcp"]
 
-
-
 [mcp_servers.shadcn]
 command = "npx"
 args = ["shadcn@latest", "mcp"]
 
-
-
-
-[mcp_servers.mongodb]
-command = "npx"
-args = ["-y", "mongodb-mcp-server", "--connectionString", "mongodb://localhost:27017/myDatabase", "--readOnly"]
-
 [mcp_servers.better-auth]
 url = "https://mcp.chonkie.ai/better-auth/better-auth-builder/mcp"
-
-
-# --- Global .gitignore Configuration ---
-[gitignore]
-# Enable/disable automatic .gitignore updates (default: true)
-enabled = true
