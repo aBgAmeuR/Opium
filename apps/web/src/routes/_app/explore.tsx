@@ -3,19 +3,12 @@ import { cn } from "@opium/ui/lib/utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { CatalogCard } from "@/components/catalog-card";
 import { types } from "@/constants/types";
-import { getUser } from "@/functions/auth";
 
 export const Route = createFileRoute("/_app/explore")({
 	component: RouteComponent,
-	beforeLoad: async () => {
-		const session = await getUser();
-		return { session };
-	},
 });
 
 function RouteComponent() {
-	// const { session } = Route.useRouteContext();
-
 	return (
 		<main className="flex flex-col gap-4 p-6">
 			<div>

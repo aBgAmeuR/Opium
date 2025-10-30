@@ -1,12 +1,12 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { RootLayout } from "@/components/layout/root";
-import { isAdmin as isAdminFn } from "@/functions/auth";
+import { getUserFn } from "@/functions/auth";
 
 export const Route = createFileRoute("/_app")({
 	component: RouteComponent,
 	beforeLoad: async () => {
-		const isAdmin = await isAdminFn();
-		return { isAdmin };
+		const session = await getUserFn();
+		return { user: session?.user, isAdmin: session?.user?.role === "admin" };
 	},
 });
 

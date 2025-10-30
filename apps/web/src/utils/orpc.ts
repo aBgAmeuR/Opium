@@ -10,6 +10,11 @@ import { QueryCache, QueryClient } from "@tanstack/react-query";
 import { createIsomorphicFn } from "@tanstack/react-start";
 
 export const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			staleTime: 1000 * 60,
+		},
+	},
 	queryCache: new QueryCache({
 		onError: (error) => {
 			toastManager.add({

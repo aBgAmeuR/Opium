@@ -1,18 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { AlbumsTable } from "@/features/albums/components/albums-table";
 import { NewAlbum } from "@/features/albums/components/new-album";
-import { isAdmin as isAdminFn } from "@/functions/auth";
 import { orpc } from "@/utils/orpc";
 
 export const Route = createFileRoute("/_app/admin/albums")({
 	component: RouteComponent,
-	beforeLoad: async () => {
-		const isAdmin = await isAdminFn();
-		if (!isAdmin) {
-			throw redirect({ to: "/dashboard" });
-		}
-	},
 });
 
 function RouteComponent() {

@@ -17,7 +17,9 @@ import { Route as AppStatusRouteImport } from './routes/_app/status'
 import { Route as AppLibraryRouteImport } from './routes/_app/library'
 import { Route as AppExploreRouteImport } from './routes/_app/explore'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as AppAdminRouteImport } from './routes/_app/_admin'
 import { Route as AppAdminIndexRouteImport } from './routes/_app/admin/index'
+import { Route as AppPlaylistIdRouteImport } from './routes/_app/playlist/$id'
 import { Route as AppAdminTracksRouteImport } from './routes/_app/admin/tracks'
 import { Route as AppAdminArtistsRouteImport } from './routes/_app/admin/artists'
 import { Route as AppAdminAlbumsRouteImport } from './routes/_app/admin/albums'
@@ -61,9 +63,18 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/_admin',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAdminIndexRoute = AppAdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPlaylistIdRoute = AppPlaylistIdRouteImport.update({
+  id: '/playlist/$id',
+  path: '/playlist/$id',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAdminTracksRoute = AppAdminTracksRouteImport.update({
@@ -93,6 +104,7 @@ export interface FileRoutesByFullPath {
   '/admin/albums': typeof AppAdminAlbumsRoute
   '/admin/artists': typeof AppAdminArtistsRoute
   '/admin/tracks': typeof AppAdminTracksRoute
+  '/playlist/$id': typeof AppPlaylistIdRoute
   '/admin': typeof AppAdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -106,6 +118,7 @@ export interface FileRoutesByTo {
   '/admin/albums': typeof AppAdminAlbumsRoute
   '/admin/artists': typeof AppAdminArtistsRoute
   '/admin/tracks': typeof AppAdminTracksRoute
+  '/playlist/$id': typeof AppPlaylistIdRoute
   '/admin': typeof AppAdminIndexRoute
 }
 export interface FileRoutesById {
@@ -113,6 +126,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
+  '/_app/_admin': typeof AppAdminRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/explore': typeof AppExploreRoute
   '/_app/library': typeof AppLibraryRoute
@@ -121,6 +135,7 @@ export interface FileRoutesById {
   '/_app/admin/albums': typeof AppAdminAlbumsRoute
   '/_app/admin/artists': typeof AppAdminArtistsRoute
   '/_app/admin/tracks': typeof AppAdminTracksRoute
+  '/_app/playlist/$id': typeof AppPlaylistIdRoute
   '/_app/admin/': typeof AppAdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -136,6 +151,7 @@ export interface FileRouteTypes {
     | '/admin/albums'
     | '/admin/artists'
     | '/admin/tracks'
+    | '/playlist/$id'
     | '/admin'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -149,12 +165,14 @@ export interface FileRouteTypes {
     | '/admin/albums'
     | '/admin/artists'
     | '/admin/tracks'
+    | '/playlist/$id'
     | '/admin'
   id:
     | '__root__'
     | '/'
     | '/_app'
     | '/login'
+    | '/_app/_admin'
     | '/_app/dashboard'
     | '/_app/explore'
     | '/_app/library'
@@ -163,6 +181,7 @@ export interface FileRouteTypes {
     | '/_app/admin/albums'
     | '/_app/admin/artists'
     | '/_app/admin/tracks'
+    | '/_app/playlist/$id'
     | '/_app/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -231,11 +250,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/_admin': {
+      id: '/_app/_admin'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AppAdminRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/admin/': {
       id: '/_app/admin/'
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AppAdminIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/playlist/$id': {
+      id: '/_app/playlist/$id'
+      path: '/playlist/$id'
+      fullPath: '/playlist/$id'
+      preLoaderRoute: typeof AppPlaylistIdRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/admin/tracks': {
@@ -263,6 +296,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
+  AppAdminRoute: typeof AppAdminRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppExploreRoute: typeof AppExploreRoute
   AppLibraryRoute: typeof AppLibraryRoute
@@ -270,10 +304,12 @@ interface AppRouteChildren {
   AppAdminAlbumsRoute: typeof AppAdminAlbumsRoute
   AppAdminArtistsRoute: typeof AppAdminArtistsRoute
   AppAdminTracksRoute: typeof AppAdminTracksRoute
+  AppPlaylistIdRoute: typeof AppPlaylistIdRoute
   AppAdminIndexRoute: typeof AppAdminIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAdminRoute: AppAdminRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppExploreRoute: AppExploreRoute,
   AppLibraryRoute: AppLibraryRoute,
@@ -281,6 +317,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAdminAlbumsRoute: AppAdminAlbumsRoute,
   AppAdminArtistsRoute: AppAdminArtistsRoute,
   AppAdminTracksRoute: AppAdminTracksRoute,
+  AppPlaylistIdRoute: AppPlaylistIdRoute,
   AppAdminIndexRoute: AppAdminIndexRoute,
 }
 

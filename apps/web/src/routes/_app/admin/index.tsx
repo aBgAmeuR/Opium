@@ -1,23 +1,14 @@
-import { Button } from "@opium/ui/components/button";
 import {
 	Card,
 	CardDescription,
 	CardHeader,
-	CardPanel,
 	CardTitle,
 } from "@opium/ui/components/card";
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
-import { isAdmin as isAdminFn } from "@/functions/auth";
 
 export const Route = createFileRoute("/_app/admin/")({
 	component: RouteComponent,
-	beforeLoad: async () => {
-		const isAdmin = await isAdminFn();
-		if (!isAdmin) {
-			throw redirect({ to: "/dashboard" });
-		}
-	},
 });
 
 function RouteComponent() {
