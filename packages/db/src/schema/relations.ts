@@ -2,9 +2,11 @@ import { relations } from "drizzle-orm";
 import { user } from "./auth";
 import {
 	album,
+	albumLikes,
 	artist,
 	interaction,
 	playlist,
+	playlistLikes,
 	playlistsToSongs,
 	song,
 	songsToFeaturedArtists,
@@ -13,6 +15,8 @@ import {
 export const userRelations = relations(user, ({ many }) => ({
 	playlists: many(playlist),
 	interactions: many(interaction),
+	playlistLikes: many(playlistLikes),
+	albumLikes: many(albumLikes),
 }));
 
 export const artistRelations = relations(artist, ({ many }) => ({
@@ -27,6 +31,7 @@ export const albumRelations = relations(album, ({ one, many }) => ({
 		references: [artist.id],
 	}),
 	songs: many(song),
+	likes: many(albumLikes),
 }));
 
 export const songRelations = relations(song, ({ one, many }) => ({
@@ -49,6 +54,7 @@ export const playlistRelations = relations(playlist, ({ one, many }) => ({
 		references: [user.id],
 	}),
 	playlistSongs: many(playlistsToSongs),
+	likes: many(playlistLikes),
 }));
 
 export const playlistsToSongsRelations = relations(

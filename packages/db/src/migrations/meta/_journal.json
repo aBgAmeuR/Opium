@@ -15,6 +15,20 @@
       "when": 1761509754012,
       "tag": "0001_medical_sabra",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1761845839832,
+      "tag": "0002_hot_thaddeus_ross",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1761846466759,
+      "tag": "0003_unknown_madelyne_pryor",
+      "breakpoints": true
     }
   ]
 }

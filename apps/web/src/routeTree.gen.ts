@@ -14,6 +14,7 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as AppStatusRouteImport } from './routes/_app/status'
+import { Route as AppLibraryRouteImport } from './routes/_app/library'
 import { Route as AppExploreRouteImport } from './routes/_app/explore'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
 import { Route as AppAdminIndexRouteImport } from './routes/_app/admin/index'
@@ -43,6 +44,11 @@ const ApiSplatRoute = ApiSplatRouteImport.update({
 const AppStatusRoute = AppStatusRouteImport.update({
   id: '/status',
   path: '/status',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppLibraryRoute = AppLibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
   getParentRoute: () => AppRoute,
 } as any)
 const AppExploreRoute = AppExploreRouteImport.update({
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/dashboard': typeof AppDashboardRoute
   '/explore': typeof AppExploreRoute
+  '/library': typeof AppLibraryRoute
   '/status': typeof AppStatusRoute
   '/api/$': typeof ApiSplatRoute
   '/admin/albums': typeof AppAdminAlbumsRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/dashboard': typeof AppDashboardRoute
   '/explore': typeof AppExploreRoute
+  '/library': typeof AppLibraryRoute
   '/status': typeof AppStatusRoute
   '/api/$': typeof ApiSplatRoute
   '/admin/albums': typeof AppAdminAlbumsRoute
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/explore': typeof AppExploreRoute
+  '/_app/library': typeof AppLibraryRoute
   '/_app/status': typeof AppStatusRoute
   '/api/$': typeof ApiSplatRoute
   '/_app/admin/albums': typeof AppAdminAlbumsRoute
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/dashboard'
     | '/explore'
+    | '/library'
     | '/status'
     | '/api/$'
     | '/admin/albums'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/dashboard'
     | '/explore'
+    | '/library'
     | '/status'
     | '/api/$'
     | '/admin/albums'
@@ -146,6 +157,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/_app/dashboard'
     | '/_app/explore'
+    | '/_app/library'
     | '/_app/status'
     | '/api/$'
     | '/_app/admin/albums'
@@ -198,6 +210,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStatusRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/library': {
+      id: '/_app/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof AppLibraryRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/explore': {
       id: '/_app/explore'
       path: '/explore'
@@ -246,6 +265,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
   AppExploreRoute: typeof AppExploreRoute
+  AppLibraryRoute: typeof AppLibraryRoute
   AppStatusRoute: typeof AppStatusRoute
   AppAdminAlbumsRoute: typeof AppAdminAlbumsRoute
   AppAdminArtistsRoute: typeof AppAdminArtistsRoute
@@ -256,6 +276,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
   AppExploreRoute: AppExploreRoute,
+  AppLibraryRoute: AppLibraryRoute,
   AppStatusRoute: AppStatusRoute,
   AppAdminAlbumsRoute: AppAdminAlbumsRoute,
   AppAdminArtistsRoute: AppAdminArtistsRoute,

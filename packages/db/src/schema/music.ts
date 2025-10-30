@@ -127,3 +127,31 @@ export const interaction = pgTable(
 	},
 	(table) => [primaryKey({ columns: [table.userId, table.songId] })],
 );
+
+export const playlistLikes = pgTable(
+	"playlist_likes",
+	{
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		playlistId: integer("playlist_id")
+			.notNull()
+			.references(() => playlist.id, { onDelete: "cascade" }),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+	},
+	(table) => [primaryKey({ columns: [table.userId, table.playlistId] })],
+);
+
+export const albumLikes = pgTable(
+	"album_likes",
+	{
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		albumId: integer("album_id")
+			.notNull()
+			.references(() => album.id, { onDelete: "cascade" }),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+	},
+	(table) => [primaryKey({ columns: [table.userId, table.albumId] })],
+);
