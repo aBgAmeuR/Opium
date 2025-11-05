@@ -13,11 +13,7 @@ function LibraryComponent() {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 
-	const ownPlaylists = useQuery(orpc.playlist.getOwnPlaylists.queryOptions());
-	const likedPlaylists = useQuery(
-		orpc.playlist.getLikedPlaylists.queryOptions(),
-	);
-	const likedAlbums = useQuery(orpc.playlist.getLikedAlbums.queryOptions());
+	const library = useQuery(orpc.library.getLibrary.queryOptions());
 
 	const createPlaylistMutation = useMutation(
 		orpc.playlist.create.mutationOptions({
@@ -51,96 +47,49 @@ function LibraryComponent() {
 
 			<div className="flex flex-col gap-8">
 				<section>
-					<h2 className="mb-4 font-semibold text-xl">My Playlists</h2>
-					<CatalogCardList
-						data={(ownPlaylists.data ?? []).map((playlist) => ({
+					{/* <CatalogCardList
+						data={(library.data ?? []).sort((a, b) => b.likedAt.getTime() - a.likedAt.getTime()).map((playlist) => ({
 							id: playlist.id.toString(),
 							name: playlist.name,
 							description: `${playlist.totalSongs ?? 0} song${(playlist.totalSongs ?? 0) !== 1 ? "s" : ""}`,
 							image: playlist.image ?? undefined,
 						}))}
-						isLoading={ownPlaylists.isLoading}
-						emptyMessage="No playlists created"
+						isLoading={library.isLoading}
+						emptyMessage="No items in your library"
 						onClick={(id) => navigate({ to: "/playlist/$id", params: { id } })}
-					/>
-				</section>
-
-				<section>
-					<h2 className="mb-4 font-semibold text-xl">Liked Playlists</h2>
-					<CatalogCardList
-						data={(likedPlaylists.data ?? []).map((playlist) => ({
-							id: playlist.id.toString(),
-							name: playlist.name,
-							description: `${playlist.totalSongs ?? 0} song${(playlist.totalSongs ?? 0) !== 1 ? "s" : ""}`,
-							image: playlist.image ?? undefined,
-						}))}
-						isLoading={likedPlaylists.isLoading}
-						emptyMessage="No liked playlists"
-						onClick={(id) => navigate({ to: "/playlist/$id", params: { id } })}
-					/>
-				</section>
-
-				<section>
-					<h2 className="mb-4 font-semibold text-xl">Liked Albums</h2>
-					<CatalogCardList
-						data={(likedAlbums.data ?? []).map((album) => ({
-							id: album.id.toString(),
-							name: album.name,
-							description: `${album.totalSongs ?? 0} song${(album.totalSongs ?? 0) !== 1 ? "s" : ""}`,
-							image: album.cover ?? undefined,
-						}))}
-						isLoading={likedAlbums.isLoading}
-						emptyMessage="No liked albums"
-					/>
+					/> */}
+					{library.isLoading && (
+						<div className="flex">
+							{Array.from({ length: 4 }).map((_, index) => (
+								<CatalogCardSkeleton key={index} />
+							))}
+						</div>
+					)}
+					<div className="flex">
+						{library.data
+							?.sort((a, b) => b.likedAt.getTime() - a.likedAt.getTime())
+							?.map((item) => (
+								<CatalogCard
+									key={item.id}
+									onClick={() =>
+										navigate({
+											to: "/playlist/$id",
+											params: { id: item.id.toString() },
+										})
+									}
+									name={item.name}
+									description={`${item.totalSongs} song${item.totalSongs !== 1 ? "s" : ""}`}
+									imageSrc={item.image ?? undefined}
+								/>
+							))}
+					</div>
+					{library.data?.length === 0 && (
+						<div className="text-muted-foreground text-sm">
+							No items in your library
+						</div>
+					)}
 				</section>
 			</div>
 		</div>
 	);
 }
-
-type CatalogCardListProps = {
-	data: Array<{
-		id: string;
-		name: string;
-		image?: string;
-		description: string;
-	}>;
-	onClick?: (id: string) => void;
-	isLoading: boolean;
-	emptyMessage: string;
-};
-
-const CatalogCardList = ({
-	data,
-	onClick,
-	isLoading,
-	emptyMessage,
-}: CatalogCardListProps) => {
-	if (isLoading) {
-		return (
-			<div className="flex">
-				{Array.from({ length: 4 }).map((_, index) => (
-					<CatalogCardSkeleton key={index} />
-				))}
-			</div>
-		);
-	}
-
-	if (data && data.length > 0) {
-		return (
-			<div className="flex">
-				{data.map((item) => (
-					<CatalogCard
-						key={item.id}
-						onClick={() => onClick?.(item.id)}
-						name={item.name}
-						description={item.description}
-						imageSrc={item.image ?? undefined}
-					/>
-				))}
-			</div>
-		);
-	}
-
-	return <div className="text-muted-foreground text-sm">{emptyMessage}</div>;
-};

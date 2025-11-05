@@ -19,6 +19,10 @@
 			"types": "./dist/drizzle.d.ts",
 			"default": "./src/drizzle.ts"
 		},
+		"./pg-core": {
+			"types": "./dist/pg-core.d.ts",
+			"default": "./src/pg-core.ts"
+		},
 		"./*": {
 			"types": "./dist/*.d.ts",
 			"default": "./src/*.ts"

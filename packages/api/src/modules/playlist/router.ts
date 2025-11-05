@@ -1,4 +1,4 @@
-import { protectedProcedure, publicProcedure } from "../../procedures";
+import { protectedProcedure } from "../../procedures";
 import { playlistService } from "./service";
 import {
 	createPlaylistSchema,

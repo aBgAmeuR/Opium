@@ -3,6 +3,7 @@ import { adminRouter } from "./modules/admin/router";
 import { albumRouter } from "./modules/album/router";
 import { artistRouter } from "./modules/artist/router";
 import { imageRouter } from "./modules/image/router";
+import { libraryRouter } from "./modules/library/router";
 import { playlistRouter } from "./modules/playlist/router";
 import { songRouter } from "./modules/song/router";
 import { publicProcedure } from "./procedures";
@@ -15,6 +16,7 @@ export const appRouter = {
 	song: songRouter,
 	image: imageRouter,
 	playlist: playlistRouter,
+	library: libraryRouter,
 };
 
 export type AppRouter = typeof appRouter;
