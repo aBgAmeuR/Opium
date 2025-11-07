@@ -8,7 +8,15 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
 	plugins: [
 		tsconfigPaths(),
-		nitroV2Plugin({ preset: "bun", compatibilityDate: "2025-11-07" }),
+		nitroV2Plugin({
+			preset: "bun",
+			compatibilityDate: "2025-11-07",
+			vercel: {
+				functions: {
+					runtime: "bun1.x",
+				},
+			},
+		}),
 		tailwindcss(),
 		tanstackStart(),
 		viteReact(),
