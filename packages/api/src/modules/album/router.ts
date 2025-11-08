@@ -1,6 +1,6 @@
-import { adminProcedure } from "../../procedures";
+import { adminProcedure, protectedProcedure } from "../../procedures";
 import { albumService } from "./service";
-import { createAlbumSchema } from "./validation";
+import { createAlbumSchema, getAlbumSchema } from "./validation";
 
 export const albumRouter = {
 	create: adminProcedure
@@ -8,4 +8,8 @@ export const albumRouter = {
 		.handler(async ({ input }) => await albumService.create(input)),
 
 	list: adminProcedure.handler(async () => await albumService.list()),
+
+	getById: protectedProcedure
+		.input(getAlbumSchema)
+		.handler(async ({ input }) => await albumService.getById(input.id)),
 };

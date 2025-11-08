@@ -7,3 +7,9 @@ export const createAlbumSchema = z.object({
 });
 
 export type CreateAlbumInput = z.infer<typeof createAlbumSchema>;
+
+export const getAlbumSchema = z.object({
+	id: z.number().int().positive(),
+});
+
+export type GetAlbumInput = z.infer<typeof getAlbumSchema>;

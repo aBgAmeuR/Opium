@@ -29,7 +29,6 @@ export const playlistRouter = {
 		.input(getPlaylistSchema)
 		.handler(async ({ input, context }) => {
 			const userId = context.session?.user?.id ?? null;
-			console.log("call", userId, input.id);
 			return await playlistService.getById(userId, input.id);
 		}),
 

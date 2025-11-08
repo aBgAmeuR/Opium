@@ -1,13 +1,17 @@
 import { Button } from "@opium/ui/components/button";
+import { Skeleton } from "@opium/ui/components/skeleton";
 import {
 	Tooltip,
 	TooltipPopup,
 	TooltipTrigger,
 } from "@opium/ui/components/tooltip";
 import { cn } from "@opium/ui/lib/utils";
-import { Link } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Link, type LinkProps } from "@tanstack/react-router";
 import { Image } from "@unpic/react";
-import { ChevronRightIcon } from "lucide-react";
+import { ChevronRightIcon, MusicIcon } from "lucide-react";
+import { Suspense } from "react";
+import { orpc } from "@/utils/orpc";
 
 const IMAGE_SIZE_OPEN = 32;
 const IMAGE_SIZE_CLOSED = 24;
@@ -16,19 +20,26 @@ type SidebarLibraryProps = {
 	isSidebarOpen: boolean;
 };
 
+type LibraryItemProps = {
+	title: string;
+	imageSrc?: string;
+	isSidebarOpen: boolean;
+	description: string;
+	to: LinkProps["to"];
+	params?: LinkProps["params"];
+};
+
 const LibraryItem = ({
 	title,
 	imageSrc,
 	isSidebarOpen,
 	description,
-}: {
-	title: string;
-	imageSrc: string;
-	isSidebarOpen: boolean;
-	description: string;
-}) => {
+	to,
+	params,
+}: LibraryItemProps) => {
 	const buttonContent = (
 		<Button
+			render={<Link to={to} params={params} />}
 			className={cn(
 				isSidebarOpen && "relative w-full justify-start gap-2.5 px-2 py-1.5",
 				!isSidebarOpen && "w-full justify-center px-0 py-4.5",
@@ -38,23 +49,32 @@ const LibraryItem = ({
 			variant="ghost"
 		>
 			<div className={cn(!isSidebarOpen && "flex justify-center")}>
-				<Image
-					alt={title}
-					className={cn(
-						"rounded-[4px] object-cover",
-						isSidebarOpen ? "size-8" : "size-6",
-					)}
-					height={isSidebarOpen ? IMAGE_SIZE_OPEN : IMAGE_SIZE_CLOSED}
-					src={imageSrc}
-					width={isSidebarOpen ? IMAGE_SIZE_OPEN : IMAGE_SIZE_CLOSED}
-				/>
+				{imageSrc ? (
+					<Image
+						alt={title}
+						className={cn(
+							"rounded-[4px] object-cover",
+							isSidebarOpen ? "size-8 min-w-8" : "size-6 min-w-6",
+						)}
+						height={isSidebarOpen ? IMAGE_SIZE_OPEN : IMAGE_SIZE_CLOSED}
+						src={imageSrc}
+						width={isSidebarOpen ? IMAGE_SIZE_OPEN : IMAGE_SIZE_CLOSED}
+					/>
+				) : (
+					<div
+						className={cn(
+							"flex items-center justify-center rounded-[4px] bg-muted text-muted-foreground",
+							isSidebarOpen ? "size-8" : "size-6",
+						)}
+					>
+						<MusicIcon className={cn(isSidebarOpen ? "size-4" : "size-3")} />
+					</div>
+				)}
 			</div>
 			{isSidebarOpen && (
-				<div className="flex flex-col">
-					<p className="line-clamp-1 text-left text-foreground text-xs">
-						{title}
-					</p>
-					<p className="line-clamp-1 text-left text-muted-foreground text-xs">
+				<div className="flex w-full min-w-0 flex-col">
+					<p className="truncate text-left text-foreground text-xs">{title}</p>
+					<p className="truncate text-left text-muted-foreground text-xs">
 						{description}
 					</p>
 				</div>
@@ -77,27 +97,6 @@ const LibraryItem = ({
 };
 
 export const SidebarLibrary = ({ isSidebarOpen }: SidebarLibraryProps) => {
-	const libraryItems = [
-		{
-			title: "Whole Lotta Red",
-			imageSrc:
-				"https://cdn-images.dzcdn.net/images/cover/3c5f5f3f5f41ff96f961afd7df7eb4d9/0x1900-000000-80-0-0.jpg",
-			description: "Album",
-		},
-		{
-			title: "Die Lit",
-			imageSrc:
-				"https://cdn-images.dzcdn.net/images/cover/f2d66b587ca8d3f0fa222c3501d23564/1900x1900-000000-81-0-0.jpg",
-			description: "Playlist",
-		},
-		{
-			title: "Playboi Carti",
-			imageSrc:
-				"https://cdn-images.dzcdn.net/images/cover/0ae8e05f734268cbe5aae06f96f2b1f2/0x1900-000000-80-0-0.jpg",
-			description: "Album",
-		},
-	];
-
 	return (
 		<div
 			className={cn(
@@ -127,16 +126,40 @@ export const SidebarLibrary = ({ isSidebarOpen }: SidebarLibraryProps) => {
 					!isSidebarOpen && "py-1",
 				)}
 			>
-				{libraryItems.map((item) => (
-					<LibraryItem
-						description={item.description}
-						imageSrc={item.imageSrc}
-						isSidebarOpen={isSidebarOpen}
-						key={item.title}
-						title={item.title}
-					/>
-				))}
+				<Suspense fallback={<Skeleton className="h-10 w-full" />}>
+					<LibraryList isSidebarOpen={isSidebarOpen} />
+				</Suspense>
 			</div>
 		</div>
 	);
+};
+
+type LibraryListProps = {
+	isSidebarOpen: boolean;
+};
+
+const LibraryList = ({ isSidebarOpen }: LibraryListProps) => {
+	const library = useSuspenseQuery(orpc.library.getLibrary.queryOptions());
+
+	if (library.isError) {
+		return (
+			<div>
+				<p>Error loading library</p>
+			</div>
+		);
+	}
+
+	return library.data
+		?.sort((a, b) => b.likedAt.getTime() - a.likedAt.getTime())
+		.map((item) => (
+			<LibraryItem
+				key={item.id.toString()}
+				to={item.type === "album" ? "/album/$id" : "/playlist/$id"}
+				params={{ id: item.id.toString() }}
+				description={item.type === "album" ? "Album" : "Playlist"}
+				imageSrc={item.image ?? undefined}
+				isSidebarOpen={isSidebarOpen}
+				title={item.name}
+			/>
+		));
 };
