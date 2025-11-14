@@ -149,6 +149,16 @@ const LibraryList = ({ isSidebarOpen }: LibraryListProps) => {
 		);
 	}
 
+	if (library.data?.length === 0) {
+		return (
+			<div className="mt-1 flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-2">
+				<p className="text-muted-foreground text-xs opacity-50">
+					No items in your library
+				</p>
+			</div>
+		);
+	}
+
 	return library.data
 		?.sort((a, b) => b.likedAt.getTime() - a.likedAt.getTime())
 		.map((item) => (

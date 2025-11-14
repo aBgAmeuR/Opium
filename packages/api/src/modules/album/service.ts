@@ -1,5 +1,5 @@
 import { db } from "@opium/db";
-import { count, desc, eq } from "@opium/db/drizzle";
+import { asc, count, desc, eq } from "@opium/db/drizzle";
 import { album, artist, song } from "@opium/db/schema/music";
 import type { CreateAlbumInput } from "./validation";
 
@@ -44,6 +44,7 @@ export const albumService = {
 				cover: album.cover,
 				artistId: album.artistId,
 				artistName: artist.name,
+				artistImage: artist.image,
 				totalSongs: count(song.id),
 				createdAt: album.createdAt,
 				updatedAt: album.updatedAt,
@@ -59,5 +60,23 @@ export const albumService = {
 		}
 
 		return albumData;
+	},
+
+	async getSongs(id: number) {
+		return await db
+			.select({
+				id: song.id,
+				title: song.title,
+				fileUrl: song.fileUrl,
+				type: song.type,
+				length: song.length,
+				producers: song.producers,
+				artistId: artist.id,
+				artistName: artist.name,
+			})
+			.from(song)
+			.innerJoin(artist, eq(song.artistId, artist.id))
+			.where(eq(song.albumId, id))
+			.orderBy(asc(song.createdAt));
 	},
 };
