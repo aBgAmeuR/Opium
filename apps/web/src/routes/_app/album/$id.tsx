@@ -7,6 +7,8 @@ import { Heart, MoreVertical, MusicIcon, Play, Shuffle } from "lucide-react";
 import { useState } from "react";
 import { orpc } from "@/utils/orpc";
 
+type SongId = string;
+
 export const Route = createFileRoute("/_app/album/$id")({
 	component: AlbumComponent,
 });
@@ -14,6 +16,8 @@ export const Route = createFileRoute("/_app/album/$id")({
 function AlbumComponent() {
 	const { id } = Route.useParams();
 	const [isLiked, setIsLiked] = useState(false);
+	const [likedSongs, setLikedSongs] = useState<Set<SongId>>(new Set());
+	const [playingSongId, setPlayingSongId] = useState<SongId | null>(null);
 
 	const { data: album } = useSuspenseQuery(
 		orpc.album.getById.queryOptions({
@@ -35,6 +39,25 @@ function AlbumComponent() {
 	const handleLike = () => {
 		// TODO: Implement like functionality
 		setIsLiked(!isLiked);
+	};
+
+	const handleSongPlay = (songId: SongId) => {
+		// TODO: Implement play functionality
+		console.log("Play song:", songId);
+		setPlayingSongId(songId);
+	};
+
+	const handleSongLike = (songId: SongId) => {
+		// TODO: Implement like functionality
+		setLikedSongs((prev) => {
+			const newSet = new Set(prev);
+			if (newSet.has(songId)) {
+				newSet.delete(songId);
+			} else {
+				newSet.add(songId);
+			}
+			return newSet;
+		});
 	};
 
 	return (
@@ -125,32 +148,110 @@ function AlbumComponent() {
 			</div>
 
 			{songs && songs.length > 0 && (
-				<div className="space-y-1">
-					{songs.map((song, index) => {
-						const minutes = Math.floor(song.length / 60);
-						const seconds = song.length % 60;
-						const formattedLength = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+				<div className="overflow-x-auto">
+					<table className="w-full">
+						<thead>
+							<tr className="border-b border-border">
+								<th className="w-12 px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground">
+									#
+								</th>
+								<th className="px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground">
+									Name
+								</th>
+								<th className="px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground">
+									Artists
+								</th>
+								<th className="px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground">
+									Type
+								</th>
+								<th className="px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground">
+									Release
+								</th>
+								<th className="w-20 px-4 py-3 text-right text-xs font-medium uppercase text-muted-foreground">
+									Duration
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							{songs.map((song, index) => {
+								const minutes = Math.floor(song.length / 60);
+								const seconds = song.length % 60;
+								const formattedLength = `${minutes}:${seconds.toString().padStart(2, "0")}`;
 
-						return (
-							<div
-								key={song.id}
-								className="flex items-center gap-4 rounded-md px-3 py-2 hover:bg-muted/50"
-							>
-								<span className="w-4 text-sm text-muted-foreground">
-									{index + 1}
-								</span>
-								<div className="flex-1">
-									<p className="text-sm font-medium">{song.title}</p>
-									<p className="text-xs text-muted-foreground">
-										{song.artistName}
-									</p>
-								</div>
-								<span className="text-xs text-muted-foreground">
-									{formattedLength}
-								</span>
-							</div>
-						);
-					})}
+								return (
+									<tr
+										key={song.id}
+										className="group border-border/50 hover:bg-muted/50 transition-colors"
+									>
+										<td className="relative px-4 py-1">
+											<div className="flex items-center justify-center">
+												<span className="group-hover:invisible text-sm text-muted-foreground">
+													{String(index + 1).padStart(2, "0")}
+												</span>
+												<Button
+													variant="ghost"
+													size="icon-sm"
+													className="absolute invisible group-hover:visible"
+													onClick={() => handleSongPlay(song.id)}
+													aria-label={`Play ${song.title}`}
+												>
+													<Play className="size-4 fill-current" />
+												</Button>
+											</div>
+										</td>
+										<td className="pl-4 py-1">
+											<div className="flex items-center justify-between">
+												<p className="text-sm font-medium">{song.title}</p>
+												<Button
+													variant="ghost"
+													size="icon-sm"
+													className={cn(
+														"transition-opacity",
+														likedSongs.has(song.id)
+															? "opacity-100"
+															: "opacity-0 group-hover:opacity-100",
+													)}
+													onClick={() => handleSongLike(song.id)}
+													aria-label={
+														likedSongs.has(song.id)
+															? `Unlike ${song.title}`
+															: `Like ${song.title}`
+													}
+												>
+													<Heart
+														className={cn(
+															"size-4",
+															likedSongs.has(song.id)
+																? "fill-current text-red-500"
+																: "",
+														)}
+													/>
+												</Button>
+											</div>
+										</td>
+										<td className="pr-4 py-1 pl-2">
+											<p className="text-sm text-muted-foreground">
+												{song.artistName}
+											</p>
+										</td>
+										<td className="px-4 py-1">
+											<p className="text-sm text-muted-foreground">
+												{song.type.charAt(0).toUpperCase() + song.type.slice(1)}
+											</p>
+										</td>
+										<td className="px-4 py-1">
+											<p className="text-sm text-muted-foreground">
+												{album.name}
+											</p>
+										</td>
+										<td className="px-4 py-1 text-right text-sm text-muted-foreground">
+											{formattedLength}
+										</td>
+									</tr>
+								);
+							})}
+						</tbody>
+					</table>
 				</div>
 			)}
 
