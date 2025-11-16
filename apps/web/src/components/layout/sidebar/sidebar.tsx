@@ -3,11 +3,11 @@
 import { cn } from "@opium/ui/lib/utils";
 import { useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
-import { SidebarHeader } from "./sidebar/sidebar-header";
-import { SidebarLibrary } from "./sidebar/sidebar-library";
-import { SidebarNavigation } from "./sidebar/sidebar-navigation";
-import { SidebarSearch } from "./sidebar/sidebar-search";
-import { SidebarUserMenu } from "./sidebar/sidebar-user-menu";
+import { SidebarHeader } from "./sidebar-header";
+import { SidebarLibrary } from "./sidebar-library";
+import { SidebarNavigation } from "./sidebar-navigation";
+import { SidebarSearch } from "./sidebar-search";
+import { SidebarUserMenu } from "./sidebar-user-menu";
 
 type SidebarProps = {
 	isAdmin: boolean;
@@ -33,7 +33,11 @@ export const Sidebar = ({ isAdmin }: SidebarProps) => {
 
 				<SidebarSearch isSidebarOpen={isSidebarOpen} />
 
-				<SidebarNavigation isSidebarOpen={isSidebarOpen} pathname={pathname} isAdmin={isAdmin} />
+				<SidebarNavigation
+					isSidebarOpen={isSidebarOpen}
+					pathname={pathname}
+					isAdmin={isAdmin}
+				/>
 
 				<SidebarLibrary isSidebarOpen={isSidebarOpen} />
 

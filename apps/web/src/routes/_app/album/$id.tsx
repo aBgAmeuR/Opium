@@ -1,9 +1,32 @@
+import {
+	AlbumIcon,
+	HeartAddIcon,
+	HeartCheckIcon,
+	PlayCircleIcon,
+	ShuffleIcon,
+} from "@opium/icons";
+import {
+	Breadcrumb,
+	BreadcrumbItem,
+	BreadcrumbLink,
+	BreadcrumbList,
+	BreadcrumbPage,
+	BreadcrumbSeparator,
+} from "@opium/ui/components/breadcrumb";
 import { Button } from "@opium/ui/components/button";
 import { cn } from "@opium/ui/lib/utils";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Image } from "@unpic/react";
-import { Heart, MoreVertical, MusicIcon, Play, Shuffle } from "lucide-react";
+import {
+	ArrowLeft,
+	ArrowRight,
+	Heart,
+	MoreVertical,
+	MusicIcon,
+	Play,
+	Shuffle,
+} from "lucide-react";
 import { useState } from "react";
 import { orpc } from "@/utils/orpc";
 
@@ -61,89 +84,109 @@ function AlbumComponent() {
 	};
 
 	return (
-		<div className="container p-6">
-			<div className="mb-6 flex gap-6">
-				<div className="relative size-48 flex-shrink-0">
-					{album.cover ? (
-						<Image
-							src={album.cover}
-							alt={album.name}
-							className="size-48 object-cover rounded-[4px]"
-							width={192}
-							height={192}
-						/>
-					) : (
-						<div className="flex size-48 items-center justify-center rounded-[4px] bg-muted text-muted-foreground">
-							<MusicIcon className="size-8" />
+		<div className="px-6 py-4">
+			<div className="flex items-center justify-between mb-4 -mx-2">
+				<div className="flex items-center gap-4">
+					<div className="flex items-center">
+						<Button variant="ghost" size="icon-sm">
+							<ArrowLeft className="size-4" />
+						</Button>
+						<Button variant="ghost" size="icon-sm" disabled>
+							<ArrowRight className="size-4" />
+						</Button>
+					</div>
+
+					<Breadcrumb>
+						<Breadcrumb>
+							<BreadcrumbList>
+								<BreadcrumbItem>
+									<AlbumIcon className="size-4" />
+									<BreadcrumbLink render={<Link to="/" />}>
+										Albums
+									</BreadcrumbLink>
+								</BreadcrumbItem>
+								<BreadcrumbSeparator> / </BreadcrumbSeparator>
+								<BreadcrumbItem>
+									<BreadcrumbPage>{album.name}</BreadcrumbPage>
+								</BreadcrumbItem>
+							</BreadcrumbList>
+						</Breadcrumb>
+					</Breadcrumb>
+				</div>
+				<div className="flex items-center gap-1">
+					<Button variant="secondary" size="sm">
+						Play All
+					</Button>
+					<Button variant="ghost" size="icon-sm">
+						<ShuffleIcon />
+					</Button>
+					<Button variant="ghost" size="icon-sm" onClick={handleLike}>
+						{isLiked ? (
+							<HeartCheckIcon className="text-red-500" />
+						) : (
+							<HeartAddIcon />
+						)}
+					</Button>
+				</div>
+			</div>
+
+			<div className="mb-6 flex gap-4">
+				<div className="relative">
+					<div
+						className="relative size-32 flex-shrink-0 rounded-sm overflow-hidden z-10"
+						style={{ boxShadow: "0 10px 20px 0 rgba(0, 0, 0, 0.1)" }}
+					>
+						{album.cover ? (
+							<Image
+								src={album.cover}
+								alt={album.name}
+								className="size-full object-cover"
+								width={128}
+								height={128}
+							/>
+						) : (
+							<div className="flex size-full items-center justify-center bg-muted text-muted-foreground">
+								<MusicIcon className="size-8" />
+							</div>
+						)}
+					</div>
+					{album.cover && (
+						<div className="absolute bottom-0 left-0 size-full origin-bottom scale-90 blur-lg saturate-200 opacity-30">
+							<Image
+								src={album.cover}
+								alt={album.name}
+								className="size-full object-cover"
+								width={128}
+								height={128}
+							/>
 						</div>
 					)}
 				</div>
 
 				<div className="flex flex-col justify-end">
-					<p className="mb-2 text-sm text-muted-foreground">Album</p>
-					<h1 className="mb-2 text-5xl font-bold">{album.name}</h1>
-					<div className="flex items-center gap-2 text-sm text-muted-foreground">
-						<div className="flex items-center">
-							<Image
-								src={album.artistImage}
-								alt={album.artistName}
-								className="size-6 object-cover rounded-full"
-								width={24}
-								height={24}
-							/>
-							<Button
-								variant="link"
-								size="sm"
-								className="text-foreground"
-								render={
-									<Link
-										// TODO: Temporary link to artist page
-										to="/album/$id"
-										params={{ id: album.artistId.toString() }}
-									/>
-								}
-							>
-								{album.artistName}
-							</Button>
-							<span>•</span>
-						</div>
+					<p className="mb-1 text-sm text-muted-foreground">Album</p>
+					<h1 className="text-4xl font-bold">{album.name}</h1>
+					<div className="flex items-center gap-1 text-sm text-muted-foreground">
+						<Button
+							variant="link"
+							size="sm"
+							className="p-0 text-foreground"
+							render={
+								<Link
+									// TODO: Temporary link to artist page
+									to="/album/$id"
+									params={{ id: album.artistId.toString() }}
+								/>
+							}
+						>
+							{album.artistName}
+						</Button>
+						<span>•</span>
 						<span>
 							{album.totalSongs ?? 0} song
 							{(album.totalSongs ?? 0) !== 1 ? "s" : ""}
 						</span>
 					</div>
-				</div>
-			</div>
-
-			<div className="mb-6 flex items-center gap-3">
-				<Button
-					variant="default"
-					size="icon-lg"
-					onClick={handlePlay}
-					className="rounded-full shadow-none-none"
-				>
-					<Play className="ml-1 size-6 fill-current" />
-				</Button>
-				<div className="flex items-center gap-0">
-					<Button variant="ghost" size="icon-lg" aria-label="Shuffle button">
-						<Shuffle className="size-5" />
-					</Button>
-					<Button
-						variant="ghost"
-						size="icon-lg"
-						onClick={handleLike}
-						aria-label={isLiked ? "Unlike album" : "Like album"}
-					>
-						<Heart
-							className={cn(
-								"size-5",
-								isLiked ? "fill-current text-red-500" : "",
-							)}
-						/>
-					</Button>
-					<Button variant="ghost" size="icon-lg" aria-label="More options">
-						<MoreVertical className="size-5" />
-					</Button>
 				</div>
 			</div>
 

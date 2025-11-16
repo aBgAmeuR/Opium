@@ -17,7 +17,6 @@
 		"@orpc/server": "catalog:",
 		"@orpc/tanstack-query": "catalog:",
 		"@tailwindcss/vite": "catalog:viteConfig",
-		"@tanstack/nitro-v2-vite-plugin": "catalog:tanstack",
 		"@tanstack/react-form": "catalog:tanstack",
 		"@tanstack/react-query": "catalog:tanstack",
 		"@tanstack/react-router": "catalog:tanstack",

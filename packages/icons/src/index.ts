@@ -1,9 +1,14 @@
 export * from "@phosphor-icons/react";
 export { AdminIcon } from "./icons/admin";
+export { AlbumIcon } from "./icons/album";
 export { ExploreIcon } from "./icons/explore";
+export { HeartAddIcon } from "./icons/heart-add";
+export { HeartCheckIcon } from "./icons/heart-check";
 export { HomeIcon } from "./icons/home";
 export { MoonIcon } from "./icons/moon";
+export { PlayCircleIcon } from "./icons/play-circle";
 export { SearchIcon } from "./icons/search";
+export { ShuffleIcon } from "./icons/shuffle";
 export { SidebarLeftIcon } from "./icons/sidebar-left";
 export { SidebarRightIcon } from "./icons/sidebar-right";
 export { SunIcon } from "./icons/sun";
