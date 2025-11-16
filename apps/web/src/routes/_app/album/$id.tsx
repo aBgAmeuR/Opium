@@ -130,7 +130,7 @@ function AlbumComponent() {
 				</div>
 			</div>
 
-			<div className="mb-6 flex gap-4">
+			<div className="mb-4 flex gap-4">
 				<div className="relative">
 					<div
 						className="relative size-32 flex-shrink-0 rounded-sm overflow-hidden z-10"

@@ -1,8 +1,6 @@
-"use client";
-
-import { AnimatePresence } from "framer-motion";
 import { AngryIcon } from "lucide-react";
 import type { PropsWithChildren } from "react";
+import { RightSidebar } from "./right-sidebar/right-sidebar";
 import { Sidebar } from "./sidebar/sidebar";
 
 type RootLayoutProps = PropsWithChildren<{
@@ -67,6 +65,11 @@ export const RootLayout = ({ children, isAdmin = false }: RootLayoutProps) => {
 				</div>
 				{/* <SettingsModal />
         <CommandSearch /> */}
+			</div>
+
+			{/* Right Sidebar */}
+			<div className="hidden md:flex">
+				<RightSidebar />
 			</div>
 
 			{/* <Toaster /> */}

@@ -27,15 +27,17 @@ type LibraryItemProps = {
 	description: string;
 	to: LinkProps["to"];
 	params?: LinkProps["params"];
+	className?: string;
 };
 
-const LibraryItem = ({
+export const LibraryItem = ({
 	title,
 	imageSrc,
 	isSidebarOpen,
 	description,
 	to,
 	params,
+	className,
 }: LibraryItemProps) => {
 	const buttonContent = (
 		<Button
@@ -44,6 +46,7 @@ const LibraryItem = ({
 				isSidebarOpen && "relative w-full justify-start gap-2.5 px-2 py-1.5",
 				!isSidebarOpen && "w-full justify-center px-0 py-4.5",
 				"group items-center text-muted-foreground",
+				className,
 			)}
 			size={isSidebarOpen ? "sm" : "icon-sm"}
 			variant="ghost"

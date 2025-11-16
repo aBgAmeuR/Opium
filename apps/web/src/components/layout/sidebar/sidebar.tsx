@@ -1,5 +1,3 @@
-"use client";
-
 import { cn } from "@opium/ui/lib/utils";
 import { useRouterState } from "@tanstack/react-router";
 import { useState } from "react";
