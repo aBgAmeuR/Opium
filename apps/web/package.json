@@ -3,9 +3,9 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "bunx --bun vite dev --port=3000",
-		"build": "bunx --bun vite build",
-		"preview": "bunx --bun vite preview",
+		"dev": "bun --bun vite dev --port=3000",
+		"build": "bun --bun vite build",
+		"preview": "bun --bun vite preview",
 		"clean": "git clean -xdf .cache .turbo dist node_modules .nitro .output .tanstack"
 	},
 	"dependencies": {

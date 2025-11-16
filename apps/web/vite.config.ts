@@ -10,6 +10,11 @@ export default defineConfig({
 		tsconfigPaths(),
 		nitroV2Plugin({
 			compatibilityDate: "2025-11-07",
+			vercel: {
+				functions: {
+					runtime: "bun1.x",
+				},
+			},
 		}),
 		tailwindcss(),
 		tanstackStart(),
