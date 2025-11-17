@@ -5,5 +5,9 @@
   "type": "module",
   "exports": {
     ".": "./biome.json"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "ultracite": "catalog:"
   }
 }
