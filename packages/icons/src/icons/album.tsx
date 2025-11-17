@@ -2,6 +2,7 @@ type Props = React.SVGProps<SVGSVGElement>;
 
 export const AlbumIcon = (props: Props) => (
 	<svg viewBox="0 0 24 24" fill="none" {...props}>
+		<title>Album</title>
 		<path
 			opacity="0.2"
 			fillRule="evenodd"

@@ -96,6 +96,11 @@
 			"allowTrailingCommas": true
 		}
 	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
+	},
 	"overrides": [
 		{
 			"json": {

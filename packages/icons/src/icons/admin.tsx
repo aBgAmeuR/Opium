@@ -2,6 +2,7 @@ type Props = React.SVGProps<SVGSVGElement>;
 
 export const AdminIcon = (props: Props) => (
 	<svg fill="none" viewBox="0 0 24 24" {...props}>
+		<title>Admin</title>
 		<g opacity="0.2">
 			<path
 				d="M18.7088 3.49534C16.8165 2.55382 14.5009 2 12 2L12 11H21L21 7.74814C21 6.34249 21 5.63966 20.5504 4.91378C20.1008 4.18791 19.6368 3.95706 18.7088 3.49534Z"

@@ -1,8 +1,11 @@
 import {
 	AlbumIcon,
+	ArrowLeftIcon,
+	ArrowRightIcon,
 	HeartAddIcon,
 	HeartCheckIcon,
-	PlayCircleIcon,
+	HeartIcon,
+	PlayIcon,
 	ShuffleIcon,
 } from "@opium/icons";
 import {
@@ -14,19 +17,10 @@ import {
 	BreadcrumbSeparator,
 } from "@opium/ui/components/breadcrumb";
 import { Button } from "@opium/ui/components/button";
+import { Cover } from "@opium/ui/components/cover";
 import { cn } from "@opium/ui/lib/utils";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Image } from "@unpic/react";
-import {
-	ArrowLeft,
-	ArrowRight,
-	Heart,
-	MoreVertical,
-	MusicIcon,
-	Play,
-	Shuffle,
-} from "lucide-react";
 import { useState } from "react";
 import { orpc } from "@/utils/orpc";
 
@@ -41,6 +35,8 @@ function AlbumComponent() {
 	const [isLiked, setIsLiked] = useState(false);
 	const [likedSongs, setLikedSongs] = useState<Set<SongId>>(new Set());
 	const [playingSongId, setPlayingSongId] = useState<SongId | null>(null);
+
+	const isCurrentTrack = true;
 
 	const { data: album } = useSuspenseQuery(
 		orpc.album.getById.queryOptions({
@@ -89,10 +85,10 @@ function AlbumComponent() {
 				<div className="flex items-center gap-4">
 					<div className="flex items-center">
 						<Button variant="ghost" size="icon-sm">
-							<ArrowLeft className="size-4" />
+							<ArrowLeftIcon />
 						</Button>
 						<Button variant="ghost" size="icon-sm" disabled>
-							<ArrowRight className="size-4" />
+							<ArrowRightIcon />
 						</Button>
 					</div>
 
@@ -122,7 +118,7 @@ function AlbumComponent() {
 					</Button>
 					<Button variant="ghost" size="icon-sm" onClick={handleLike}>
 						{isLiked ? (
-							<HeartCheckIcon className="text-red-500" />
+							<HeartIcon className="text-red-500" />
 						) : (
 							<HeartAddIcon />
 						)}
@@ -131,37 +127,12 @@ function AlbumComponent() {
 			</div>
 
 			<div className="mb-4 flex gap-4">
-				<div className="relative">
-					<div
-						className="relative size-32 flex-shrink-0 rounded-sm overflow-hidden z-10"
-						style={{ boxShadow: "0 10px 20px 0 rgba(0, 0, 0, 0.1)" }}
-					>
-						{album.cover ? (
-							<Image
-								src={album.cover}
-								alt={album.name}
-								className="size-full object-cover"
-								width={128}
-								height={128}
-							/>
-						) : (
-							<div className="flex size-full items-center justify-center bg-muted text-muted-foreground">
-								<MusicIcon className="size-8" />
-							</div>
-						)}
-					</div>
-					{album.cover && (
-						<div className="absolute bottom-0 left-0 size-full origin-bottom scale-90 blur-lg saturate-200 opacity-30">
-							<Image
-								src={album.cover}
-								alt={album.name}
-								className="size-full object-cover"
-								width={128}
-								height={128}
-							/>
-						</div>
-					)}
-				</div>
+				<Cover
+					size="lg"
+					variant="blur"
+					imageSrc={album.cover}
+					alt={album.name}
+				/>
 
 				<div className="flex flex-col justify-end">
 					<p className="mb-1 text-sm text-muted-foreground">Album</p>
@@ -227,20 +198,28 @@ function AlbumComponent() {
 										className="group border-border/50 hover:bg-muted/50 transition-colors"
 									>
 										<td className="relative px-4 py-1">
-											<div className="flex items-center justify-center">
-												<span className="group-hover:invisible text-sm text-muted-foreground">
-													{String(index + 1).padStart(2, "0")}
-												</span>
-												<Button
-													variant="ghost"
-													size="icon-sm"
-													className="absolute invisible group-hover:visible"
-													onClick={() => handleSongPlay(song.id)}
-													aria-label={`Play ${song.title}`}
-												>
-													<Play className="size-4 fill-current" />
-												</Button>
-											</div>
+											{isCurrentTrack ? (
+												<div className="mx-auto flex size-[0.65rem] items-end justify-center space-x-0.5">
+													<div className="animate-now-playing-1 w-1 bg-muted-foreground"></div>
+													<div className="animate-now-playing-2 w-1 bg-muted-foreground [animation-delay:0.2s]"></div>
+													<div className="animate-now-playing-3 w-1 bg-muted-foreground [animation-delay:0.4s]"></div>
+												</div>
+											) : (
+												<div className="flex items-center justify-center">
+													<span className="group-hover:invisible text-sm text-muted-foreground">
+														{String(index + 1).padStart(2, "0")}
+													</span>
+													<Button
+														variant="ghost"
+														size="icon-sm"
+														className="absolute invisible group-hover:visible"
+														onClick={() => handleSongPlay(song.id)}
+														aria-label={`Play ${song.title}`}
+													>
+														<PlayIcon />
+													</Button>
+												</div>
+											)}
 										</td>
 										<td className="pl-4 py-1">
 											<div className="flex items-center justify-between">
@@ -261,14 +240,11 @@ function AlbumComponent() {
 															: `Like ${song.title}`
 													}
 												>
-													<Heart
-														className={cn(
-															"size-4",
-															likedSongs.has(song.id)
-																? "fill-current text-red-500"
-																: "",
-														)}
-													/>
+													{likedSongs.has(song.id) ? (
+														<HeartIcon className="text-red-500" />
+													) : (
+														<HeartAddIcon />
+													)}
 												</Button>
 											</div>
 										</td>

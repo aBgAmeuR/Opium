@@ -1,19 +1,20 @@
-import { HeartAddIcon, HeartCheckIcon, ShuffleIcon } from "@opium/icons";
-import { Button } from "@opium/ui/components/button";
-import { Slider, SliderValue } from "@opium/ui/components/slider";
-import { cn } from "@opium/ui/lib/utils";
-import { Image } from "@unpic/react";
 import {
-	List,
-	Pause,
-	Play,
-	Repeat,
-	Repeat1,
-	SkipBack,
-	SkipForward,
-	Volume2,
-	VolumeX,
-} from "lucide-react";
+	HeartAddIcon,
+	HeartIcon,
+	NextIcon,
+	PauseIcon,
+	PlayIcon,
+	PreviousIcon,
+	QueueIcon,
+	RepeatIcon,
+	ShuffleIcon,
+	VolumeHighIcon,
+	VolumeOffIcon,
+} from "@opium/icons";
+import { Button } from "@opium/ui/components/button";
+import { Cover } from "@opium/ui/components/cover";
+import { Slider } from "@opium/ui/components/slider";
+import { cn } from "@opium/ui/lib/utils";
 import { useState } from "react";
 
 // Mock data
@@ -24,7 +25,7 @@ const mockSong = {
 	artist: "Playboi Carti",
 	image:
 		"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop",
-	duration: 180, // 3 minutes in seconds
+	duration: 180,
 };
 
 const formatTime = (seconds: number): string => {
@@ -89,15 +90,7 @@ export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
 
 				{/* Song Info */}
 				<div className="flex min-w-0 flex-1 items-center gap-3">
-					<div className="relative size-10 shrink-0 overflow-hidden rounded-sm bg-muted">
-						<Image
-							alt={`${mockSong.title} album cover`}
-							className="size-full object-cover"
-							height={56}
-							src={mockSong.image}
-							width={56}
-						/>
-					</div>
+					<Cover size="md" imageSrc={mockSong.image} alt={mockSong.title} />
 					<div className="min-w-0 flex-1">
 						<p className="truncate text-sm font-medium text-foreground">
 							{mockSong.title}
@@ -113,7 +106,7 @@ export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
 						aria-label={isLiked ? "Unlike song" : "Like song"}
 					>
 						{isLiked ? (
-							<HeartCheckIcon className="size-4 text-red-500" />
+							<HeartIcon className="size-4 text-red-500" />
 						) : (
 							<HeartAddIcon className="size-4" />
 						)}
@@ -135,20 +128,20 @@ export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
 						</Button>
 
 						<Button variant="ghost" size="icon-sm" aria-label="Previous song">
-							<SkipBack />
+							<PreviousIcon />
 						</Button>
 
 						<Button
 							variant="default"
-							size="icon"
+							size="icon-sm"
 							onClick={handlePlayPause}
 							aria-label={isPlaying ? "Pause" : "Play"}
 						>
-							{isPlaying ? <Pause /> : <Play />}
+							{isPlaying ? <PauseIcon /> : <PlayIcon />}
 						</Button>
 
 						<Button variant="ghost" size="icon-sm" aria-label="Next song">
-							<SkipForward />
+							<NextIcon />
 						</Button>
 
 						<Button
@@ -158,25 +151,9 @@ export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
 							className={cn(repeatMode !== "off" && "text-primary")}
 							aria-label={`Repeat: ${repeatMode}`}
 						>
-							{repeatMode === "one" ? <Repeat1 /> : <Repeat />}
+							{repeatMode === "one" ? <RepeatIcon /> : <RepeatIcon />}
 						</Button>
 					</div>
-
-					{/* Time Bar */}
-					{/* <div className="flex w-full items-center gap-2">
-						<span className="text-xs text-muted-foreground tabular-nums">
-							{formatTime(currentTime)}
-						</span>
-						<Slider
-							value={currentTime}
-							onValueChange={(value) => setCurrentTime(value as number)}
-							max={mockSong.duration}
-							aria-label="Seek"
-						/>
-						<span className="text-xs text-muted-foreground tabular-nums">
-							{formatTime(mockSong.duration)}
-						</span>
-					</div> */}
 				</div>
 
 				{/* Volume and Queue Controls */}
@@ -188,7 +165,7 @@ export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
 							onClick={onToggleQueue}
 							aria-label="Toggle queue"
 						>
-							<List />
+							<QueueIcon />
 						</Button>
 					)}
 
@@ -199,7 +176,7 @@ export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
 							onClick={handleMute}
 							aria-label={isMuted ? "Unmute" : "Mute"}
 						>
-							{isMuted || volume === 0 ? <VolumeX /> : <Volume2 />}
+							{isMuted || volume === 0 ? <VolumeOffIcon /> : <VolumeHighIcon />}
 						</Button>
 						<Slider
 							value={isMuted ? 0 : volume}

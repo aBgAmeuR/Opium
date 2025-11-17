@@ -2,6 +2,7 @@ type Props = React.SVGProps<SVGSVGElement>;
 
 export const ShuffleIcon = (props: Props) => (
 	<svg viewBox="0 0 24 24" fill="none" {...props}>
+		<title>Shuffle</title>
 		<path
 			d="M19.5576 4L20.4551 4.97574C20.8561 5.41165 21.0566 5.62961 20.9861 5.81481C20.9155 6 20.632 6 20.0649 6C18.7956 6 17.2771 5.79493 16.1111 6.4733C15.3903 6.89272 14.8883 7.62517 14.0392 9M3 18H4.58082C6.50873 18 7.47269 18 8.2862 17.5267C9.00708 17.1073 9.50904 16.3748 10.3582 15"
 			stroke="currentColor"

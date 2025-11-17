@@ -34,7 +34,7 @@ export const RootLayout = ({ children, isAdmin = false }: RootLayoutProps) => {
 				</div>
 
 				<div className="flex flex-1 overflow-hidden">
-					<div className="flex w-full pt-1 pr-1">
+					<div className="flex w-full pt-1">
 						<div className="relative flex w-full flex-1 flex-row overflow-hidden rounded-t-sm border-t border-x border-border bg-background">
 							<div className="relative flex h-full w-0 flex-1 flex-row">
 								<div className="flex w-full flex-col gap-2 overflow-y-auto pb-20">

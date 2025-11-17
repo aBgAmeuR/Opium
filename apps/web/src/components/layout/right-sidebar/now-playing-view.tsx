@@ -1,4 +1,5 @@
 import { Button } from "@opium/ui/components/button";
+import { Cover } from "@opium/ui/components/cover";
 import { Image } from "@unpic/react";
 import { LibraryItem } from "../sidebar/sidebar-library";
 
@@ -37,17 +38,13 @@ export function NowPlayingView({ openQueue }: NowPlayingViewProps) {
 
 			<div className="flex h-full w-full flex-1 flex-col overflow-hidden">
 				<div className="flex h-full w-full flex-col overflow-y-auto gap-4">
-					<div className="w-full px-3 ">
-						<div className="relative aspect-square w-full overflow-hidden rounded-md bg-muted">
-							<Image
-								alt={`${mockCurrentSong.album} album cover`}
-								className="h-full w-full object-cover"
-								height={400}
-								src={mockCurrentSong.albumArtUrl}
-								width={400}
-							/>
-						</div>
-					</div>
+					<Cover
+						size="xl"
+						variant="blur"
+						imageSrc={mockCurrentSong.albumArtUrl}
+						alt={mockCurrentSong.album}
+						className="px-3"
+					/>
 
 					<div className="flex flex-1 flex-col gap-2 px-3">
 						<div className="flex flex-col gap-0.5">

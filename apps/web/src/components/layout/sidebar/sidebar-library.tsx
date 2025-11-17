@@ -1,4 +1,5 @@
 import { Button } from "@opium/ui/components/button";
+import { Cover } from "@opium/ui/components/cover";
 import { Skeleton } from "@opium/ui/components/skeleton";
 import {
 	Tooltip,
@@ -8,13 +9,9 @@ import {
 import { cn } from "@opium/ui/lib/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, type LinkProps } from "@tanstack/react-router";
-import { Image } from "@unpic/react";
-import { ChevronRightIcon, MusicIcon } from "lucide-react";
+import { ChevronRightIcon } from "lucide-react";
 import { Suspense } from "react";
 import { orpc } from "@/utils/orpc";
-
-const IMAGE_SIZE_OPEN = 32;
-const IMAGE_SIZE_CLOSED = 24;
 
 type SidebarLibraryProps = {
 	isSidebarOpen: boolean;
@@ -52,27 +49,11 @@ export const LibraryItem = ({
 			variant="ghost"
 		>
 			<div className={cn(!isSidebarOpen && "flex justify-center")}>
-				{imageSrc ? (
-					<Image
-						alt={title}
-						className={cn(
-							"rounded-[4px] object-cover",
-							isSidebarOpen ? "size-8 min-w-8" : "size-6 min-w-6",
-						)}
-						height={isSidebarOpen ? IMAGE_SIZE_OPEN : IMAGE_SIZE_CLOSED}
-						src={imageSrc}
-						width={isSidebarOpen ? IMAGE_SIZE_OPEN : IMAGE_SIZE_CLOSED}
-					/>
-				) : (
-					<div
-						className={cn(
-							"flex items-center justify-center rounded-[4px] bg-muted text-muted-foreground",
-							isSidebarOpen ? "size-8" : "size-6",
-						)}
-					>
-						<MusicIcon className={cn(isSidebarOpen ? "size-4" : "size-3")} />
-					</div>
-				)}
+				<Cover
+					size={isSidebarOpen ? "default" : "sm"}
+					imageSrc={imageSrc}
+					alt={title}
+				/>
 			</div>
 			{isSidebarOpen && (
 				<div className="flex w-full min-w-0 flex-col">
@@ -87,7 +68,7 @@ export const LibraryItem = ({
 
 	if (!isSidebarOpen) {
 		return (
-			<Tooltip delay={10}>
+			<Tooltip>
 				<TooltipTrigger render={buttonContent} />
 				<TooltipPopup side="right" sideOffset={4}>
 					{title}

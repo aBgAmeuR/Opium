@@ -14,7 +14,9 @@
 		"./providers/*": "./src/providers/*.tsx"
 	},
 	"dependencies": {
+		"@opium/icons": "workspace:*",
 		"@base-ui-components/react": "^1.0.0-beta.5",
+		"@unpic/react": "catalog:",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"lucide-react": "^0.554.0",
@@ -26,6 +28,7 @@
 		"typescript": "catalog:"
 	},
 	"devDependencies": {
+		"@opium/biome-config": "workspace:*",
 		"@opium/tailwind-config": "workspace:*",
 		"@opium/tsconfig": "workspace:*",
 		"@fontsource-variable/inter": "^5.2.8",
