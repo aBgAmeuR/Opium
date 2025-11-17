@@ -23,7 +23,7 @@ export const Sidebar = ({ isAdmin }: SidebarProps) => {
 		<div
 			className={cn(
 				"relative top-0 bottom-0 left-0 z-50 flex h-dvh shrink-0 flex-col py-2 transition-all duration-200",
-				isSidebarOpen ? "top-0 h-full w-[200px]" : "w-[50px]",
+				isSidebarOpen ? "top-0 h-full w-[200px]" : "top-0 h-full w-[50px]",
 			)}
 		>
 			<div className="flex w-full flex-1 flex-col items-start overflow-hidden">

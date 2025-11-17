@@ -1,0 +1,217 @@
+import { HeartAddIcon, HeartCheckIcon, ShuffleIcon } from "@opium/icons";
+import { Button } from "@opium/ui/components/button";
+import { Slider, SliderValue } from "@opium/ui/components/slider";
+import { cn } from "@opium/ui/lib/utils";
+import { Image } from "@unpic/react";
+import {
+	List,
+	Pause,
+	Play,
+	Repeat,
+	Repeat1,
+	SkipBack,
+	SkipForward,
+	Volume2,
+	VolumeX,
+} from "lucide-react";
+import { useState } from "react";
+
+// Mock data
+const mockSong = {
+	id: "1",
+	title:
+		"4tspoon (feat. Yung Bans) fgze gggggggggg gezg gjuizehzeherio àzeig egjiogzeiogze àigzeug g zerio gje iej  fj fjazef j ezezjg jro jezopj eo",
+	artist: "Playboi Carti",
+	image:
+		"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop",
+	duration: 180, // 3 minutes in seconds
+};
+
+const formatTime = (seconds: number): string => {
+	const mins = Math.floor(seconds / 60);
+	const secs = Math.floor(seconds % 60);
+	return `${mins}:${secs.toString().padStart(2, "0")}`;
+};
+
+type RepeatMode = "off" | "all" | "one";
+
+export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
+	const [isPlaying, setIsPlaying] = useState(false);
+	const [currentTime, setCurrentTime] = useState<number>(45); // Mock current time in seconds
+	const [volume, setVolume] = useState(70); // Volume percentage
+	const [isMuted, setIsMuted] = useState(false);
+	const [isLiked, setIsLiked] = useState(false);
+	const [isShuffle, setIsShuffle] = useState(false);
+	const [repeatMode, setRepeatMode] = useState<RepeatMode>("off");
+
+	const handlePlayPause = () => {
+		setIsPlaying(!isPlaying);
+	};
+
+	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setCurrentTime(Number(e.target.value));
+	};
+
+	const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const newVolume = Number(e.target.value);
+		setVolume(newVolume);
+		setIsMuted(newVolume === 0);
+	};
+
+	const handleMute = () => {
+		if (isMuted) {
+			setIsMuted(false);
+		} else {
+			setIsMuted(true);
+		}
+	};
+
+	const handleRepeat = () => {
+		const modes: RepeatMode[] = ["off", "all", "one"];
+		const currentIndex = modes.indexOf(repeatMode);
+		const nextIndex = (currentIndex + 1) % modes.length;
+		setRepeatMode(modes.at(nextIndex) ?? "off");
+	};
+
+	return (
+		<div className="z-50 bg-sidebar w-full">
+			{/* Player Controls */}
+			<div className="flex w-full items-center gap-4 px-3 py-3">
+				<div className="absolute left-0 right-0 top-0 w-full">
+					<Slider
+						className="[&_[data-slot=slider-track]]:before:rounded-none [&_[data-slot=slider-indicator]]:rounded-none [&_[data-slot=slider-indicator]]:![margin-inline-start:0] [&_[data-slot=slider-thumb]]:size-3"
+						value={currentTime}
+						onValueChange={(value) => setCurrentTime(value as number)}
+						max={mockSong.duration}
+						aria-label="Seek"
+					/>
+				</div>
+
+				{/* Song Info */}
+				<div className="flex min-w-0 flex-1 items-center gap-3">
+					<div className="relative size-10 shrink-0 overflow-hidden rounded-sm bg-muted">
+						<Image
+							alt={`${mockSong.title} album cover`}
+							className="size-full object-cover"
+							height={56}
+							src={mockSong.image}
+							width={56}
+						/>
+					</div>
+					<div className="min-w-0 flex-1">
+						<p className="truncate text-sm font-medium text-foreground">
+							{mockSong.title}
+						</p>
+						<p className="truncate text-xs text-muted-foreground">
+							{mockSong.artist}
+						</p>
+					</div>
+					<Button
+						variant="ghost"
+						size="icon-sm"
+						onClick={() => setIsLiked(!isLiked)}
+						aria-label={isLiked ? "Unlike song" : "Like song"}
+					>
+						{isLiked ? (
+							<HeartCheckIcon className="size-4 text-red-500" />
+						) : (
+							<HeartAddIcon className="size-4" />
+						)}
+					</Button>
+				</div>
+
+				{/* Main Controls */}
+				<div className="flex flex-col items-center gap-1">
+					{/* Control Buttons */}
+					<div className="flex items-center gap-1">
+						<Button
+							variant="ghost"
+							size="icon-sm"
+							onClick={() => setIsShuffle(!isShuffle)}
+							className={cn(isShuffle && "text-primary")}
+							aria-label="Toggle shuffle"
+						>
+							<ShuffleIcon />
+						</Button>
+
+						<Button variant="ghost" size="icon-sm" aria-label="Previous song">
+							<SkipBack />
+						</Button>
+
+						<Button
+							variant="default"
+							size="icon"
+							onClick={handlePlayPause}
+							aria-label={isPlaying ? "Pause" : "Play"}
+						>
+							{isPlaying ? <Pause /> : <Play />}
+						</Button>
+
+						<Button variant="ghost" size="icon-sm" aria-label="Next song">
+							<SkipForward />
+						</Button>
+
+						<Button
+							variant="ghost"
+							size="icon-sm"
+							onClick={handleRepeat}
+							className={cn(repeatMode !== "off" && "text-primary")}
+							aria-label={`Repeat: ${repeatMode}`}
+						>
+							{repeatMode === "one" ? <Repeat1 /> : <Repeat />}
+						</Button>
+					</div>
+
+					{/* Time Bar */}
+					{/* <div className="flex w-full items-center gap-2">
+						<span className="text-xs text-muted-foreground tabular-nums">
+							{formatTime(currentTime)}
+						</span>
+						<Slider
+							value={currentTime}
+							onValueChange={(value) => setCurrentTime(value as number)}
+							max={mockSong.duration}
+							aria-label="Seek"
+						/>
+						<span className="text-xs text-muted-foreground tabular-nums">
+							{formatTime(mockSong.duration)}
+						</span>
+					</div> */}
+				</div>
+
+				{/* Volume and Queue Controls */}
+				<div className="flex min-w-0 flex-1 items-center justify-end">
+					{onToggleQueue && (
+						<Button
+							variant="ghost"
+							size="icon-sm"
+							onClick={onToggleQueue}
+							aria-label="Toggle queue"
+						>
+							<List />
+						</Button>
+					)}
+
+					<div className="flex items-center gap-1">
+						<Button
+							variant="ghost"
+							size="icon-sm"
+							onClick={handleMute}
+							aria-label={isMuted ? "Unmute" : "Mute"}
+						>
+							{isMuted || volume === 0 ? <VolumeX /> : <Volume2 />}
+						</Button>
+						<Slider
+							value={isMuted ? 0 : volume}
+							onValueChange={(value) => setVolume(value as number)}
+							max={100}
+							min={0}
+							className="w-24!"
+							aria-label="Volume"
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}

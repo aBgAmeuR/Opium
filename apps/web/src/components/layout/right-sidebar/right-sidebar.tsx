@@ -1,12 +1,17 @@
 import { cn } from "@opium/ui/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
 import { NowPlayingView } from "./now-playing-view";
 import { QueueView } from "./queue-view";
 
-export const RightSidebar = () => {
-	const [isQueueOpen, setIsQueueOpen] = useState(false);
+type RightSidebarProps = {
+	isQueueOpen: boolean;
+	setIsQueueOpen: (open: boolean) => void;
+};
 
+export const RightSidebar = ({
+	isQueueOpen,
+	setIsQueueOpen,
+}: RightSidebarProps) => {
 	return (
 		<div
 			className={cn(
