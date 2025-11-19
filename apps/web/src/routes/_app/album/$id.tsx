@@ -78,7 +78,7 @@ function AlbumComponent() {
 	};
 
 	return (
-		<div className="px-6 py-4">
+		<div className="flex h-full flex-col px-6 py-4">
 			<PageHeader
 				breadcrumbs={[
 					{
@@ -138,9 +138,9 @@ function AlbumComponent() {
 			</div>
 
 			{songs && songs.length > 0 && (
-				<div className="overflow-x-auto">
+				<div className="flex-1 overflow-x-auto">
 					<table className="w-full border-separate border-spacing-0">
-						<thead>
+						<thead className="sticky top-0 z-10 bg-background">
 							<tr>
 								<th className="w-7 pl-0 pr-2 py-2 text-center text-xs font-normal text-muted-foreground/60">
 									#

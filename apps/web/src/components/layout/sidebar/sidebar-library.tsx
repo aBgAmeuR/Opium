@@ -84,7 +84,7 @@ export const SidebarLibrary = ({ isSidebarOpen }: SidebarLibraryProps) => {
 	return (
 		<div
 			className={cn(
-				"flex w-full flex-col justify-center gap-0.5 border-hard border-t border-dashed py-2",
+				"flex w-full flex-1 min-h-0 flex-col gap-0.5 border-hard border-t border-dashed py-2",
 				isSidebarOpen ? "px-3" : "px-1",
 			)}
 		>
@@ -106,7 +106,7 @@ export const SidebarLibrary = ({ isSidebarOpen }: SidebarLibraryProps) => {
 
 			<div
 				className={cn(
-					"no-scrollbar flex w-full flex-col gap-0 overflow-y-auto",
+					"no-scrollbar flex w-full flex-1 min-h-0 flex-col gap-0 overflow-y-auto",
 					!isSidebarOpen && "py-1",
 				)}
 			>

@@ -1,4 +1,5 @@
 import { Button } from "@opium/ui/components/button";
+import { Cover } from "@opium/ui/components/cover";
 import { Skeleton } from "@opium/ui/components/skeleton";
 import {
 	Tooltip,
@@ -6,8 +7,6 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from "@opium/ui/components/tooltip";
-import { Image } from "@unpic/react";
-import { MusicIcon } from "lucide-react";
 
 type CatalogCardProps = {
 	name: string;
@@ -29,19 +28,7 @@ export const CatalogCard = ({
 		variant="ghost"
 		onClick={onClick}
 	>
-		{imageSrc ? (
-			<Image
-				alt="Album"
-				className="size-32 rounded-[4px] object-cover"
-				height={128}
-				src={imageSrc}
-				width={128}
-			/>
-		) : (
-			<div className="flex size-32 items-center justify-center rounded-[4px] bg-muted text-muted-foreground">
-				<MusicIcon className="size-6" />
-			</div>
-		)}
+		<Cover size="lg" imageSrc={imageSrc} alt={name} />
 		<div className="flex w-full flex-col">
 			<p className="truncate text-left text-foreground text-xs">{name}</p>
 			<div className="flex items-center gap-1">
