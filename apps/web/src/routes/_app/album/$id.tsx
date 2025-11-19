@@ -1,3 +1,4 @@
+import { useAudioStore } from "@opium/audio";
 import {
 	AlbumIcon,
 	HeartAddIcon,
@@ -5,7 +6,6 @@ import {
 	PlayIcon,
 	ShuffleIcon,
 } from "@opium/icons";
-import { usePlayerStore } from "@opium/player";
 import { Button } from "@opium/ui/components/button";
 import { Cover } from "@opium/ui/components/cover";
 import { cn } from "@opium/ui/lib/utils";
@@ -23,12 +23,10 @@ export const Route = createFileRoute("/_app/album/$id")({
 
 function AlbumComponent() {
 	const { id } = Route.useParams();
-	const { play } = usePlayerStore();
 	const [isLiked, setIsLiked] = useState(false);
 	const [likedSongs, setLikedSongs] = useState<Set<SongId>>(new Set());
-	const [playingSongId, setPlayingSongId] = useState<SongId | null>(null);
-
-	const isCurrentTrack = false;
+	const setQueueAndPlay = useAudioStore((state) => state.setQueueAndPlay);
+	const currentTrack = useAudioStore((state) => state.currentTrack);
 
 	const { data: album } = useSuspenseQuery(
 		orpc.album.getById.queryOptions({
@@ -46,18 +44,24 @@ function AlbumComponent() {
 		setIsLiked(!isLiked);
 	};
 
-	const handleSongPlay = (song: NonNullable<typeof songs>[number]) => {
-		play({
-			id: song.id,
-			title: song.title,
-			artist: song.artistName,
+	const handleSongPlay = async (song: NonNullable<typeof songs>[number]) => {
+		const queue = songs?.map((s) => ({
+			id: s.id,
+			title: s.title,
+			artist: s.artistName,
 			artwork: album.cover,
-			url: song.fileUrl,
+			url: s.fileUrl,
+			album: album.name,
 			albumId: album.id,
 			artistId: album.artistId,
-			type: song.type,
-			duration: song.length,
-		});
+			type: s.type,
+			duration: s.length,
+		}));
+
+		if (!queue) return;
+		const songIndex = queue.findIndex((s) => s.id === song.id) ?? 0;
+
+		await setQueueAndPlay(queue, songIndex);
 	};
 
 	const handleSongLike = (songId: SongId) => {
@@ -175,7 +179,7 @@ function AlbumComponent() {
 										)}
 									>
 										<td className="relative pl-0 pr-2">
-											{isCurrentTrack ? (
+											{currentTrack?.id === song.id ? (
 												<div className="mx-auto flex size-[0.65rem] items-end justify-center space-x-0.5">
 													<div className="animate-now-playing-1 w-1 bg-primary"></div>
 													<div className="animate-now-playing-2 w-1 bg-primary [animation-delay:0.2s]"></div>
@@ -190,7 +194,7 @@ function AlbumComponent() {
 														variant="link"
 														size="icon"
 														className="hidden group-hover:flex group-focus:flex"
-														onClick={() => handleSongPlay(song)}
+														onClick={async () => await handleSongPlay(song)}
 														aria-label={`Play ${song.title}`}
 													>
 														<PlayIcon />

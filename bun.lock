@@ -1,6 +1,5 @@
 {
   "lockfileVersion": 1,
-  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "opium",
@@ -44,9 +43,9 @@
       "name": "web",
       "dependencies": {
         "@opium/api": "workspace:*",
+        "@opium/audio": "workspace:*",
         "@opium/auth": "workspace:*",
         "@opium/icons": "workspace:*",
-        "@opium/player": "workspace:*",
         "@opium/ui": "workspace:*",
         "@orpc/client": "catalog:",
         "@orpc/server": "catalog:",
@@ -98,6 +97,21 @@
       },
       "devDependencies": {
         "@opium/tsconfig": "workspace:*",
+        "tsdown": "catalog:",
+        "typescript": "catalog:",
+      },
+    },
+    "packages/audio": {
+      "name": "@opium/audio",
+      "dependencies": {
+        "howler": "^2.2.4",
+        "zustand": "^5.0.8",
+      },
+      "devDependencies": {
+        "@opium/tsconfig": "workspace:*",
+        "@types/howler": "^2.2.12",
+        "@types/react": "catalog:react",
+        "react": "catalog:react",
         "tsdown": "catalog:",
         "typescript": "catalog:",
       },
@@ -168,21 +182,6 @@
         "typescript": "catalog:",
       },
     },
-    "packages/player": {
-      "name": "@opium/player",
-      "dependencies": {
-        "howler": "^2.2.4",
-        "zustand": "^5.0.8",
-      },
-      "devDependencies": {
-        "@opium/tsconfig": "workspace:*",
-        "@types/howler": "^2.2.12",
-        "@types/react": "catalog:react",
-        "react": "catalog:react",
-        "tsdown": "catalog:",
-        "typescript": "catalog:",
-      },
-    },
     "packages/storage": {
       "name": "@opium/storage",
       "dependencies": {
@@ -198,7 +197,7 @@
     "packages/ui": {
       "name": "@opium/ui",
       "dependencies": {
-        "@base-ui-components/react": "^1.0.0-beta.5",
+        "@base-ui-components/react": "^1.0.0-beta.6",
         "@opium/icons": "workspace:*",
         "@unpic/react": "catalog:",
         "class-variance-authority": "^0.7.1",
@@ -437,7 +436,7 @@
 
     "@babel/types": ["@babel/types@7.28.5", "", { "dependencies": { "@babel/helper-string-parser": "^7.27.1", "@babel/helper-validator-identifier": "^7.28.5" } }, "sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA=="],
 
-    "@base-ui-components/react": ["@base-ui-components/react@1.0.0-beta.5", "", { "dependencies": { "@babel/runtime": "^7.28.4", "@base-ui-components/utils": "0.2.0", "@floating-ui/react-dom": "^2.1.6", "@floating-ui/utils": "^0.2.10", "reselect": "^5.1.1", "tabbable": "^6.3.0", "use-sync-external-store": "^1.6.0" }, "peerDependencies": { "@types/react": "^17 || ^18 || ^19", "react": "^17 || ^18 || ^19", "react-dom": "^17 || ^18 || ^19" }, "optionalPeers": ["@types/react"] }, "sha512-fOvqQIJIeG6h+1CUpA0rnyH2cFa+QxgOrRohkRv1182o5I04GjTG6tqCCxSmtqT0VZmOX88GPYiHz9Sh4j/pyw=="],
+    "@base-ui-components/react": ["@base-ui-components/react@1.0.0-beta.6", "", { "dependencies": { "@babel/runtime": "^7.28.4", "@base-ui-components/utils": "0.2.0", "@floating-ui/react-dom": "^2.1.6", "@floating-ui/utils": "^0.2.10", "reselect": "^5.1.1", "tabbable": "^6.3.0", "use-sync-external-store": "^1.6.0" }, "peerDependencies": { "@types/react": "^17 || ^18 || ^19", "react": "^17 || ^18 || ^19", "react-dom": "^17 || ^18 || ^19" }, "optionalPeers": ["@types/react"] }, "sha512-jE07DkS7JcGKGH4/hNPTabyGfEzrfDhGPM0h9exGDWwRhEJXZK9xhJ4m3fr+yPf8gpddOCMMoKyV4xITJKrSOA=="],
 
     "@base-ui-components/utils": ["@base-ui-components/utils@0.2.0", "", { "dependencies": { "@babel/runtime": "^7.28.4", "@floating-ui/utils": "^0.2.10", "reselect": "^5.1.1", "use-sync-external-store": "^1.6.0" }, "peerDependencies": { "@types/react": "^17 || ^18 || ^19", "react": "^17 || ^18 || ^19", "react-dom": "^17 || ^18 || ^19" }, "optionalPeers": ["@types/react"] }, "sha512-uLLsLpYxPVq/QNsrfHwXuI+uiCr8+P/SLtTgrA4hL5b4UmWo3dnhwo38edfu+gCgfblrJveDj1D4RxEvDc7RXw=="],
 
@@ -589,6 +588,8 @@
 
     "@opium/api": ["@opium/api@workspace:packages/api"],
 
+    "@opium/audio": ["@opium/audio@workspace:packages/audio"],
+
     "@opium/auth": ["@opium/auth@workspace:packages/auth"],
 
     "@opium/biome-config": ["@opium/biome-config@workspace:tooling/biome"],
@@ -598,8 +599,6 @@
     "@opium/email": ["@opium/email@workspace:packages/email"],
 
     "@opium/icons": ["@opium/icons@workspace:packages/icons"],
-
-    "@opium/player": ["@opium/player@workspace:packages/player"],
 
     "@opium/storage": ["@opium/storage@workspace:packages/storage"],
 

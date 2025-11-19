@@ -12,7 +12,7 @@
 		"@opium/api": "workspace:*",
 		"@opium/auth": "workspace:*",
 		"@opium/icons": "workspace:*",
-		"@opium/player": "workspace:*",
+		"@opium/audio": "workspace:*",
 		"@opium/ui": "workspace:*",
 		"@orpc/client": "catalog:",
 		"@orpc/server": "catalog:",

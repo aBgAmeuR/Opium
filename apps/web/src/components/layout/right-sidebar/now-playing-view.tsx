@@ -1,4 +1,4 @@
-import { usePlayerStore } from "@opium/player";
+import { useAudioStore } from "@opium/audio";
 import { Button } from "@opium/ui/components/button";
 import { Cover } from "@opium/ui/components/cover";
 import { LibraryItem } from "../sidebar/sidebar-library";
@@ -8,11 +8,9 @@ type NowPlayingViewProps = {
 };
 
 export function NowPlayingView({ openQueue }: NowPlayingViewProps) {
-	const currentTrack = usePlayerStore(
-		(state) => state.queue[state.currentTrackIndex],
-	);
-	const nextTrack = usePlayerStore(
-		(state) => state.queue[state.currentTrackIndex + 1],
+	const currentTrack = useAudioStore((state) => state.currentTrack);
+	const nextTrack = useAudioStore(
+		(state) => state.queue[state.currentQueueIndex + 1],
 	);
 
 	return (
@@ -59,11 +57,11 @@ export function NowPlayingView({ openQueue }: NowPlayingViewProps) {
 							<span className="text-xs font-medium text-muted-foreground">
 								Album
 							</span>
-							<span className="text-sm">{currentTrack?.albumId}</span>
+							<span className="text-sm">{currentTrack?.album}</span>
 						</div>
 
 						{currentTrack?.type && (
-								<div className="flex flex-col gap-0.5">
+							<div className="flex flex-col gap-0.5">
 								<span className="text-xs font-medium text-muted-foreground">
 									Type
 								</span>
@@ -74,22 +72,21 @@ export function NowPlayingView({ openQueue }: NowPlayingViewProps) {
 							</div>
 						)}
 					</div>
-
-					<div className="flex flex-col gap-0">
-						<div className="flex justify-between items-center px-3 ">
-							<span className="text-xs font-medium text-muted-foreground">
-								Next Song
-							</span>
-							<Button
-								variant="link"
-								size="xs"
-								className="p-0"
-								onClick={openQueue}
-							>
-								Open Queue
-							</Button>
-						</div>
-						{nextTrack && (
+					{nextTrack && (
+						<div className="flex flex-col gap-0">
+							<div className="flex justify-between items-center px-3 ">
+								<span className="text-xs font-medium text-muted-foreground">
+									Next Song
+								</span>
+								<Button
+									variant="link"
+									size="xs"
+									className="p-0"
+									onClick={openQueue}
+								>
+									Open Queue
+								</Button>
+							</div>
 							<div className="px-1">
 								<LibraryItem
 									key={nextTrack.id}
@@ -101,8 +98,8 @@ export function NowPlayingView({ openQueue }: NowPlayingViewProps) {
 									title={nextTrack.title}
 								/>
 							</div>
-						)}
-					</div>
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

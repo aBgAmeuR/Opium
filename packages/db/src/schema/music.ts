@@ -20,6 +20,8 @@ export const trackTypesEnum = [
 	"leak",
 ] as const;
 
+export type TrackType = (typeof trackTypesEnum)[number];
+
 export const playlistVisibilitiesEnum = ["public", "private"] as const;
 
 export const artist = pgTable("artist", {

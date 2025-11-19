@@ -1,3 +1,4 @@
+import { useAudioStore } from "@opium/audio";
 import {
 	HeartAddIcon,
 	HeartIcon,
@@ -11,38 +12,30 @@ import {
 	VolumeHighIcon,
 	VolumeOffIcon,
 } from "@opium/icons";
-import { usePlayerStore } from "@opium/player";
 import { Button } from "@opium/ui/components/button";
 import { Cover } from "@opium/ui/components/cover";
 import { Slider } from "@opium/ui/components/slider";
-import { cn } from "@opium/ui/lib/utils";
+import { Toggle } from "@opium/ui/components/toggle";
 import { useState } from "react";
 
 export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
-	const isPlaying = usePlayerStore((s) => s.isPlaying);
-	const volume = usePlayerStore((s) => s.volume);
-	const isMuted = usePlayerStore((s) => s.isMuted);
-	const isShuffle = usePlayerStore((s) => s.isShuffle);
-	const repeatMode = usePlayerStore((s) => s.repeatMode);
-	const queue = usePlayerStore((s) => s.queue);
-	const currentTrackIndex = usePlayerStore((s) => s.currentTrackIndex);
-	const currentTime = usePlayerStore((s) => s.currentTime);
-	const togglePlayPause = usePlayerStore((s) => s.togglePlayPause);
-	const next = usePlayerStore((s) => s.next);
-	const prev = usePlayerStore((s) => s.prev);
-	const seek = usePlayerStore((s) => s.seek);
-	const setVolume = usePlayerStore((s) => s.setVolume);
-	const toggleMute = usePlayerStore((s) => s.toggleMute);
-	const toggleShuffle = usePlayerStore((s) => s.toggleShuffle);
-	const toggleRepeat = usePlayerStore((s) => s.toggleRepeat);
+	const isPlaying = useAudioStore((state) => state.isPlaying);
+	const volume = useAudioStore((state) => state.volume);
+	const isMuted = useAudioStore((state) => state.isMuted);
+	const shuffleEnabled = useAudioStore((state) => state.shuffleEnabled);
+	const repeatMode = useAudioStore((state) => state.repeatMode);
+	const currentTime = useAudioStore((state) => state.currentTime);
+	const seek = useAudioStore((state) => state.seek);
+	const setVolume = useAudioStore((state) => state.setVolume);
+	const toggleMute = useAudioStore((state) => state.toggleMute);
+	const toggleShuffle = useAudioStore((state) => state.toggleShuffle);
+	const previous = useAudioStore((state) => state.previous);
+	const next = useAudioStore((state) => state.next);
+	const changeRepeatMode = useAudioStore((state) => state.changeRepeatMode);
+	const togglePlay = useAudioStore((state) => state.togglePlay);
+	const currentTrack = useAudioStore((state) => state.currentTrack);
 
 	const [isLiked, setIsLiked] = useState(false);
-
-	const currentTrack = queue[currentTrackIndex];
-
-	if (!currentTrack) {
-		return null;
-	}
 
 	return (
 		<div className="z-50 bg-sidebar w-full">
@@ -51,12 +44,8 @@ export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
 					<Slider
 						className="[&_[data-slot=slider-track]]:before:rounded-none [&_[data-slot=slider-indicator]]:rounded-none [&_[data-slot=slider-indicator]]:![margin-inline-start:0] [&_[data-slot=slider-thumb]]:size-3"
 						value={currentTime}
-						onValueChange={(value) => {
-							// For instant feedback, we could update locally or just call seek
-							// Calling seek will update seekTrigger -> Audio Logic -> Howler -> update currentTime in store
-							seek(value as number);
-						}}
-						max={currentTrack.duration || 180}
+						onValueChange={(value) => seek(value as number)}
+						max={currentTrack?.duration || 0}
 						aria-label="Seek"
 					/>
 				</div>
@@ -64,15 +53,15 @@ export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
 				<div className="flex min-w-0 flex-1 items-center gap-3">
 					<Cover
 						size="md"
-						imageSrc={currentTrack.artwork}
-						alt={currentTrack.title}
+						imageSrc={currentTrack?.artwork}
+						alt={currentTrack?.title}
 					/>
 					<div className="min-w-0 flex-1">
 						<p className="truncate text-sm font-medium text-foreground">
-							{currentTrack.title}
+							{currentTrack?.title || "Unknown Title"}
 						</p>
 						<p className="truncate text-xs text-muted-foreground">
-							{currentTrack.artist}
+							{currentTrack?.artist || "Unknown Artist"}
 						</p>
 					</div>
 					<Button
@@ -91,20 +80,19 @@ export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
 
 				<div className="flex flex-col items-center gap-1">
 					<div className="flex items-center gap-1">
-						<Button
-							variant="ghost"
-							size="icon-sm"
-							onClick={toggleShuffle}
-							className={cn(isShuffle && "text-primary")}
+						<Toggle
 							aria-label="Toggle shuffle"
+							size="sm"
+							pressed={shuffleEnabled}
+							onPressedChange={toggleShuffle}
 						>
 							<ShuffleIcon />
-						</Button>
+						</Toggle>
 
 						<Button
 							variant="ghost"
 							size="icon-sm"
-							onClick={prev}
+							onClick={previous}
 							aria-label="Previous song"
 						>
 							<PreviousIcon />
@@ -113,7 +101,7 @@ export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
 						<Button
 							variant="default"
 							size="icon-sm"
-							onClick={togglePlayPause}
+							onClick={togglePlay}
 							aria-label={isPlaying ? "Pause" : "Play"}
 						>
 							{isPlaying ? <PauseIcon /> : <PlayIcon />}
@@ -128,15 +116,14 @@ export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
 							<NextIcon />
 						</Button>
 
-						<Button
-							variant="ghost"
-							size="icon-sm"
-							onClick={toggleRepeat}
-							className={cn(repeatMode !== "off" && "text-primary")}
-							aria-label={`Repeat: ${repeatMode}`}
+						<Toggle
+							aria-label="Toggle repeat"
+							size="sm"
+							pressed={repeatMode === "one"}
+							onPressedChange={changeRepeatMode}
 						>
 							{repeatMode === "one" ? <RepeatIcon /> : <RepeatIcon />}
-						</Button>
+						</Toggle>
 					</div>
 				</div>
 

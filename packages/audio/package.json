@@ -1,5 +1,5 @@
 {
-	"name": "@opium/player",
+	"name": "@opium/audio",
 	"private": true,
 	"type": "module",
 	"exports": {
