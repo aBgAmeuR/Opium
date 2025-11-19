@@ -7,7 +7,7 @@ export const albumRouter = {
 		.input(createAlbumSchema)
 		.handler(async ({ input }) => await albumService.create(input)),
 
-	list: adminProcedure.handler(async () => await albumService.list()),
+	list: publicProcedure.handler(async () => await albumService.list()),
 
 	getById: publicProcedure
 		.input(getAlbumSchema)

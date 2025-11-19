@@ -1,0 +1,27 @@
+{
+	"name": "@opium/player",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./src/index.ts"
+		}
+	},
+	"scripts": {
+		"build": "tsdown",
+		"clean": "git clean -xdf .cache .turbo dist node_modules"
+	},
+	"dependencies": {
+		"howler": "^2.2.4",
+		"zustand": "^5.0.8"
+	},
+	"devDependencies": {
+		"@opium/tsconfig": "workspace:*",
+		"@types/howler": "^2.2.12",
+		"@types/react": "catalog:react",
+		"react": "catalog:react",
+		"tsdown": "catalog:",
+		"typescript": "catalog:"
+	}
+}

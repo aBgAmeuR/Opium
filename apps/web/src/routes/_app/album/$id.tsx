@@ -1,27 +1,18 @@
 import {
 	AlbumIcon,
-	ArrowLeftIcon,
-	ArrowRightIcon,
 	HeartAddIcon,
-	HeartCheckIcon,
 	HeartIcon,
 	PlayIcon,
 	ShuffleIcon,
 } from "@opium/icons";
-import {
-	Breadcrumb,
-	BreadcrumbItem,
-	BreadcrumbLink,
-	BreadcrumbList,
-	BreadcrumbPage,
-	BreadcrumbSeparator,
-} from "@opium/ui/components/breadcrumb";
+import { usePlayerStore } from "@opium/player";
 import { Button } from "@opium/ui/components/button";
 import { Cover } from "@opium/ui/components/cover";
 import { cn } from "@opium/ui/lib/utils";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { PageHeader } from "@/components/layout/page-header";
 import { orpc } from "@/utils/orpc";
 
 type SongId = string;
@@ -32,11 +23,12 @@ export const Route = createFileRoute("/_app/album/$id")({
 
 function AlbumComponent() {
 	const { id } = Route.useParams();
+	const { play } = usePlayerStore();
 	const [isLiked, setIsLiked] = useState(false);
 	const [likedSongs, setLikedSongs] = useState<Set<SongId>>(new Set());
 	const [playingSongId, setPlayingSongId] = useState<SongId | null>(null);
 
-	const isCurrentTrack = true;
+	const isCurrentTrack = false;
 
 	const { data: album } = useSuspenseQuery(
 		orpc.album.getById.queryOptions({
@@ -50,20 +42,22 @@ function AlbumComponent() {
 		}),
 	);
 
-	const handlePlay = () => {
-		// TODO: Implement play functionality
-		console.log("Play album:", album.name);
-	};
-
 	const handleLike = () => {
-		// TODO: Implement like functionality
 		setIsLiked(!isLiked);
 	};
 
-	const handleSongPlay = (songId: SongId) => {
-		// TODO: Implement play functionality
-		console.log("Play song:", songId);
-		setPlayingSongId(songId);
+	const handleSongPlay = (song: NonNullable<typeof songs>[number]) => {
+		play({
+			id: song.id,
+			title: song.title,
+			artist: song.artistName,
+			artwork: album.cover,
+			url: song.fileUrl,
+			albumId: album.id,
+			artistId: album.artistId,
+			type: song.type,
+			duration: song.length,
+		});
 	};
 
 	const handleSongLike = (songId: SongId) => {
@@ -81,50 +75,28 @@ function AlbumComponent() {
 
 	return (
 		<div className="px-6 py-4">
-			<div className="flex items-center justify-between mb-4 -mx-2">
-				<div className="flex items-center gap-4">
-					<div className="flex items-center">
-						<Button variant="ghost" size="icon-sm">
-							<ArrowLeftIcon />
-						</Button>
-						<Button variant="ghost" size="icon-sm" disabled>
-							<ArrowRightIcon />
-						</Button>
-					</div>
-
-					<Breadcrumb>
-						<Breadcrumb>
-							<BreadcrumbList>
-								<BreadcrumbItem>
-									<AlbumIcon className="size-4" />
-									<BreadcrumbLink render={<Link to="/" />}>
-										Albums
-									</BreadcrumbLink>
-								</BreadcrumbItem>
-								<BreadcrumbSeparator> / </BreadcrumbSeparator>
-								<BreadcrumbItem>
-									<BreadcrumbPage>{album.name}</BreadcrumbPage>
-								</BreadcrumbItem>
-							</BreadcrumbList>
-						</Breadcrumb>
-					</Breadcrumb>
-				</div>
-				<div className="flex items-center gap-1">
-					<Button variant="secondary" size="sm">
-						Play All
-					</Button>
-					<Button variant="ghost" size="icon-sm">
-						<ShuffleIcon />
-					</Button>
-					<Button variant="ghost" size="icon-sm" onClick={handleLike}>
-						{isLiked ? (
-							<HeartIcon className="text-red-500" />
-						) : (
-							<HeartAddIcon />
-						)}
-					</Button>
-				</div>
-			</div>
+			<PageHeader
+				breadcrumbs={[
+					{
+						icon: <AlbumIcon className="size-4" />,
+						label: "Albums",
+						href: "/",
+					},
+					{
+						label: album.name,
+					},
+				]}
+			>
+				<Button variant="secondary" size="sm">
+					Play All
+				</Button>
+				<Button variant="ghost" size="icon-sm">
+					<ShuffleIcon />
+				</Button>
+				<Button variant="ghost" size="icon-sm" onClick={handleLike}>
+					{isLiked ? <HeartIcon className="text-red-500" /> : <HeartAddIcon />}
+				</Button>
+			</PageHeader>
 
 			<div className="mb-4 flex gap-4">
 				<Cover
@@ -163,25 +135,25 @@ function AlbumComponent() {
 
 			{songs && songs.length > 0 && (
 				<div className="overflow-x-auto">
-					<table className="w-full">
+					<table className="w-full border-separate border-spacing-0">
 						<thead>
-							<tr className="border-b border-border">
-								<th className="w-12 px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground">
+							<tr>
+								<th className="w-7 pl-0 pr-2 py-2 text-center text-xs font-normal text-muted-foreground/60">
 									#
 								</th>
-								<th className="px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground">
+								<th className="px-4 py-2 text-left text-xs font-normal text-muted-foreground/60">
 									Name
 								</th>
-								<th className="px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground">
+								<th className="px-4 py-2 text-left text-xs font-normal text-muted-foreground/60">
 									Artists
 								</th>
-								<th className="px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground">
-									Type
-								</th>
-								<th className="px-4 py-3 text-left text-xs font-medium uppercase text-muted-foreground">
+								<th className="px-4 py-2 text-left text-xs font-normal text-muted-foreground/60">
 									Release
 								</th>
-								<th className="w-20 px-4 py-3 text-right text-xs font-medium uppercase text-muted-foreground">
+								<th className="px-4 py-2 text-left text-xs font-normal text-muted-foreground/60">
+									Type
+								</th>
+								<th className="w-20 px-4 py-2 text-right text-xs font-normal text-muted-foreground/60">
 									Duration
 								</th>
 							</tr>
@@ -191,29 +163,34 @@ function AlbumComponent() {
 								const minutes = Math.floor(song.length / 60);
 								const seconds = song.length % 60;
 								const formattedLength = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+								const isEven = index % 2 === 0;
 
 								return (
 									<tr
 										key={song.id}
-										className="group border-border/50 hover:bg-muted/50 transition-colors"
+										className={cn(
+											"group transition-colors duration-150",
+											isEven && "bg-muted/20",
+											"hover:bg-muted/40",
+										)}
 									>
-										<td className="relative px-4 py-1">
+										<td className="relative pl-0 pr-2">
 											{isCurrentTrack ? (
 												<div className="mx-auto flex size-[0.65rem] items-end justify-center space-x-0.5">
-													<div className="animate-now-playing-1 w-1 bg-muted-foreground"></div>
-													<div className="animate-now-playing-2 w-1 bg-muted-foreground [animation-delay:0.2s]"></div>
-													<div className="animate-now-playing-3 w-1 bg-muted-foreground [animation-delay:0.4s]"></div>
+													<div className="animate-now-playing-1 w-1 bg-primary"></div>
+													<div className="animate-now-playing-2 w-1 bg-primary [animation-delay:0.2s]"></div>
+													<div className="animate-now-playing-3 w-1 bg-primary [animation-delay:0.4s]"></div>
 												</div>
 											) : (
-												<div className="flex items-center justify-center">
-													<span className="group-hover:invisible text-sm text-muted-foreground">
+												<div className="flex items-center justify-center size-7">
+													<span className="flex group-hover:hidden group-focus::hidden text-sm text-muted-foreground/70">
 														{String(index + 1).padStart(2, "0")}
 													</span>
 													<Button
-														variant="ghost"
-														size="icon-sm"
-														className="absolute invisible group-hover:visible"
-														onClick={() => handleSongPlay(song.id)}
+														variant="link"
+														size="icon"
+														className="hidden group-hover:flex group-focus:flex"
+														onClick={() => handleSongPlay(song)}
 														aria-label={`Play ${song.title}`}
 													>
 														<PlayIcon />
@@ -221,14 +198,16 @@ function AlbumComponent() {
 												</div>
 											)}
 										</td>
-										<td className="pl-4 py-1">
-											<div className="flex items-center justify-between">
-												<p className="text-sm font-medium">{song.title}</p>
+										<td className="pl-4 py-1.5">
+											<div className="flex items-center justify-between gap-3">
+												<p className="text-sm text-foreground group-hover:text-foreground transition-colors">
+													{song.title}
+												</p>
 												<Button
 													variant="ghost"
 													size="icon-sm"
 													className={cn(
-														"transition-opacity",
+														"h-6 w-6 transition-opacity",
 														likedSongs.has(song.id)
 															? "opacity-100"
 															: "opacity-0 group-hover:opacity-100",
@@ -241,30 +220,32 @@ function AlbumComponent() {
 													}
 												>
 													{likedSongs.has(song.id) ? (
-														<HeartIcon className="text-red-500" />
+														<HeartIcon className="size-4 text-red-500" />
 													) : (
-														<HeartAddIcon />
+														<HeartAddIcon className="size-4" />
 													)}
 												</Button>
 											</div>
 										</td>
-										<td className="pr-4 py-1 pl-2">
-											<p className="text-sm text-muted-foreground">
+										<td className="px-4 py-1.5">
+											<p className="text-sm text-muted-foreground/80">
 												{song.artistName}
 											</p>
 										</td>
-										<td className="px-4 py-1">
-											<p className="text-sm text-muted-foreground">
-												{song.type.charAt(0).toUpperCase() + song.type.slice(1)}
-											</p>
-										</td>
-										<td className="px-4 py-1">
-											<p className="text-sm text-muted-foreground">
+										<td className="px-4 py-1.5">
+											<p className="text-sm text-muted-foreground/80">
 												{album.name}
 											</p>
 										</td>
-										<td className="px-4 py-1 text-right text-sm text-muted-foreground">
-											{formattedLength}
+										<td className="px-4 py-1.5">
+											<p className="text-sm text-muted-foreground/80">
+												{song.type.charAt(0).toUpperCase() + song.type.slice(1)}
+											</p>
+										</td>
+										<td className="px-4 py-1.5 text-right">
+											<p className="text-sm text-muted-foreground/70">
+												{formattedLength}
+											</p>
 										</td>
 									</tr>
 								);

@@ -1,14 +1,19 @@
 import { Button } from "@opium/ui/components/button";
 import { cn } from "@opium/ui/lib/utils";
-import { createFileRoute } from "@tanstack/react-router";
-import { CatalogCard } from "@/components/catalog-card";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { CatalogCard, CatalogCardSkeleton } from "@/components/catalog-card";
 import { types } from "@/constants/types";
+import { orpc } from "@/utils/orpc";
 
 export const Route = createFileRoute("/_app/explore")({
 	component: RouteComponent,
 });
 
 function RouteComponent() {
+	const { data: albums, isLoading } = useQuery(orpc.album.list.queryOptions());
+	const navigate = useNavigate();
+
 	return (
 		<main className="flex flex-col gap-4 p-6">
 			<div>
@@ -56,6 +61,32 @@ function RouteComponent() {
 						name="Playboi Carti"
 						type="performance"
 					/>
+				</div>
+			</div>
+			<div>
+				<h2 className="font-bold text-lg tracking-tight">Albums</h2>
+				<div className="flex flex-wrap">
+					{albums?.map((album) => (
+						<CatalogCard
+							key={album.id}
+							description={album.artistName}
+							imageSrc={album.cover}
+							name={album.name}
+							onClick={() =>
+								navigate({
+									to: "/album/$id",
+									params: { id: album.id.toString() },
+								})
+							}
+						/>
+					))}
+					{isLoading && (
+						<div className="flex">
+							{Array.from({ length: 4 }).map((_, index) => (
+								<CatalogCardSkeleton key={index} />
+							))}
+						</div>
+					)}
 				</div>
 			</div>
 		</main>

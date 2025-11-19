@@ -1,3 +1,4 @@
+import { initAudio } from "@opium/player";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { RootLayout } from "@/components/layout/root";
 import { getUserFn } from "@/functions/auth";
@@ -12,6 +13,7 @@ export const Route = createFileRoute("/_app")({
 
 function RouteComponent() {
 	const { isAdmin } = Route.useRouteContext();
+	initAudio();
 
 	return (
 		<RootLayout isAdmin={isAdmin}>

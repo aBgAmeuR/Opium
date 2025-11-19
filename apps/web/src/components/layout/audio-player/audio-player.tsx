@@ -11,92 +11,68 @@ import {
 	VolumeHighIcon,
 	VolumeOffIcon,
 } from "@opium/icons";
+import { usePlayerStore } from "@opium/player";
 import { Button } from "@opium/ui/components/button";
 import { Cover } from "@opium/ui/components/cover";
 import { Slider } from "@opium/ui/components/slider";
 import { cn } from "@opium/ui/lib/utils";
 import { useState } from "react";
 
-// Mock data
-const mockSong = {
-	id: "1",
-	title:
-		"4tspoon (feat. Yung Bans) fgze gggggggggg gezg gjuizehzeherio àzeig egjiogzeiogze àigzeug g zerio gje iej  fj fjazef j ezezjg jro jezopj eo",
-	artist: "Playboi Carti",
-	image:
-		"https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop",
-	duration: 180,
-};
-
-const formatTime = (seconds: number): string => {
-	const mins = Math.floor(seconds / 60);
-	const secs = Math.floor(seconds % 60);
-	return `${mins}:${secs.toString().padStart(2, "0")}`;
-};
-
-type RepeatMode = "off" | "all" | "one";
-
 export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
-	const [isPlaying, setIsPlaying] = useState(false);
-	const [currentTime, setCurrentTime] = useState<number>(45); // Mock current time in seconds
-	const [volume, setVolume] = useState(70); // Volume percentage
-	const [isMuted, setIsMuted] = useState(false);
+	const isPlaying = usePlayerStore((s) => s.isPlaying);
+	const volume = usePlayerStore((s) => s.volume);
+	const isMuted = usePlayerStore((s) => s.isMuted);
+	const isShuffle = usePlayerStore((s) => s.isShuffle);
+	const repeatMode = usePlayerStore((s) => s.repeatMode);
+	const queue = usePlayerStore((s) => s.queue);
+	const currentTrackIndex = usePlayerStore((s) => s.currentTrackIndex);
+	const currentTime = usePlayerStore((s) => s.currentTime);
+	const togglePlayPause = usePlayerStore((s) => s.togglePlayPause);
+	const next = usePlayerStore((s) => s.next);
+	const prev = usePlayerStore((s) => s.prev);
+	const seek = usePlayerStore((s) => s.seek);
+	const setVolume = usePlayerStore((s) => s.setVolume);
+	const toggleMute = usePlayerStore((s) => s.toggleMute);
+	const toggleShuffle = usePlayerStore((s) => s.toggleShuffle);
+	const toggleRepeat = usePlayerStore((s) => s.toggleRepeat);
+
 	const [isLiked, setIsLiked] = useState(false);
-	const [isShuffle, setIsShuffle] = useState(false);
-	const [repeatMode, setRepeatMode] = useState<RepeatMode>("off");
 
-	const handlePlayPause = () => {
-		setIsPlaying(!isPlaying);
-	};
+	const currentTrack = queue[currentTrackIndex];
 
-	const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setCurrentTime(Number(e.target.value));
-	};
-
-	const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const newVolume = Number(e.target.value);
-		setVolume(newVolume);
-		setIsMuted(newVolume === 0);
-	};
-
-	const handleMute = () => {
-		if (isMuted) {
-			setIsMuted(false);
-		} else {
-			setIsMuted(true);
-		}
-	};
-
-	const handleRepeat = () => {
-		const modes: RepeatMode[] = ["off", "all", "one"];
-		const currentIndex = modes.indexOf(repeatMode);
-		const nextIndex = (currentIndex + 1) % modes.length;
-		setRepeatMode(modes.at(nextIndex) ?? "off");
-	};
+	if (!currentTrack) {
+		return null;
+	}
 
 	return (
 		<div className="z-50 bg-sidebar w-full">
-			{/* Player Controls */}
 			<div className="flex w-full items-center gap-4 px-3 py-3">
 				<div className="absolute left-0 right-0 top-0 w-full">
 					<Slider
 						className="[&_[data-slot=slider-track]]:before:rounded-none [&_[data-slot=slider-indicator]]:rounded-none [&_[data-slot=slider-indicator]]:![margin-inline-start:0] [&_[data-slot=slider-thumb]]:size-3"
 						value={currentTime}
-						onValueChange={(value) => setCurrentTime(value as number)}
-						max={mockSong.duration}
+						onValueChange={(value) => {
+							// For instant feedback, we could update locally or just call seek
+							// Calling seek will update seekTrigger -> Audio Logic -> Howler -> update currentTime in store
+							seek(value as number);
+						}}
+						max={currentTrack.duration || 180}
 						aria-label="Seek"
 					/>
 				</div>
 
-				{/* Song Info */}
 				<div className="flex min-w-0 flex-1 items-center gap-3">
-					<Cover size="md" imageSrc={mockSong.image} alt={mockSong.title} />
+					<Cover
+						size="md"
+						imageSrc={currentTrack.artwork}
+						alt={currentTrack.title}
+					/>
 					<div className="min-w-0 flex-1">
 						<p className="truncate text-sm font-medium text-foreground">
-							{mockSong.title}
+							{currentTrack.title}
 						</p>
 						<p className="truncate text-xs text-muted-foreground">
-							{mockSong.artist}
+							{currentTrack.artist}
 						</p>
 					</div>
 					<Button
@@ -113,41 +89,49 @@ export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
 					</Button>
 				</div>
 
-				{/* Main Controls */}
 				<div className="flex flex-col items-center gap-1">
-					{/* Control Buttons */}
 					<div className="flex items-center gap-1">
 						<Button
 							variant="ghost"
 							size="icon-sm"
-							onClick={() => setIsShuffle(!isShuffle)}
+							onClick={toggleShuffle}
 							className={cn(isShuffle && "text-primary")}
 							aria-label="Toggle shuffle"
 						>
 							<ShuffleIcon />
 						</Button>
 
-						<Button variant="ghost" size="icon-sm" aria-label="Previous song">
+						<Button
+							variant="ghost"
+							size="icon-sm"
+							onClick={prev}
+							aria-label="Previous song"
+						>
 							<PreviousIcon />
 						</Button>
 
 						<Button
 							variant="default"
 							size="icon-sm"
-							onClick={handlePlayPause}
+							onClick={togglePlayPause}
 							aria-label={isPlaying ? "Pause" : "Play"}
 						>
 							{isPlaying ? <PauseIcon /> : <PlayIcon />}
 						</Button>
 
-						<Button variant="ghost" size="icon-sm" aria-label="Next song">
+						<Button
+							variant="ghost"
+							size="icon-sm"
+							onClick={next}
+							aria-label="Next song"
+						>
 							<NextIcon />
 						</Button>
 
 						<Button
 							variant="ghost"
 							size="icon-sm"
-							onClick={handleRepeat}
+							onClick={toggleRepeat}
 							className={cn(repeatMode !== "off" && "text-primary")}
 							aria-label={`Repeat: ${repeatMode}`}
 						>
@@ -156,7 +140,6 @@ export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
 					</div>
 				</div>
 
-				{/* Volume and Queue Controls */}
 				<div className="flex min-w-0 flex-1 items-center justify-end">
 					{onToggleQueue && (
 						<Button
@@ -173,7 +156,7 @@ export function AudioPlayer({ onToggleQueue }: { onToggleQueue?: () => void }) {
 						<Button
 							variant="ghost"
 							size="icon-sm"
-							onClick={handleMute}
+							onClick={toggleMute}
 							aria-label={isMuted ? "Unmute" : "Mute"}
 						>
 							{isMuted || volume === 0 ? <VolumeOffIcon /> : <VolumeHighIcon />}
