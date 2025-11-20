@@ -7,9 +7,9 @@ import {
 } from "@opium/ui/components/tooltip";
 import { cn } from "@opium/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
+import { useSidebar } from "./sidebar-provider";
 
 type SidebarNavigationProps = {
-	isSidebarOpen: boolean;
 	pathname: string;
 	isAdmin: boolean;
 };
@@ -60,7 +60,7 @@ const NavigationItem = ({
 
 	if (!isSidebarOpen) {
 		return (
-			<Tooltip delay={10}>
+			<Tooltip>
 				<TooltipTrigger render={buttonContent} />
 				<TooltipPopup side="right" sideOffset={4}>
 					{label}
@@ -73,10 +73,11 @@ const NavigationItem = ({
 };
 
 export function SidebarNavigation({
-	isSidebarOpen,
 	pathname,
 	isAdmin,
 }: SidebarNavigationProps) {
+	const { open } = useSidebar();
+
 	return (
 		<div
 			className={cn(
@@ -87,7 +88,7 @@ export function SidebarNavigation({
 				<div className="flex w-full flex-col gap-0.5 border-border/50">
 					<NavigationItem
 						icon={HomeIcon}
-						isSidebarOpen={isSidebarOpen}
+						isSidebarOpen={open}
 						label="Home"
 						to="/dashboard"
 						isActive={pathname === "/dashboard"}
@@ -95,7 +96,7 @@ export function SidebarNavigation({
 
 					<NavigationItem
 						icon={ExploreIcon}
-						isSidebarOpen={isSidebarOpen}
+						isSidebarOpen={open}
 						label="Explore"
 						to="/explore"
 						isActive={pathname === "/explore"}
@@ -104,7 +105,7 @@ export function SidebarNavigation({
 					{isAdmin && (
 						<NavigationItem
 							icon={AdminIcon}
-							isSidebarOpen={isSidebarOpen}
+							isSidebarOpen={open}
 							label="Admin"
 							to="/admin"
 							isActive={pathname.startsWith("/admin")}

@@ -18,19 +18,13 @@ import { cn } from "@opium/ui/lib/utils";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { LogOutIcon, Settings2Icon } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import { useSidebar } from "./sidebar-provider";
 
-type SidebarUserMenuProps = {
-	isSidebarOpen: boolean;
-	onToggle: () => void;
-};
-
-export const SidebarUserMenu = ({
-	isSidebarOpen,
-	onToggle,
-}: SidebarUserMenuProps) => {
+export const SidebarUserMenu = () => {
 	const navigate = useNavigate();
 	const { theme, setTheme } = useTheme();
 	const { data: session } = authClient.useSession();
+	const { open, toggleSidebar } = useSidebar();
 
 	const signOut = () => {
 		authClient.signOut({
@@ -48,16 +42,16 @@ export const SidebarUserMenu = ({
 		<div
 			className={cn(
 				"mt-auto flex w-full flex-col items-center gap-2 to-transparent p-2 pt-4",
-				isSidebarOpen && "items-start justify-between",
+				open && "items-start justify-between",
 			)}
 		>
-			{!isSidebarOpen && (
+			{!open && (
 				<Tooltip>
 					<TooltipTrigger
 						render={
 							<Button
-								className={cn(!isSidebarOpen && "mx-auto")}
-								onClick={onToggle}
+								className={cn(!open && "mx-auto")}
+								onClick={toggleSidebar}
 								size="icon"
 								variant="ghost"
 							/>
@@ -77,16 +71,16 @@ export const SidebarUserMenu = ({
 						render={
 							<Button
 								className={cn(
-									isSidebarOpen && "relative w-full",
+									open && "relative w-full",
 									"justify-center px-2 text-muted-foreground",
 								)}
-								size={isSidebarOpen ? "sm" : "icon-sm"}
+								size={open ? "sm" : "icon-sm"}
 								variant="outline"
 							/>
 						}
 					>
 						<UserIcon className="size-4" />
-						{isSidebarOpen && "Profile"}
+						{open && "Profile"}
 					</MenuTrigger>
 					<MenuPopup align="end" side="right" sideOffset={4}>
 						<MenuGroup>
@@ -114,7 +108,7 @@ export const SidebarUserMenu = ({
 				</Menu>
 			)}
 
-			{isSidebarOpen && !session && (
+			{open && !session && (
 				<div className="flex w-full flex-col gap-1.5 p-1">
 					<Button size="sm" variant="outline">
 						<Settings2Icon size={14} strokeWidth={2} />

@@ -12,10 +12,7 @@ import { Link, type LinkProps } from "@tanstack/react-router";
 import { ChevronRightIcon } from "lucide-react";
 import { Suspense } from "react";
 import { orpc } from "@/utils/orpc";
-
-type SidebarLibraryProps = {
-	isSidebarOpen: boolean;
-};
+import { useSidebar } from "./sidebar-provider";
 
 type LibraryItemProps = {
 	title: string;
@@ -80,38 +77,40 @@ export const LibraryItem = ({
 	return buttonContent;
 };
 
-export const SidebarLibrary = ({ isSidebarOpen }: SidebarLibraryProps) => {
+export const SidebarLibrary = () => {
+	const { open } = useSidebar();
+
 	return (
 		<div
 			className={cn(
 				"flex w-full flex-1 min-h-0 flex-col gap-0.5 border-hard border-t border-dashed py-2",
-				isSidebarOpen ? "px-3" : "px-1",
+				open ? "px-3" : "px-1",
 			)}
 		>
-			{isSidebarOpen && (
+			{open && (
 				<Button
 					render={<Link to="/library" />}
 					className={cn(
 						"w-full justify-start text-muted-foreground",
-						!isSidebarOpen && "w-auto justify-center",
+						!open && "w-auto justify-center",
 					)}
-					size={isSidebarOpen ? "xs" : "icon-sm"}
+					size={open ? "xs" : "icon-sm"}
 					variant="ghost"
 				>
-					{isSidebarOpen && "Your library"}
-					{isSidebarOpen && <span className="inline-flex flex-1" />}
-					{isSidebarOpen && <ChevronRightIcon size={14} strokeWidth={2} />}
+					{open && "Your library"}
+					{open && <span className="inline-flex flex-1" />}
+					{open && <ChevronRightIcon size={14} strokeWidth={2} />}
 				</Button>
 			)}
 
 			<div
 				className={cn(
 					"no-scrollbar flex w-full flex-1 min-h-0 flex-col gap-0 overflow-y-auto",
-					!isSidebarOpen && "py-1",
+					!open && "py-1",
 				)}
 			>
 				<Suspense fallback={<Skeleton className="h-10 w-full" />}>
-					<LibraryList isSidebarOpen={isSidebarOpen} />
+					<LibraryList isSidebarOpen={open} />
 				</Suspense>
 			</div>
 		</div>

@@ -1,6 +1,6 @@
 import { AngryIcon } from "lucide-react";
 import { type PropsWithChildren, useState } from "react";
-import { AudioPlayer } from "./audio-player/audio-player";
+import { AudioPlayer } from "@/components/audio/audio-player";
 import { RightSidebar } from "./right-sidebar/right-sidebar";
 import { Sidebar } from "./sidebar/sidebar";
 
@@ -54,7 +54,9 @@ export const RootLayout = ({ children, isAdmin = false }: RootLayoutProps) => {
 			</div>
 
 			<div className="hidden md:flex relative bottom-0 left-0 right-0">
-				<AudioPlayer onToggleQueue={() => setIsQueueOpen(!isQueueOpen)} />
+				<div className="z-50 bg-sidebar w-full">
+					<AudioPlayer onToggleQueue={() => setIsQueueOpen(!isQueueOpen)} />
+				</div>
 			</div>
 		</div>
 	);
