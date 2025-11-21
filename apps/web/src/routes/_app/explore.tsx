@@ -2,7 +2,7 @@ import { Button } from "@opium/ui/components/button";
 import { cn } from "@opium/ui/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { CatalogCard, CatalogCardSkeleton } from "@/components/catalog-card";
+import { CatalogCard, CatalogCardSkeleton } from "@/components/catalog/card";
 import { types } from "@/constants/types";
 import { orpc } from "@/utils/orpc";
 

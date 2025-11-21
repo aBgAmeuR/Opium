@@ -1,7 +1,7 @@
 import { AngryIcon } from "lucide-react";
 import { type PropsWithChildren, useState } from "react";
 import { AudioPlayer } from "@/components/audio/audio-player";
-import { RightSidebar } from "./right-sidebar/right-sidebar";
+import { RightSidebar } from "./right-sidebar";
 import { Sidebar } from "./sidebar/sidebar";
 
 type RootLayoutProps = PropsWithChildren<{
@@ -9,8 +9,6 @@ type RootLayoutProps = PropsWithChildren<{
 }>;
 
 export const RootLayout = ({ children, isAdmin = false }: RootLayoutProps) => {
-	//   const { isSidebarOpen, isMobileSidebarOpen, setIsMobileSidebarOpen } = useRootContext();
-	const isSidebarOpen = true;
 	const [isQueueOpen, setIsQueueOpen] = useState(false);
 
 	return (
@@ -30,7 +28,7 @@ export const RootLayout = ({ children, isAdmin = false }: RootLayoutProps) => {
 			</div>
 			<div className="flex flex-1 overflow-hidden">
 				<div className="hidden md:flex">
-					{isSidebarOpen && <Sidebar isAdmin={isAdmin} />}
+					<Sidebar isAdmin={isAdmin} />
 				</div>
 
 				<div className="flex flex-1 overflow-hidden">

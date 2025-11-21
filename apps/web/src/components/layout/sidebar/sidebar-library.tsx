@@ -1,81 +1,13 @@
 import { Button } from "@opium/ui/components/button";
-import { Cover } from "@opium/ui/components/cover";
 import { Skeleton } from "@opium/ui/components/skeleton";
-import {
-	Tooltip,
-	TooltipPopup,
-	TooltipTrigger,
-} from "@opium/ui/components/tooltip";
 import { cn } from "@opium/ui/lib/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link, type LinkProps } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { ChevronRightIcon } from "lucide-react";
 import { Suspense } from "react";
+import { MediaItem } from "@/components/media-item";
 import { orpc } from "@/utils/orpc";
 import { useSidebar } from "./sidebar-provider";
-
-type LibraryItemProps = {
-	title: string;
-	imageSrc?: string;
-	isSidebarOpen: boolean;
-	description: string;
-	to: LinkProps["to"];
-	params?: LinkProps["params"];
-	className?: string;
-};
-
-export const LibraryItem = ({
-	title,
-	imageSrc,
-	isSidebarOpen,
-	description,
-	to,
-	params,
-	className,
-}: LibraryItemProps) => {
-	const buttonContent = (
-		<Button
-			render={<Link to={to} params={params} />}
-			className={cn(
-				isSidebarOpen && "relative w-full justify-start gap-2.5 px-2 py-1.5",
-				!isSidebarOpen && "w-full justify-center px-0 py-4.5",
-				"group items-center text-muted-foreground",
-				className,
-			)}
-			size={isSidebarOpen ? "sm" : "icon-sm"}
-			variant="ghost"
-		>
-			<div className={cn(!isSidebarOpen && "flex justify-center")}>
-				<Cover
-					size={isSidebarOpen ? "default" : "sm"}
-					imageSrc={imageSrc}
-					alt={title}
-				/>
-			</div>
-			{isSidebarOpen && (
-				<div className="flex w-full min-w-0 flex-col">
-					<p className="truncate text-left text-foreground text-xs">{title}</p>
-					<p className="truncate text-left text-muted-foreground text-xs">
-						{description}
-					</p>
-				</div>
-			)}
-		</Button>
-	);
-
-	if (!isSidebarOpen) {
-		return (
-			<Tooltip>
-				<TooltipTrigger render={buttonContent} />
-				<TooltipPopup side="right" sideOffset={4}>
-					{title}
-				</TooltipPopup>
-			</Tooltip>
-		);
-	}
-
-	return buttonContent;
-};
 
 export const SidebarLibrary = () => {
 	const { open } = useSidebar();
@@ -145,13 +77,13 @@ const LibraryList = ({ isSidebarOpen }: LibraryListProps) => {
 	return library.data
 		?.sort((a, b) => b.likedAt.getTime() - a.likedAt.getTime())
 		.map((item) => (
-			<LibraryItem
+			<MediaItem
 				key={item.id.toString()}
-				to={item.type === "album" ? "/album/$id" : "/playlist/$id"}
+				href={item.type === "album" ? "/album/$id" : "/playlist/$id"}
 				params={{ id: item.id.toString() }}
 				description={item.type === "album" ? "Album" : "Playlist"}
-				imageSrc={item.image ?? undefined}
-				isSidebarOpen={isSidebarOpen}
+				image={item.image ?? undefined}
+				isExpanded={isSidebarOpen}
 				title={item.name}
 			/>
 		));

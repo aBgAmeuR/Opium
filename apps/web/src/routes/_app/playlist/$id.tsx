@@ -9,6 +9,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Image } from "@unpic/react";
 import { MusicIcon, Pencil } from "lucide-react";
 import { useState } from "react";
+import { CollectionHeader } from "@/components/collection/collection-header";
 import { orpc } from "@/utils/orpc";
 
 export const Route = createFileRoute("/_app/playlist/$id")({
@@ -83,58 +84,58 @@ function PlaylistComponent() {
 		});
 	};
 
+	const image = (
+		<div className="relative size-48 flex-shrink-0 group">
+			{playlist.image ? (
+				<Image
+					src={playlist.image}
+					alt={playlist.name}
+					className="size-48 object-cover rounded-[4px]"
+					width={192}
+					height={192}
+				/>
+			) : (
+				<div className="flex size-48 items-center justify-center rounded-[4px] bg-muted text-muted-foreground">
+					<MusicIcon className="size-8" />
+				</div>
+			)}
+			{isOwner && (
+				<div className="absolute right-1 bottom-1 items-center justify-center hidden group-hover:flex">
+					<label
+						className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
+					>
+						<input
+							type="file"
+							accept="image/*"
+							className="hidden"
+							onChange={handleImageChange}
+						/>
+						<Pencil className="size-4" />
+					</label>
+				</div>
+			)}
+		</div>
+	);
+
+	const metadata = (
+		<>
+			<span>
+				{playlist.totalSongs ?? 0} song
+				{(playlist.totalSongs ?? 0) !== 1 ? "s" : ""}
+			</span>
+			<span>•</span>
+			<span>{playlist.createdAt.toLocaleDateString()}</span>
+		</>
+	);
+
 	return (
 		<div className="container mx-auto max-w-6xl px-4 py-8">
-			<div className="mb-8 flex gap-6">
-				<div className="relative size-48 flex-shrink-0 group">
-					{playlist.image ? (
-						<Image
-							src={playlist.image}
-							alt={playlist.name}
-							className="size-48 object-cover rounded-[4px]"
-							width={192}
-							height={192}
-						/>
-					) : (
-						<div className="flex size-48 items-center justify-center rounded-[4px] bg-muted text-muted-foreground">
-							<MusicIcon className="size-8" />
-						</div>
-					)}
-					{isOwner && (
-						<div className="absolute right-1 bottom-1 items-center justify-center hidden group-hover:flex">
-							<label
-								className={cn(
-									buttonVariants({ variant: "ghost", size: "icon" }),
-								)}
-							>
-								<input
-									type="file"
-									accept="image/*"
-									className="hidden"
-									onChange={handleImageChange}
-								/>
-								<Pencil className="size-4" />
-							</label>
-						</div>
-					)}
-				</div>
-
-				<div className="flex flex-col justify-end">
-					<p className="mb-2 text-sm text-muted-foreground capitalize">
-						{playlist.visibility} Playlist
-					</p>
-
-					<h1 className="mb-4 text-5xl font-bold">{playlist.name}</h1>
-					<div className="flex items-center gap-2 text-sm text-muted-foreground">
-						<span>
-							{playlist.totalSongs ?? 0} song
-							{(playlist.totalSongs ?? 0) !== 1 ? "s" : ""}
-						</span>
-						<span>•</span>
-						<span>{playlist.createdAt.toLocaleDateString()}</span>
-					</div>
-				</div>
-			</div>
+			<CollectionHeader
+				image={image}
+				title={playlist.name}
+				subtitle={`${playlist.visibility} Playlist`}
+				metadata={metadata}
+			/>
 		</div>
 	);
 }

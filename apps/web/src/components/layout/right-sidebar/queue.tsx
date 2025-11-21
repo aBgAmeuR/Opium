@@ -2,7 +2,7 @@ import { useAudioStore } from "@opium/audio";
 import { CrossIcon } from "@opium/icons";
 import { Button } from "@opium/ui/components/button";
 import { useMemo } from "react";
-import { LibraryItem } from "../sidebar/sidebar-library";
+import { MediaItem } from "@/components/media-item";
 
 type QueueViewProps = {
 	onClose: () => void;
@@ -35,13 +35,13 @@ export function QueueView({ onClose }: QueueViewProps) {
 
 			<div className="flex size-full flex-1 flex-col overflow-y-auto px-1">
 				{reorderedQueue.map((track) => (
-					<LibraryItem
+					<MediaItem
 						key={track.id}
-						to={"/album/$id"}
+						href={"/album/$id"}
 						params={{ id: track.id }}
 						description={track.artist}
-						imageSrc={track.artwork}
-						isSidebarOpen={true}
+						image={track.artwork}
+						isExpanded={true}
 						title={track.title}
 					/>
 				))}

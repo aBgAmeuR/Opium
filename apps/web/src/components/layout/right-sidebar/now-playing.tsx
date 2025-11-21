@@ -1,7 +1,7 @@
 import { useAudioStore } from "@opium/audio";
 import { Button } from "@opium/ui/components/button";
 import { Cover } from "@opium/ui/components/cover";
-import { LibraryItem } from "../sidebar/sidebar-library";
+import { MediaItem } from "@/components/media-item";
 
 type NowPlayingViewProps = {
 	openQueue: () => void;
@@ -88,13 +88,13 @@ export function NowPlayingView({ openQueue }: NowPlayingViewProps) {
 								</Button>
 							</div>
 							<div className="px-1">
-								<LibraryItem
+								<MediaItem
 									key={nextTrack.id}
-									to={"/album/$id"}
+									href={"/album/$id"}
 									params={{ id: nextTrack.id.toString() }}
 									description={nextTrack.artist}
-									imageSrc={nextTrack.artwork}
-									isSidebarOpen={true}
+									image={nextTrack.artwork}
+									isExpanded={true}
 									title={nextTrack.title}
 								/>
 							</div>

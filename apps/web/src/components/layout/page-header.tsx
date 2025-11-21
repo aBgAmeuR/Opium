@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, ArrowRightIcon } from "@opium/icons";
+import { ArrowLeftIcon, ArrowRightIcon, Icon, type Icons } from "@opium/icons";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -9,10 +9,10 @@ import {
 } from "@opium/ui/components/breadcrumb";
 import { Button } from "@opium/ui/components/button";
 import { Link, useRouter } from "@tanstack/react-router";
-import type { PropsWithChildren, ReactNode } from "react";
+import type { PropsWithChildren } from "react";
 
 export type BreadcrumbItemData = {
-	icon?: ReactNode;
+	icon?: Icons;
 	label: string;
 	href?: string;
 };
@@ -54,7 +54,9 @@ export function PageHeader({ breadcrumbs, children }: PageHeaderProps) {
 							const isLast = index === breadcrumbs.length - 1;
 							const elements = [
 								<BreadcrumbItem key={`item-${index}`}>
-									{item.icon && <span className="mr-1">{item.icon}</span>}
+									{item.icon && (
+										<Icon name={item.icon} className="size-4 mr-1" />
+									)}
 									{item.href && !isLast ? (
 										<BreadcrumbLink render={<Link to={item.href} />}>
 											{item.label}

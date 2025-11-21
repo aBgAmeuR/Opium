@@ -2,7 +2,7 @@ import { Button } from "@opium/ui/components/button";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
-import { CatalogCard, CatalogCardSkeleton } from "@/components/catalog-card";
+import { CatalogCard, CatalogCardSkeleton } from "@/components/catalog/card";
 import { orpc } from "@/utils/orpc";
 
 export const Route = createFileRoute("/_app/library")({

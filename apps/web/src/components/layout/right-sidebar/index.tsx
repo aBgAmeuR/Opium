@@ -1,7 +1,7 @@
 import { cn } from "@opium/ui/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { NowPlayingView } from "./now-playing-view";
-import { QueueView } from "./queue-view";
+import { NowPlayingView } from "./now-playing";
+import { QueueView } from "./queue";
 
 type RightSidebarProps = {
 	isQueueOpen: boolean;
