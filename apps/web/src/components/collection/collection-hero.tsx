@@ -56,7 +56,7 @@ export const CollectionHeroInfo = ({
 	return (
 		<div className="flex flex-col justify-end">
 			<p className="text-sm text-muted-foreground capitalize">{subtitle}</p>
-			<div className="text-4xl font-bold leading-tight">{title}</div>
+			<div className="text-4xl font-bold line-clamp-2 break-all">{title}</div>
 			<div className="flex items-center gap-2 text-sm text-muted-foreground">
 				{children}
 			</div>

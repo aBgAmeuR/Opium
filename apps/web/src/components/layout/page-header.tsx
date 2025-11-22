@@ -53,7 +53,7 @@ export function PageHeader({ breadcrumbs, children }: PageHeaderProps) {
 						{breadcrumbs.flatMap((item, index) => {
 							const isLast = index === breadcrumbs.length - 1;
 							const elements = [
-								<BreadcrumbItem key={`item-${index}`}>
+								<BreadcrumbItem key={`item-${index}`} className="flex-nowrap">
 									{item.icon && (
 										<Icon name={item.icon} className="size-4 mr-1" />
 									)}
@@ -62,7 +62,9 @@ export function PageHeader({ breadcrumbs, children }: PageHeaderProps) {
 											{item.label}
 										</BreadcrumbLink>
 									) : (
-										<BreadcrumbPage>{item.label}</BreadcrumbPage>
+										<BreadcrumbPage className="line-clamp-1 break-all">
+											{item.label}
+										</BreadcrumbPage>
 									)}
 								</BreadcrumbItem>,
 							];

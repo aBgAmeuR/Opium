@@ -3,6 +3,8 @@
 
 @import "@fontsource-variable/inter";
 
+@import "tw-animate-css";
+
 @custom-variant dark (&:is(.dark *));
 @custom-variant fixed (&:is(.layout-fixed *));
 

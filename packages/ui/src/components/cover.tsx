@@ -9,26 +9,31 @@ const sizes = {
 		image: 24,
 		cover: "size-6",
 		icon: "size-3",
+		rounded: "rounded-xs",
 	},
 	default: {
 		image: 32,
 		cover: "size-8",
 		icon: "size-4",
+		rounded: "rounded-sm",
 	},
 	md: {
 		image: 40,
 		cover: "size-10",
 		icon: "size-5",
+		rounded: "rounded-sm",
 	},
 	lg: {
 		image: 128,
 		cover: "size-32",
 		icon: "size-6",
+		rounded: "rounded-md",
 	},
 	xl: {
 		image: 176,
 		cover: "size-44",
 		icon: "size-8",
+		rounded: "rounded-md",
 	},
 };
 
@@ -50,13 +55,14 @@ function Cover({
 	const defaultProps = {
 		"data-slot": "cover",
 		className: cn(
-			"relative flex-shrink-0 rounded-sm overflow-hidden z-10 shadow-md",
+			"relative flex-shrink-0 overflow-hidden shadow-md",
 			sizes[size].cover,
+			sizes[size].rounded,
 		),
 	};
 
 	return (
-		<div className={cn("relative", className)}>
+		<div className={cn("relative object-cover", className)}>
 			<div {...mergeProps<"div">(defaultProps, props)}>
 				{imageSrc ? (
 					<Image
