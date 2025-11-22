@@ -2,6 +2,7 @@ import type { PropsWithChildren } from "react";
 
 export * from "./collection-hero";
 export * from "./collection-nav";
+export * from "./collection-table";
 
 type CollectionProps = PropsWithChildren;
 

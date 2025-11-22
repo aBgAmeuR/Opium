@@ -1,7 +1,12 @@
-import type { Track } from "@opium/audio";
+import { type Track, useAudioStore } from "@opium/audio";
 import { ShuffleIcon } from "@opium/icons";
 import { Button } from "@opium/ui/components/button";
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import {
+	useMutation,
+	useQuery,
+	useQueryClient,
+	useSuspenseQuery,
+} from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
 	Collection,
@@ -9,8 +14,9 @@ import {
 	CollectionHeroImage,
 	CollectionHeroInfo,
 	CollectionNav,
+	CollectionTable,
 } from "@/components/collection";
-import { CollectionTable } from "@/components/collection/collection-table";
+import { LikeButton } from "@/components/like-button";
 import { orpc } from "@/utils/orpc";
 
 export const Route = createFileRoute("/_app/album/$id")({
@@ -18,33 +24,61 @@ export const Route = createFileRoute("/_app/album/$id")({
 });
 
 function AlbumComponent() {
+	const { user } = Route.useRouteContext();
 	const { id } = Route.useParams();
+	const queryClient = useQueryClient();
+	const setQueueAndPlay = useAudioStore((state) => state.setQueueAndPlay);
 
 	const { data: album } = useSuspenseQuery(
-		orpc.album.getById.queryOptions({
-			input: { id: Number(id) },
-		}),
+		orpc.album.getById.queryOptions({ input: { id: Number(id) } }),
 	);
 
-	const { data: songs, isLoading: isLoadingSongs } = useQuery(
-		orpc.album.getSongs.queryOptions({
-			input: { id: Number(id) },
+	const { data: songs, isLoading } = useQuery(
+		orpc.album.getSongs.queryOptions({ input: { id: Number(id) } }),
+	);
+
+	const { mutate: toggleLike } = useMutation(
+		orpc.album.toggleLike.mutationOptions({
+			onMutate: async () => {
+				const albumQueryKey = orpc.album.getById.queryKey({
+					input: { id: Number(id) },
+				});
+				await queryClient.cancelQueries({ queryKey: albumQueryKey });
+
+				const previousAlbum = queryClient.getQueryData(albumQueryKey);
+
+				queryClient.setQueryData(albumQueryKey, (old) =>
+					old ? { ...old, liked: !old.liked } : undefined,
+				);
+
+				return { previousAlbum };
+			},
+			onSettled: () => {
+				queryClient.invalidateQueries({
+					queryKey: orpc.album.getById.queryKey({ input: { id: Number(id) } }),
+				});
+				queryClient.invalidateQueries({
+					queryKey: orpc.library.getLibrary.queryKey(),
+				});
+			},
 		}),
 	);
 
 	const tracks: Track[] =
 		songs?.map((s) => ({
-			id: s.id,
-			title: s.title,
-			artist: s.artistName,
-			artwork: album.cover,
-			url: s.fileUrl,
+			...s,
 			album: album.name,
-			albumId: album.id,
-			artistId: album.artistId,
-			type: s.type,
-			duration: s.length,
+			artwork: album.cover,
 		})) ?? [];
+
+	const handlePlayAll = async () => {
+		await setQueueAndPlay(tracks, 0);
+	};
+
+	const handlePlayAllShuffle = async () => {
+		const shuffledTracks = [...tracks].sort(() => Math.random() - 0.5);
+		await setQueueAndPlay(shuffledTracks, 0);
+	};
 
 	return (
 		<Collection>
@@ -54,13 +88,18 @@ function AlbumComponent() {
 					{ label: album.name },
 				]}
 			>
-				<Button variant="secondary" size="sm">
+				<Button variant="secondary" size="sm" onClick={handlePlayAll}>
 					Play All
 				</Button>
-				<Button variant="ghost" size="icon-sm">
+				<Button variant="ghost" size="icon-sm" onClick={handlePlayAllShuffle}>
 					<ShuffleIcon />
 				</Button>
-				{/* <LikeButton isLiked={isLiked} onClick={handleLike} /> */}
+				{user && (
+					<LikeButton
+						isLiked={album.liked ?? false}
+						onClick={() => toggleLike({ albumId: album.id })}
+					/>
+				)}
 			</CollectionNav>
 
 			<CollectionHero>
@@ -87,7 +126,7 @@ function AlbumComponent() {
 				</CollectionHeroInfo>
 			</CollectionHero>
 
-			<CollectionTable tracks={tracks} isLoading={isLoadingSongs} />
+			<CollectionTable tracks={tracks} isLoading={isLoading} />
 		</Collection>
 	);
 }

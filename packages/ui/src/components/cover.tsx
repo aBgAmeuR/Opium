@@ -27,7 +27,7 @@ const sizes = {
 		image: 128,
 		cover: "size-32",
 		icon: "size-6",
-		rounded: "rounded-md",
+		rounded: "rounded-sm",
 	},
 	xl: {
 		image: 176,

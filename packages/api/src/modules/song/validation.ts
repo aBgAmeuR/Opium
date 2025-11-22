@@ -23,3 +23,9 @@ export const createSongSchema = z.object({
 });
 
 export type CreateSongInput = z.infer<typeof createSongSchema>;
+
+export const getLatestSongSchema = z.object({
+	limit: z.number().int().positive().max(100).min(1).default(10),
+});
+
+export type GetLatestSongInput = z.infer<typeof getLatestSongSchema>;

@@ -67,7 +67,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 
 function RootDocument() {
 	return (
-		<html className="dark" lang="en">
+		<html className="dark" lang="en" suppressHydrationWarning>
 			<head>
 				<HeadContent />
 			</head>

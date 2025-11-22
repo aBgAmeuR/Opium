@@ -13,3 +13,9 @@ export const getAlbumSchema = z.object({
 });
 
 export type GetAlbumInput = z.infer<typeof getAlbumSchema>;
+
+export const toggleLikeSchema = z.object({
+	albumId: z.number().int().positive(),
+});
+
+export type ToggleLikeInput = z.infer<typeof toggleLikeSchema>;

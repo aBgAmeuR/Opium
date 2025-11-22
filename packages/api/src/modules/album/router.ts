@@ -1,6 +1,14 @@
-import { adminProcedure, publicProcedure } from "../../procedures";
+import {
+	adminProcedure,
+	protectedProcedure,
+	publicProcedure,
+} from "../../procedures";
 import { albumService } from "./service";
-import { createAlbumSchema, getAlbumSchema } from "./validation";
+import {
+	createAlbumSchema,
+	getAlbumSchema,
+	toggleLikeSchema,
+} from "./validation";
 
 export const albumRouter = {
 	create: adminProcedure
@@ -11,9 +19,16 @@ export const albumRouter = {
 
 	getById: publicProcedure
 		.input(getAlbumSchema)
-		.handler(async ({ input }) => await albumService.getById(input.id)),
+		.handler(async ({ input, context }) => await albumService.getById(input.id, context.session?.user.id)),
 
 	getSongs: publicProcedure
 		.input(getAlbumSchema)
 		.handler(async ({ input }) => await albumService.getSongs(input.id)),
+
+	toggleLike: protectedProcedure
+		.input(toggleLikeSchema)
+		.handler(
+			async ({ input, context }) =>
+				await albumService.toggleLike(context.session.user.id, input.albumId),
+		),
 };

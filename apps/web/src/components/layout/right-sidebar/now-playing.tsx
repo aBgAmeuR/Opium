@@ -50,7 +50,7 @@ export function NowPlayingView({ openQueue }: NowPlayingViewProps) {
 							<span className="text-xs font-medium text-muted-foreground">
 								Duration
 							</span>
-							<span className="text-sm">{currentTrack?.duration ?? 0}s</span>
+							<span className="text-sm">{`${Math.floor((currentTrack?.duration ?? 0) / 60)}:${((currentTrack?.duration ?? 0) % 60).toString().padStart(2, "0")}`}</span>
 						</div>
 
 						<div className="flex flex-col gap-0.5">

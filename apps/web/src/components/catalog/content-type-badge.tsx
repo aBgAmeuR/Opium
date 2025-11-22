@@ -7,11 +7,13 @@ import {
 
 export type ContentType =
 	| "leak"
-	| "snippet"
 	| "remastered"
 	| "feature"
 	| "performance"
-	| "ai";
+	| "official"
+	| "remix"
+	| "AI"
+	| "fan made";
 
 type ContentTypeBadgeProps = {
 	type: ContentType;
@@ -30,7 +32,7 @@ export const ContentTypeBadge = ({ type }: ContentTypeBadgeProps) => (
 				{type.charAt(0).toUpperCase()}
 			</TooltipTrigger>
 			<TooltipPopup className="py-2">
-				<div className="space-y-2">
+				<div className="space-y-1">
 					<p className="font-medium text-[13px]">Content Types</p>
 					<div className="space-y-1 text-muted-foreground text-xs">
 						<div className="flex items-center gap-1">

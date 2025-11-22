@@ -44,4 +44,25 @@ export const songService = {
 			.innerJoin(artist, eq(song.artistId, artist.id))
 			.orderBy(desc(song.createdAt));
 	},
+
+	async getLatest(limit: number) {
+		return await db
+			.select({
+				id: song.id,
+				title: song.title,
+				artist: artist.name,
+				url: song.fileUrl,
+				cover: album.cover,
+				albumId: song.albumId,
+				artistId: artist.id,
+				type: song.type,
+				duration: song.length,
+				createdAt: song.createdAt,
+			})
+			.from(song)
+			.innerJoin(artist, eq(song.artistId, artist.id))
+			.innerJoin(album, eq(song.albumId, album.id))
+			.orderBy(desc(song.createdAt))
+			.limit(limit);
+	},
 };

@@ -78,7 +78,7 @@ const LibraryList = ({ isSidebarOpen }: LibraryListProps) => {
 		?.sort((a, b) => b.likedAt.getTime() - a.likedAt.getTime())
 		.map((item) => (
 			<MediaItem
-				key={item.id.toString()}
+				key={`${item.type}-${item.id}`}
 				href={item.type === "album" ? "/album/$id" : "/playlist/$id"}
 				params={{ id: item.id.toString() }}
 				description={item.type === "album" ? "Album" : "Playlist"}

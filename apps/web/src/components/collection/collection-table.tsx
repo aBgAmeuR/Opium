@@ -57,6 +57,7 @@ export const CollectionTable = ({
 	const currentTrack = useAudioStore((state) => state.currentTrack);
 	const setQueueAndPlay = useAudioStore((state) => state.setQueueAndPlay);
 	const addToQueue = useAudioStore((state) => state.addToQueue);
+	const isPlaying = useAudioStore((state) => state.isPlaying);
 
 	const handleSongPlay = async (track: Track) => {
 		const trackIndex = tracks.findIndex((t) => t.id === track.id) ?? 0;
@@ -65,46 +66,6 @@ export const CollectionTable = ({
 
 	if (isLoading) {
 		return (
-			// <div className="flex-1 overflow-x-auto">
-			// 	<Table>
-			// 		<CollectionTableHeader />
-			// 		<TableBody>
-			// 			{Array.from({ length: 20 }).map((_, index) => (
-			// 				<TableRow
-			// 					key={index}
-			// 					className={cn(
-			// 						"group transition-colors duration-150",
-			// 						index % 2 === 0 && "bg-muted/20",
-			// 						"hover:bg-muted/40",
-			// 					)}
-			// 				>
-			// 					<TableCell className="relative pl-0 pr-2">
-			// 						<div className="flex items-center justify-center size-7">
-			// 							<span className="flex text-sm text-muted-foreground/70">
-			// 								{String(index + 1).padStart(2, "0")}
-			// 							</span>
-			// 						</div>
-			// 					</TableCell>
-			// 					<TableCell className="pl-4 py-1.5">
-			// 						<Skeleton className="h-5 w-[80%]" />
-			// 					</TableCell>
-			// 					<TableCell className="px-4 py-1.5 hidden md:table-cell">
-			// 						<Skeleton className="h-5 w-[60%]" />
-			// 					</TableCell>
-			// 					<TableCell className="px-4 py-1.5 hidden lg:table-cell">
-			// 						<Skeleton className="h-5 w-[60%]" />
-			// 					</TableCell>
-			// 					<TableCell className="px-4 py-1.5 hidden xl:table-cell">
-			// 						<Skeleton className="h-5 w-16" />
-			// 					</TableCell>
-			// 					<TableCell className="px-4 py-1.5 text-right">
-			// 						<Skeleton className="h-5 w-10 ml-auto" />
-			// 					</TableCell>
-			// 				</TableRow>
-			// 			))}
-			// 		</TableBody>
-			// 	</Table>
-			// </div>
 			<ScrollArea className="flex-1" orientation="both">
 				<Table className="border-separate border-spacing-0 table-fixed w-full">
 					<CollectionTableHeader />
@@ -200,7 +161,7 @@ export const CollectionTable = ({
 							)}
 						>
 							<TableCell className="relative py-0">
-								{currentTrack?.id === track.id ? (
+								{currentTrack?.id === track.id && isPlaying ? (
 									<div className="mx-auto flex size-[0.65rem] items-end justify-center space-x-0.5">
 										<div className="animate-now-playing-1 w-1 bg-primary"></div>
 										<div className="animate-now-playing-2 w-1 bg-primary [animation-delay:0.2s]"></div>
@@ -311,8 +272,8 @@ export const CollectionTable = ({
 
 const CollectionTableHeader = () => {
 	return (
-		<TableHeader className="sticky top-0 z-10 bg-background">
-			<TableRow>
+		<TableHeader className="sticky top-0 z-10">
+			<TableRow className="bg-background!">
 				<TableHead className="w-11 text-muted-foreground/80 text-center">
 					#
 				</TableHead>

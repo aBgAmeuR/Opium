@@ -1,6 +1,6 @@
 import { db } from "@opium/db";
-import { asc, count, desc, eq } from "@opium/db/drizzle";
-import { album, artist, song } from "@opium/db/schema/music";
+import { and, asc, count, desc, eq, sql } from "@opium/db/drizzle";
+import { album, albumLikes, artist, song } from "@opium/db/schema/music";
 import type { CreateAlbumInput } from "./validation";
 
 export const albumService = {
@@ -36,7 +36,7 @@ export const albumService = {
 			.orderBy(desc(album.createdAt));
 	},
 
-	async getById(id: number) {
+	async getById(id: number, userId?: string) {
 		const [albumData] = await db
 			.select({
 				id: album.id,
@@ -48,6 +48,9 @@ export const albumService = {
 				totalSongs: count(song.id),
 				createdAt: album.createdAt,
 				updatedAt: album.updatedAt,
+				liked: userId
+					? sql<boolean>`exists(select 1 from ${albumLikes} where ${albumLikes.albumId} = ${album.id} and ${albumLikes.userId} = ${userId})`
+					: sql<boolean>`false`,
 			})
 			.from(album)
 			.innerJoin(artist, eq(album.artistId, artist.id))
@@ -67,16 +70,40 @@ export const albumService = {
 			.select({
 				id: song.id,
 				title: song.title,
-				fileUrl: song.fileUrl,
-				type: song.type,
-				length: song.length,
-				producers: song.producers,
+				artist: artist.name,
+				url: song.fileUrl,
+				albumId: song.albumId,
 				artistId: artist.id,
-				artistName: artist.name,
+				type: song.type,
+				duration: song.length,
 			})
 			.from(song)
 			.innerJoin(artist, eq(song.artistId, artist.id))
 			.where(eq(song.albumId, id))
 			.orderBy(asc(song.createdAt));
+	},
+
+	async toggleLike(userId: string, albumId: number) {
+		const [existing] = await db
+			.select()
+			.from(albumLikes)
+			.where(
+				and(eq(albumLikes.userId, userId), eq(albumLikes.albumId, albumId)),
+			);
+
+		if (existing) {
+			await db
+				.delete(albumLikes)
+				.where(
+					and(eq(albumLikes.userId, userId), eq(albumLikes.albumId, albumId)),
+				);
+			return false;
+		}
+
+		await db.insert(albumLikes).values({
+			userId,
+			albumId,
+		});
+		return true;
 	},
 };

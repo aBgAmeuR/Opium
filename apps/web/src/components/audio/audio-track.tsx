@@ -1,6 +1,10 @@
 import { useAudioStore } from "@opium/audio";
 import { Cover } from "@opium/ui/components/cover";
 import { useState } from "react";
+import {
+	type ContentType,
+	ContentTypeBadge,
+} from "../catalog/content-type-badge";
 import { LikeButton } from "../like-button";
 
 export const AudioTrack = () => {
@@ -18,9 +22,14 @@ export const AudioTrack = () => {
 				<p className="truncate text-sm font-medium text-foreground">
 					{currentTrack?.title || "Unknown Title"}
 				</p>
-				<p className="truncate text-xs text-muted-foreground">
-					{currentTrack?.artist || "Unknown Artist"}
-				</p>
+				<div className="flex items-center gap-1">
+					{currentTrack && (
+						<ContentTypeBadge type={currentTrack.type as ContentType} />
+					)}
+					<p className="truncate text-xs text-muted-foreground">
+						{currentTrack?.artist || "Unknown Artist"}
+					</p>
+				</div>
 			</div>
 			<LikeButton isLiked={isLiked} onClick={() => setIsLiked(!isLiked)} />
 		</div>
