@@ -1,5 +1,10 @@
 import { useAudioStore } from "@opium/audio";
-import { VolumeHighIcon, VolumeOffIcon } from "@opium/icons";
+import {
+	VolumeHighIcon,
+	VolumeLowIcon,
+	VolumeMediumIcon,
+	VolumeOffIcon,
+} from "@opium/icons";
 import { Button } from "@opium/ui/components/button";
 import { Slider } from "@opium/ui/components/slider";
 
@@ -9,6 +14,17 @@ export const AudioVolume = () => {
 	const volume = useAudioStore((state) => state.volume);
 	const setVolume = useAudioStore((state) => state.setVolume);
 
+	const volumePercent = Math.round(volume * 100);
+
+	const getVolumeIcon = () => {
+		if (isMuted || volume === 0) return VolumeOffIcon;
+		if (volumePercent < 33) return VolumeLowIcon;
+		if (volumePercent < 66) return VolumeMediumIcon;
+		return VolumeHighIcon;
+	};
+
+	const VolumeIcon = getVolumeIcon();
+
 	return (
 		<div className="flex items-center gap-1">
 			<Button
@@ -17,7 +33,7 @@ export const AudioVolume = () => {
 				onClick={toggleMute}
 				aria-label={isMuted ? "Unmute" : "Mute"}
 			>
-				{isMuted || volume === 0 ? <VolumeOffIcon /> : <VolumeHighIcon />}
+				<VolumeIcon />
 			</Button>
 			<Slider
 				value={isMuted ? 0 : volume * 100}

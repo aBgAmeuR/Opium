@@ -5,9 +5,7 @@ import {
 	HeadContent,
 	Outlet,
 	Scripts,
-	useRouterState,
 } from "@tanstack/react-router";
-import Loader from "@/components/loader";
 import type { orpc } from "@/utils/orpc";
 import appCss from "../index.css?url";
 
@@ -67,7 +65,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 
 function RootDocument() {
 	return (
-		<html className="dark" lang="en" suppressHydrationWarning>
+		<html className="dark" lang="en">
 			<head>
 				<HeadContent />
 			</head>

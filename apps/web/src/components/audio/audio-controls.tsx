@@ -5,6 +5,7 @@ import {
 	PlayIcon,
 	PreviousIcon,
 	RepeatIcon,
+	RepeatOneIcon,
 	ShuffleIcon,
 } from "@opium/icons";
 import { Button } from "@opium/ui/components/button";
@@ -92,10 +93,10 @@ const AudioQueueRepeatMode = () => {
 		<Toggle
 			aria-label="Toggle repeat"
 			size="sm"
-			pressed={repeatMode === "one"}
+			pressed={repeatMode !== "all"}
 			onPressedChange={changeRepeatMode}
 		>
-			{repeatMode === "one" ? <RepeatIcon /> : <RepeatIcon />}
+			{repeatMode === "one" ? <RepeatOneIcon /> : <RepeatIcon />}
 		</Toggle>
 	);
 };

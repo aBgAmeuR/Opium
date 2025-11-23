@@ -42,6 +42,7 @@ import {
 import { cn } from "@opium/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { LikeButton } from "../like-button";
+import { CollectionTableMenu } from "./collection-table-menu";
 
 type CollectionTableProps = {
 	tracks: Track[];
@@ -56,7 +57,6 @@ export const CollectionTable = ({
 }: CollectionTableProps) => {
 	const currentTrack = useAudioStore((state) => state.currentTrack);
 	const setQueueAndPlay = useAudioStore((state) => state.setQueueAndPlay);
-	const addToQueue = useAudioStore((state) => state.addToQueue);
 	const isPlaying = useAudioStore((state) => state.isPlaying);
 
 	const handleSongPlay = async (track: Track) => {
@@ -217,50 +217,7 @@ export const CollectionTable = ({
 								<p className="text-sm text-muted-foreground/70 tabular-nums">
 									{`${Math.floor(track.duration / 60)}:${(track.duration % 60).toString().padStart(2, "0")}`}
 								</p>
-								<Menu>
-									<MenuTrigger
-										className="invisible group-hover:visible group-focus:visible"
-										render={<Button variant="ghost" size="icon-sm" />}
-									>
-										<MoreIcon />
-									</MenuTrigger>
-									<MenuPopup align="start" sideOffset={4}>
-										<MenuItem onClick={async () => await handleSongPlay(track)}>
-											<PlayIcon />
-											Play
-										</MenuItem>
-										<MenuSeparator />
-
-										<MenuItem>
-											<HeartIcon />
-											Save in liked
-										</MenuItem>
-
-										<MenuSub orientation="horizontal">
-											<MenuSubTrigger>
-												<PlusIcon />
-												Add to playlist
-											</MenuSubTrigger>
-											<MenuSubPopup>
-												<MenuItem>Favorites</MenuItem>
-												<MenuItem>Jazz</MenuItem>
-												<MenuItem>Rock</MenuItem>
-											</MenuSubPopup>
-										</MenuSub>
-
-										<MenuItem onClick={() => addToQueue(track, "last")}>
-											<QueueIcon />
-											Add to queue
-										</MenuItem>
-
-										<MenuSeparator />
-
-										<MenuItem>
-											<ShareIcon />
-											Share
-										</MenuItem>
-									</MenuPopup>
-								</Menu>
+								<CollectionTableMenu tracks={tracks} track={track} />
 							</TableCell>
 						</TableRow>
 					))}
@@ -271,6 +228,15 @@ export const CollectionTable = ({
 };
 
 const CollectionTableHeader = () => {
+	const tracks = useAudioStore((state) => state.queue);
+	const setQueueAndPlay = useAudioStore((state) => state.setQueueAndPlay);
+	const addToQueue = useAudioStore((state) => state.addToQueue);
+
+	const handleSongPlay = async (track: Track) => {
+		const trackIndex = tracks.findIndex((t) => t.id === track.id) ?? 0;
+		await setQueueAndPlay(tracks, trackIndex);
+	};
+
 	return (
 		<TableHeader className="sticky top-0 z-10">
 			<TableRow className="bg-background!">

@@ -23,6 +23,7 @@ import { PlusIcon } from "./icons/plus";
 import { PreviousIcon } from "./icons/previous";
 import { QueueIcon } from "./icons/queue";
 import { RepeatIcon } from "./icons/repeat";
+import { RepeatOneIcon } from "./icons/repeat-one";
 import { SearchIcon } from "./icons/search";
 import { ShareIcon } from "./icons/share";
 import { ShuffleIcon } from "./icons/shuffle";
@@ -34,6 +35,7 @@ import { VolumeHighIcon } from "./icons/volume-high";
 import { VolumeLowIcon } from "./icons/volume-low";
 import { VolumeMediumIcon } from "./icons/volume-medium";
 import { VolumeOffIcon } from "./icons/volume-off";
+
 export {
 	AdminIcon,
 	AlbumIcon,
@@ -59,6 +61,7 @@ export {
 	PreviousIcon,
 	QueueIcon,
 	RepeatIcon,
+	RepeatOneIcon,
 	SearchIcon,
 	ShareIcon,
 	ShuffleIcon,
@@ -97,6 +100,7 @@ export const icons = {
 	previous: PreviousIcon,
 	queue: QueueIcon,
 	repeat: RepeatIcon,
+	"repeat-one": RepeatOneIcon,
 	search: SearchIcon,
 	share: ShareIcon,
 	shuffle: ShuffleIcon,

@@ -25,7 +25,7 @@ export function PageHeader({ breadcrumbs, children }: PageHeaderProps) {
 	const router = useRouter();
 
 	return (
-		<div className="flex items-center justify-between mb-4 -mx-2">
+		<div className="flex items-center justify-between mb-4 -mx-2 gap-2">
 			<div className="flex items-center gap-4">
 				<div className="flex items-center">
 					<Button
@@ -49,7 +49,7 @@ export function PageHeader({ breadcrumbs, children }: PageHeaderProps) {
 				</div>
 
 				<Breadcrumb>
-					<BreadcrumbList>
+					<BreadcrumbList className="flex-nowrap">
 						{breadcrumbs.flatMap((item, index) => {
 							const isLast = index === breadcrumbs.length - 1;
 							const elements = [

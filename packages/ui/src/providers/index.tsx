@@ -4,7 +4,7 @@ import type { PropsWithChildren } from "react";
 
 export const Providers = ({ children }: PropsWithChildren) => (
   <ToastProvider>
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       {children}
     </ThemeProvider>
   </ToastProvider>
