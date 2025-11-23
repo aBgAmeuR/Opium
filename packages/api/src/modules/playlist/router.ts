@@ -1,8 +1,11 @@
-import { protectedProcedure } from "../../procedures";
+import { protectedProcedure, publicProcedure } from "../../procedures";
 import { playlistService } from "./service";
 import {
+	addToPlaylistSchema,
 	createPlaylistSchema,
 	getPlaylistSchema,
+	removeFromPlaylistSchema,
+	toggleLikeSchema,
 	updatePlaylistSchema,
 } from "./validation";
 
@@ -25,31 +28,44 @@ export const playlistRouter = {
 			return await playlistService.update(context.session.user.id, input);
 		}),
 
-	getById: protectedProcedure
+	getById: publicProcedure
 		.input(getPlaylistSchema)
 		.handler(async ({ input, context }) => {
 			const userId = context.session?.user?.id ?? null;
 			return await playlistService.getById(userId, input.id);
 		}),
 
-	getOwnPlaylists: protectedProcedure.handler(async ({ context }) => {
-		if (!context.session?.user?.id) {
-			throw new Error("Unauthorized");
-		}
-		return await playlistService.getOwnPlaylists(context.session.user.id);
-	}),
+	getSongs: publicProcedure
+		.input(getPlaylistSchema)
+		.handler(async ({ input }) => await playlistService.getSongs(input.id)),
 
-	getLikedPlaylists: protectedProcedure.handler(async ({ context }) => {
-		if (!context.session?.user?.id) {
-			throw new Error("Unauthorized");
-		}
-		return await playlistService.getLikedPlaylists(context.session.user.id);
-	}),
+	toggleLike: protectedProcedure
+		.input(toggleLikeSchema)
+		.handler(
+			async ({ input, context }) =>
+				await playlistService.toggleLike(
+					context.session.user.id,
+					input.playlistId,
+				),
+		),
 
-	getLikedAlbums: protectedProcedure.handler(async ({ context }) => {
-		if (!context.session?.user?.id) {
-			throw new Error("Unauthorized");
-		}
-		return await playlistService.getLikedAlbums(context.session.user.id);
-	}),
+	addToPlaylist: protectedProcedure
+		.input(addToPlaylistSchema)
+		.handler(async ({ input, context }) => {
+			return await playlistService.addToPlaylist(
+				context.session.user.id,
+				input.playlistId,
+				input.songId,
+			);
+		}),
+
+	removeFromPlaylist: protectedProcedure
+		.input(removeFromPlaylistSchema)
+		.handler(async ({ input, context }) => {
+			return await playlistService.removeFromPlaylist(
+				context.session.user.id,
+				input.playlistId,
+				input.songId,
+			);
+		}),
 };

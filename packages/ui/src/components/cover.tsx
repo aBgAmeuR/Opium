@@ -26,7 +26,7 @@ const sizes = {
 	lg: {
 		image: 128,
 		cover: "size-32",
-		icon: "size-6",
+		icon: "size-8",
 		rounded: "rounded-sm",
 	},
 	xl: {

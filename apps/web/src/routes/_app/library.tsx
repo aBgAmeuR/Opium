@@ -18,9 +18,9 @@ function LibraryComponent() {
 	const createPlaylistMutation = useMutation(
 		orpc.playlist.create.mutationOptions({
 			onSuccess: (data) => {
-				queryClient.invalidateQueries({
-					queryKey: orpc.playlist.getOwnPlaylists.queryKey(),
-				});
+				// queryClient.invalidateQueries({
+				// 	queryKey: orpc.playlist.getOwnPlaylists.queryKey(),
+				// });
 				if (data) {
 					navigate({ to: "/playlist/$id", params: { id: data.id.toString() } });
 				}

@@ -1,6 +1,7 @@
 import { useAudioStore } from "@opium/audio";
 import { Button } from "@opium/ui/components/button";
 import { Cover } from "@opium/ui/components/cover";
+import { useMemo } from "react";
 import { MediaItem } from "@/components/media-item";
 
 type NowPlayingViewProps = {
@@ -9,9 +10,22 @@ type NowPlayingViewProps = {
 
 export function NowPlayingView({ openQueue }: NowPlayingViewProps) {
 	const currentTrack = useAudioStore((state) => state.currentTrack);
-	const nextTrack = useAudioStore(
-		(state) => state.queue[state.currentQueueIndex + 1],
-	);
+	const queue = useAudioStore((state) => state.queue);
+	const currentQueueIndex = useAudioStore((state) => state.currentQueueIndex);
+	const repeatMode = useAudioStore((state) => state.repeatMode);
+
+	const reorderedQueue = useMemo(() => {
+		const previousTracks = queue.slice(0, currentQueueIndex);
+		const upcomingTracks = queue.slice(currentQueueIndex);
+
+		if (repeatMode === "all") {
+			return [...upcomingTracks, ...previousTracks];
+		}
+
+		return upcomingTracks;
+	}, [queue, currentQueueIndex, repeatMode]);
+
+	const nextTrack = reorderedQueue[1];
 
 	return (
 		<div className="flex w-full flex-1 gap-2 flex-col overflow-hidden">

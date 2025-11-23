@@ -1,14 +1,5 @@
 import { type Track, useAudioStore } from "@opium/audio";
-import {
-	ExploreIcon,
-	HeartIcon,
-	MoreIcon,
-	MusicIcon,
-	PlayIcon,
-	PlusIcon,
-	QueueIcon,
-	ShareIcon,
-} from "@opium/icons";
+import { ExploreIcon, MusicIcon, PlayIcon } from "@opium/icons";
 import { Button } from "@opium/ui/components/button";
 import { Cover } from "@opium/ui/components/cover";
 import {
@@ -19,16 +10,6 @@ import {
 	EmptyMedia,
 	EmptyTitle,
 } from "@opium/ui/components/empty";
-import {
-	Menu,
-	MenuItem,
-	MenuPopup,
-	MenuSeparator,
-	MenuSub,
-	MenuSubPopup,
-	MenuSubTrigger,
-	MenuTrigger,
-} from "@opium/ui/components/menu";
 import { ScrollArea } from "@opium/ui/components/scroll-area";
 import { Skeleton } from "@opium/ui/components/skeleton";
 import {
@@ -48,12 +29,14 @@ type CollectionTableProps = {
 	tracks: Track[];
 	isLoading?: boolean;
 	showCover?: boolean;
+	libraryId?: number;
 };
 
 export const CollectionTable = ({
 	tracks,
 	isLoading,
 	showCover = false,
+	libraryId,
 }: CollectionTableProps) => {
 	const currentTrack = useAudioStore((state) => state.currentTrack);
 	const setQueueAndPlay = useAudioStore((state) => state.setQueueAndPlay);
@@ -217,7 +200,11 @@ export const CollectionTable = ({
 								<p className="text-sm text-muted-foreground/70 tabular-nums">
 									{`${Math.floor(track.duration / 60)}:${(track.duration % 60).toString().padStart(2, "0")}`}
 								</p>
-								<CollectionTableMenu tracks={tracks} track={track} />
+								<CollectionTableMenu
+									tracks={tracks}
+									track={track}
+									libraryId={libraryId}
+								/>
 							</TableCell>
 						</TableRow>
 					))}
@@ -228,15 +215,6 @@ export const CollectionTable = ({
 };
 
 const CollectionTableHeader = () => {
-	const tracks = useAudioStore((state) => state.queue);
-	const setQueueAndPlay = useAudioStore((state) => state.setQueueAndPlay);
-	const addToQueue = useAudioStore((state) => state.addToQueue);
-
-	const handleSongPlay = async (track: Track) => {
-		const trackIndex = tracks.findIndex((t) => t.id === track.id) ?? 0;
-		await setQueueAndPlay(tracks, trackIndex);
-	};
-
 	return (
 		<TableHeader className="sticky top-0 z-10">
 			<TableRow className="bg-background!">

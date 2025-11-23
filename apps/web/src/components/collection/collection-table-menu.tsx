@@ -1,5 +1,6 @@
 import { type Track, useAudioStore } from "@opium/audio";
 import {
+	DeleteIcon,
 	HeartIcon,
 	MoreIcon,
 	PlayIcon,
@@ -18,21 +19,22 @@ import {
 	MenuSubTrigger,
 	MenuTrigger,
 } from "@opium/ui/components/menu";
-import { useQuery } from "@tanstack/react-query";
-import { Router } from "@tanstack/react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { Route } from "@/routes";
 import { orpc } from "@/utils/orpc";
 
 type CollectionTableMenuProps = {
 	tracks: Track[];
 	track: Track;
+	libraryId?: number;
 };
 
 export const CollectionTableMenu = ({
 	tracks,
 	track,
+	libraryId,
 }: CollectionTableMenuProps) => {
+	const queryClient = useQueryClient();
 	const setQueueAndPlay = useAudioStore((state) => state.setQueueAndPlay);
 	const addToQueue = useAudioStore((state) => state.addToQueue);
 
@@ -46,6 +48,30 @@ export const CollectionTableMenu = ({
 		const trackIndex = tracks.findIndex((t) => t.id === track.id) ?? 0;
 		await setQueueAndPlay(tracks, trackIndex);
 	};
+
+	const { mutate: addToPlaylist } = useMutation(
+		orpc.playlist.addToPlaylist.mutationOptions({
+			onSuccess: (_data, { playlistId }) => {
+				queryClient.invalidateQueries({
+					queryKey: orpc.playlist.getById.queryKey({
+						input: { id: playlistId },
+					}),
+				});
+			},
+		}),
+	);
+
+	const { mutate: removeFromPlaylist } = useMutation(
+		orpc.playlist.removeFromPlaylist.mutationOptions({
+			onSuccess: (_data, { playlistId }) => {
+				queryClient.invalidateQueries({
+					queryKey: orpc.playlist.getById.queryKey({
+						input: { id: playlistId },
+					}),
+				});
+			},
+		}),
+	);
 
 	return (
 		<Menu>
@@ -74,10 +100,28 @@ export const CollectionTableMenu = ({
 					</MenuSubTrigger>
 					<MenuSubPopup>
 						{userLibrary?.map((item) => (
-							<MenuItem key={item.id}>{item.name}</MenuItem>
+							<MenuItem
+								key={item.id}
+								onClick={() =>
+									addToPlaylist({ playlistId: item.id, songId: track.id })
+								}
+							>
+								{item.name}
+							</MenuItem>
 						))}
 					</MenuSubPopup>
 				</MenuSub>
+
+				{libraryId && (
+					<MenuItem
+						onClick={() =>
+							removeFromPlaylist({ playlistId: libraryId, songId: track.id })
+						}
+					>
+						<DeleteIcon />
+						Remove from playlist
+					</MenuItem>
+				)}
 
 				<MenuItem onClick={() => addToQueue(track, "last")}>
 					<QueueIcon />

@@ -21,3 +21,23 @@ export const getPlaylistSchema = z.object({
 });
 
 export type GetPlaylistInput = z.infer<typeof getPlaylistSchema>;
+
+export const toggleLikeSchema = z.object({
+	playlistId: z.number().int().positive(),
+});
+
+export type ToggleLikeInput = z.infer<typeof toggleLikeSchema>;
+
+export const addToPlaylistSchema = z.object({
+	playlistId: z.number().int().positive(),
+	songId: z.string().min(1).max(255),
+});
+
+export type AddToPlaylistInput = z.infer<typeof addToPlaylistSchema>;
+
+export const removeFromPlaylistSchema = z.object({
+	playlistId: z.number().int().positive(),
+	songId: z.string().min(1).max(255),
+});
+
+export type RemoveFromPlaylistInput = z.infer<typeof removeFromPlaylistSchema>;

@@ -6,6 +6,7 @@ import { ArrowRightIcon } from "./icons/arrow-right";
 import { ChevronLeftIcon } from "./icons/chevron-left";
 import { ChevronRightIcon } from "./icons/chevron-right";
 import { CrossIcon } from "./icons/cross";
+import { DeleteIcon } from "./icons/delete";
 import { ExploreIcon } from "./icons/explore";
 import { HeartIcon } from "./icons/heart";
 import { HeartAddIcon } from "./icons/heart-add";
@@ -44,6 +45,7 @@ export {
 	ChevronLeftIcon,
 	ChevronRightIcon,
 	CrossIcon,
+	DeleteIcon,
 	ExploreIcon,
 	HeartIcon,
 	HeartAddIcon,
@@ -83,6 +85,7 @@ export const icons = {
 	"chevron-left": ChevronLeftIcon,
 	"chevron-right": ChevronRightIcon,
 	cross: CrossIcon,
+	delete: DeleteIcon,
 	explore: ExploreIcon,
 	heart: HeartIcon,
 	"heart-add": HeartAddIcon,

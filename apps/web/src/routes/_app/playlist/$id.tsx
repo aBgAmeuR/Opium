@@ -1,15 +1,22 @@
-import { buttonVariants } from "@opium/ui/components/button";
-import { cn } from "@opium/ui/lib/utils";
+import { type Track, useAudioStore } from "@opium/audio";
+import { ShuffleIcon } from "@opium/icons";
+import { Button } from "@opium/ui/components/button";
 import {
 	useMutation,
+	useQuery,
 	useQueryClient,
 	useSuspenseQuery,
 } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Image } from "@unpic/react";
-import { MusicIcon, Pencil } from "lucide-react";
-import { useState } from "react";
-import { CollectionHeader } from "@/components/collection/collection-header";
+import {
+	Collection,
+	CollectionHero,
+	CollectionHeroImage,
+	CollectionHeroInfo,
+	CollectionNav,
+	CollectionTable,
+} from "@/components/collection";
+import { LikeButton } from "@/components/like-button";
 import { orpc } from "@/utils/orpc";
 
 export const Route = createFileRoute("/_app/playlist/$id")({
@@ -19,123 +26,101 @@ export const Route = createFileRoute("/_app/playlist/$id")({
 function PlaylistComponent() {
 	const { user } = Route.useRouteContext();
 	const { id } = Route.useParams();
+	const queryClient = useQueryClient();
+	const setQueueAndPlay = useAudioStore((state) => state.setQueueAndPlay);
 
 	const { data: playlist } = useSuspenseQuery(
-		orpc.playlist.getById.queryOptions({
-			input: { id: Number(id) },
-		}),
+		orpc.playlist.getById.queryOptions({ input: { id: Number(id) } }),
 	);
 
-	const queryClient = useQueryClient();
-	const isOwner = user?.id === playlist.userId;
+	const { data: tracks = [], isLoading } = useQuery(
+		orpc.playlist.getSongs.queryOptions({ input: { id: Number(id) } }),
+	);
 
-	const [isEditing, setIsEditing] = useState(false);
-	const [editName, setEditName] = useState(playlist.name);
-	const [editVisibility, setEditVisibility] = useState(playlist.visibility);
-	const [imageFile, setImageFile] = useState<File | null>(null);
-	const [imagePreview, setImagePreview] = useState<string | null>(null);
+	const { mutate: toggleLike } = useMutation(
+		orpc.playlist.toggleLike.mutationOptions({
+			onMutate: async () => {
+				const playlistQueryKey = orpc.playlist.getById.queryKey({
+					input: { id: Number(id) },
+				});
+				await queryClient.cancelQueries({ queryKey: playlistQueryKey });
 
-	const updatePlaylistMutation = useMutation(
-		orpc.playlist.update.mutationOptions({
-			onSuccess: () => {
+				const previousPlaylist = queryClient.getQueryData(playlistQueryKey);
+
+				queryClient.setQueryData(playlistQueryKey, (old) =>
+					old ? { ...old, liked: !old.liked } : undefined,
+				);
+
+				return { previousPlaylist };
+			},
+			onSettled: () => {
 				queryClient.invalidateQueries({
 					queryKey: orpc.playlist.getById.queryKey({
-						input: { id: playlist.id },
+						input: { id: Number(id) },
 					}),
 				});
 				queryClient.invalidateQueries({
-					queryKey: orpc.playlist.getOwnPlaylists.queryKey(),
+					queryKey: orpc.library.getLibrary.queryKey(),
 				});
-				setIsEditing(false);
-				setImageFile(null);
-				setImagePreview(null);
 			},
 		}),
 	);
 
-	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (file) {
-			setImageFile(file);
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				setImagePreview(reader.result as string);
-			};
-			reader.readAsDataURL(file);
-		}
+	const handlePlayAll = async () => {
+		await setQueueAndPlay(tracks, 0);
 	};
 
-	const handleSave = async () => {
-		let imageUrl = playlist.image;
-
-		if (imageFile) {
-			const { url } = await orpc.image.upload.call({
-				file: imageFile,
-				prefix: "playlists",
-			});
-			imageUrl = url;
-		}
-
-		updatePlaylistMutation.mutate({
-			id: playlist.id,
-			name: editName,
-			visibility: editVisibility,
-			image: imageUrl ?? null,
-		});
+	const handlePlayAllShuffle = async () => {
+		const shuffledTracks = [...tracks].sort(() => Math.random() - 0.5);
+		await setQueueAndPlay(shuffledTracks, 0);
 	};
-
-	const image = (
-		<div className="relative size-48 flex-shrink-0 group">
-			{playlist.image ? (
-				<Image
-					src={playlist.image}
-					alt={playlist.name}
-					className="size-48 object-cover rounded-[4px]"
-					width={192}
-					height={192}
-				/>
-			) : (
-				<div className="flex size-48 items-center justify-center rounded-[4px] bg-muted text-muted-foreground">
-					<MusicIcon className="size-8" />
-				</div>
-			)}
-			{isOwner && (
-				<div className="absolute right-1 bottom-1 items-center justify-center hidden group-hover:flex">
-					<label
-						className={cn(buttonVariants({ variant: "ghost", size: "icon" }))}
-					>
-						<input
-							type="file"
-							accept="image/*"
-							className="hidden"
-							onChange={handleImageChange}
-						/>
-						<Pencil className="size-4" />
-					</label>
-				</div>
-			)}
-		</div>
-	);
-
-	const metadata = (
-		<>
-			<span>
-				{playlist.totalSongs ?? 0} song
-				{(playlist.totalSongs ?? 0) !== 1 ? "s" : ""}
-			</span>
-			<span>•</span>
-			<span>{playlist.createdAt.toLocaleDateString()}</span>
-		</>
-	);
 
 	return (
-		<div className="container mx-auto max-w-6xl px-4 py-8">
-			<CollectionHeader
-				image={image}
-				title={playlist.name}
-				subtitle={`${playlist.visibility} Playlist`}
-				metadata={metadata}
+		<Collection>
+			<CollectionNav
+				breadcrumbs={[
+					{ icon: "playlist", label: "Playlists", href: "/" },
+					{ label: playlist.name },
+				]}
+			>
+				<Button variant="secondary" size="sm" onClick={handlePlayAll}>
+					Play All
+				</Button>
+				<Button variant="ghost" size="icon-sm" onClick={handlePlayAllShuffle}>
+					<ShuffleIcon />
+				</Button>
+				{user && playlist.userId !== user?.id && (
+					<LikeButton
+						isLiked={playlist.liked ?? false}
+						onClick={() => toggleLike({ playlistId: playlist.id })}
+					/>
+				)}
+			</CollectionNav>
+
+			<CollectionHero>
+				<CollectionHeroImage
+					imageSrc={playlist.image ?? undefined}
+					imageAlt={playlist.name}
+				/>
+				<CollectionHeroInfo
+					title={playlist.name}
+					subtitle={`${playlist.visibility} Playlist`}
+				>
+					<span>
+						{playlist.totalSongs ?? 0} song
+						{(playlist.totalSongs ?? 0) !== 1 ? "s" : ""}
+					</span>
+					<span>•</span>
+					<span>{playlist.createdAt.toLocaleDateString()}</span>
+				</CollectionHeroInfo>
+			</CollectionHero>
+
+			<CollectionTable
+				tracks={tracks}
+				isLoading={isLoading}
+				showCover
+				libraryId={playlist.userId === user?.id ? playlist.id : undefined}
 			/>
-		</div>
+		</Collection>
 	);
 }

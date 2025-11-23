@@ -1,5 +1,5 @@
 import { db } from "@opium/db";
-import { and, count, desc, eq } from "@opium/db/drizzle";
+import { and, asc, count, desc, eq, sql } from "@opium/db/drizzle";
 import {
 	album,
 	albumLikes,
@@ -57,6 +57,9 @@ export const playlistService = {
 				createdAt: playlist.createdAt,
 				updatedAt: playlist.updatedAt,
 				totalSongs: count(playlistsToSongs.songId),
+				liked: userId
+					? sql<boolean>`exists(select 1 from ${playlistLikes} where ${playlistLikes.playlistId} = ${playlist.id} and ${playlistLikes.userId} = ${userId})`
+					: sql<boolean>`false`,
 			})
 			.from(playlist)
 			.leftJoin(playlistsToSongs, eq(playlist.id, playlistsToSongs.playlistId))
@@ -77,62 +80,88 @@ export const playlistService = {
 		return playlistData;
 	},
 
-	async getOwnPlaylists(userId: string) {
+	async getSongs(playlistId: number) {
 		return await db
 			.select({
-				id: playlist.id,
-				name: playlist.name,
-				visibility: playlist.visibility,
-				image: playlist.image,
-				createdAt: playlist.createdAt,
-				updatedAt: playlist.updatedAt,
-				totalSongs: count(playlistsToSongs.songId),
+				id: song.id,
+				title: song.title,
+				artist: artist.name,
+				url: song.fileUrl,
+				albumId: song.albumId,
+				album: album.name,
+				artwork: album.cover,
+				artistId: artist.id,
+				type: song.type,
+				duration: song.length,
 			})
-			.from(playlist)
-			.leftJoin(playlistsToSongs, eq(playlist.id, playlistsToSongs.playlistId))
-			.where(eq(playlist.userId, userId))
-			.groupBy(playlist.id)
-			.orderBy(desc(playlist.createdAt));
+			.from(playlistsToSongs)
+			.innerJoin(song, eq(playlistsToSongs.songId, song.id))
+			.innerJoin(artist, eq(song.artistId, artist.id))
+			.innerJoin(album, eq(song.albumId, album.id))
+			.where(eq(playlistsToSongs.playlistId, playlistId))
+			.orderBy(asc(song.createdAt));
 	},
 
-	async getLikedPlaylists(userId: string) {
-		return await db
-			.select({
-				id: playlist.id,
-				name: playlist.name,
-				visibility: playlist.visibility,
-				image: playlist.image,
-				userId: playlist.userId,
-				createdAt: playlist.createdAt,
-				updatedAt: playlist.updatedAt,
-				totalSongs: count(playlistsToSongs.songId),
-			})
+	async toggleLike(userId: string, playlistId: number) {
+		const [existing] = await db
+			.select()
 			.from(playlistLikes)
-			.innerJoin(playlist, eq(playlistLikes.playlistId, playlist.id))
-			.leftJoin(playlistsToSongs, eq(playlist.id, playlistsToSongs.playlistId))
-			.where(eq(playlistLikes.userId, userId))
-			.groupBy(playlist.id, playlistLikes.createdAt)
-			.orderBy(desc(playlistLikes.createdAt));
+			.where(
+				and(
+					eq(playlistLikes.userId, userId),
+					eq(playlistLikes.playlistId, playlistId),
+				),
+			);
+
+		if (existing) {
+			await db
+				.delete(playlistLikes)
+				.where(
+					and(
+						eq(playlistLikes.userId, userId),
+						eq(playlistLikes.playlistId, playlistId),
+					),
+				);
+			return false;
+		}
+
+		await db.insert(playlistLikes).values({
+			userId,
+			playlistId,
+		});
+		return true;
 	},
 
-	async getLikedAlbums(userId: string) {
-		return await db
-			.select({
-				id: album.id,
-				name: album.name,
-				cover: album.cover,
-				artistId: album.artistId,
-				artistName: artist.name,
-				createdAt: album.createdAt,
-				updatedAt: album.updatedAt,
-				totalSongs: count(song.id),
-			})
-			.from(albumLikes)
-			.innerJoin(album, eq(albumLikes.albumId, album.id))
-			.innerJoin(artist, eq(album.artistId, artist.id))
-			.leftJoin(song, eq(album.id, song.albumId))
-			.where(eq(albumLikes.userId, userId))
-			.groupBy(album.id, artist.id, albumLikes.createdAt)
-			.orderBy(desc(albumLikes.createdAt));
+	async addToPlaylist(userId: string, playlistId: number, songId: string) {
+		const [playlistData] = await db
+			.select()
+			.from(playlist)
+			.where(and(eq(playlist.id, playlistId), eq(playlist.userId, userId)));
+
+		if (!playlistData) {
+			throw new Error("Playlist not found or you don't have permission");
+		}
+
+		await db.insert(playlistsToSongs).values({ playlistId, songId });
+	},
+
+	async removeFromPlaylist(userId: string, playlistId: number, songId: string) {
+		const [playlistData] = await db
+			.select()
+			.from(playlist)
+			.where(and(eq(playlist.id, playlistId), eq(playlist.userId, userId)));
+
+		if (!playlistData) {
+			throw new Error("Playlist not found or you don't have permission");
+		}
+
+		await db
+			.delete(playlistsToSongs)
+			.where(
+				and(
+					eq(playlistsToSongs.playlistId, playlistId),
+					eq(playlistsToSongs.songId, songId),
+				),
+			);
 	},
 };
