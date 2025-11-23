@@ -17,7 +17,7 @@ export const libraryService = {
 			.select({
 				id: playlist.id,
 				name: playlist.name,
-				type: sql`'playlist'`,
+				type: sql<'playlist' | 'album'>`'playlist'`,
 				image: playlist.image,
 				likedAt: playlist.createdAt,
 				totalSongs: count(playlistsToSongs.songId),
@@ -31,7 +31,7 @@ export const libraryService = {
 			.select({
 				id: playlist.id,
 				name: playlist.name,
-				type: sql`'playlist'`,
+				type: sql<'playlist' | 'album'>`'playlist'`,
 				image: playlist.image,
 				likedAt: playlistLikes.createdAt,
 				totalSongs: count(playlistsToSongs.songId),
@@ -46,7 +46,7 @@ export const libraryService = {
 			.select({
 				id: album.id,
 				name: album.name,
-				type: sql`'album'`,
+				type: sql<'playlist' | 'album'>`'album'`,
 				image: album.cover,
 				likedAt: albumLikes.createdAt,
 				totalSongs: count(song.id),

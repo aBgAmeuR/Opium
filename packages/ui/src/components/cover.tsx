@@ -79,7 +79,7 @@ function Cover({
 				)}
 			</div>
 			{imageSrc && variant === "blur" && (
-				<div className="absolute bottom-0 left-0 size-full origin-bottom scale-90 blur-lg saturate-200 opacity-20">
+				<div className="absolute bottom-2 left-0 size-full origin-bottom scale-90 blur-lg saturate-200 opacity-20">
 					<Image
 						src={imageSrc}
 						alt={alt}

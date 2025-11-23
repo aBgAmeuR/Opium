@@ -68,4 +68,9 @@ export const playlistRouter = {
 				input.songId,
 			);
 		}),
+
+	getLikedTracks: protectedProcedure
+		.handler(async ({ context }) => {
+			return await playlistService.getLikedTracks(context.session.user.id);
+		}),
 };

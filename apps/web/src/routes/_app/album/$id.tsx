@@ -103,7 +103,7 @@ function AlbumComponent() {
 			</CollectionNav>
 
 			<CollectionHero>
-				<CollectionHeroImage imageSrc={album.cover} imageAlt={album.name} />
+				<CollectionHeroImage src={album.cover} alt={album.name} />
 				<CollectionHeroInfo title={album.name} subtitle="Album">
 					<Button
 						variant="link"

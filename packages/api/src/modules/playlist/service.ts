@@ -2,8 +2,8 @@ import { db } from "@opium/db";
 import { and, asc, count, desc, eq, sql } from "@opium/db/drizzle";
 import {
 	album,
-	albumLikes,
 	artist,
+	interaction,
 	playlist,
 	playlistLikes,
 	playlistsToSongs,
@@ -163,5 +163,27 @@ export const playlistService = {
 					eq(playlistsToSongs.songId, songId),
 				),
 			);
+	},
+
+	async getLikedTracks(userId: string) {
+		return await db
+			.select({
+				id: song.id,
+				title: song.title,
+				artist: artist.name,
+				url: song.fileUrl,
+				albumId: song.albumId,
+				album: album.name,
+				artwork: album.cover,
+				artistId: artist.id,
+				type: song.type,
+				duration: song.length,
+			})
+			.from(interaction)
+			.innerJoin(song, eq(interaction.songId, song.id))
+			.innerJoin(artist, eq(song.artistId, artist.id))
+			.innerJoin(album, eq(song.albumId, album.id))
+			.where(and(eq(interaction.userId, userId), eq(interaction.liked, true)))
+			.orderBy(desc(interaction.createdAt));
 	},
 };

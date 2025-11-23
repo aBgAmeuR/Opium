@@ -7,13 +7,13 @@ export const CollectionHero = ({ children }: PropsWithChildren) => {
 };
 
 export const CollectionHeroImage = ({
-	imageSrc,
-	imageAlt,
+	src,
+	alt,
 }: {
-	imageSrc?: string;
-	imageAlt: string;
+	src: string | null;
+	alt: string;
 }) => {
-	return <Cover size="lg" variant="blur" imageSrc={imageSrc} alt={imageAlt} />;
+	return <Cover size="lg" variant="blur" imageSrc={src ?? undefined} alt={alt} />;
 };
 
 export const CollectionHeroInfo = ({

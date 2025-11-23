@@ -29,3 +29,9 @@ export const getLatestSongSchema = z.object({
 });
 
 export type GetLatestSongInput = z.infer<typeof getLatestSongSchema>;
+
+export const toggleLikeSchema = z.object({
+	songId: z.string(),
+});
+
+export type ToggleLikeInput = z.infer<typeof toggleLikeSchema>;

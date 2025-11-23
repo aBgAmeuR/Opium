@@ -21,6 +21,7 @@ import {
 } from "@opium/ui/components/menu";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo } from "react";
+import { Route } from "@/routes/_app";
 import { orpc } from "@/utils/orpc";
 
 type CollectionTableMenuProps = {
@@ -34,6 +35,7 @@ export const CollectionTableMenu = ({
 	track,
 	libraryId,
 }: CollectionTableMenuProps) => {
+	const { user } = Route.useRouteContext();
 	const queryClient = useQueryClient();
 	const setQueueAndPlay = useAudioStore((state) => state.setQueueAndPlay);
 	const addToQueue = useAudioStore((state) => state.addToQueue);
@@ -73,6 +75,16 @@ export const CollectionTableMenu = ({
 		}),
 	);
 
+	const { mutate: toggleLike } = useMutation(
+		orpc.song.toggleLike.mutationOptions({
+			onSuccess: () => {
+				queryClient.invalidateQueries({
+					queryKey: orpc.playlist.getLikedTracks.queryKey(),
+				});
+			},
+		}),
+	);
+
 	return (
 		<Menu>
 			<MenuTrigger
@@ -88,7 +100,10 @@ export const CollectionTableMenu = ({
 				</MenuItem>
 				<MenuSeparator />
 
-				<MenuItem>
+				<MenuItem
+					onClick={() => toggleLike({ songId: track.id })}
+					disabled={!user}
+				>
 					<HeartIcon />
 					Save in liked
 				</MenuItem>

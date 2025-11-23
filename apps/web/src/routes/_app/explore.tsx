@@ -28,18 +28,15 @@ function RouteComponent() {
 			</div>
 			<div>
 				<h2 className="font-bold text-lg tracking-tight">Browse by Type</h2>
-				<div className="mt-2 grid grid-cols-4 gap-2 lg:grid-cols-5 xl:grid-cols-6">
+				<div className="mt-4 grid grid-cols-3 gap-3 lg:grid-cols-4 xl:grid-cols-6">
 					{types.map((type) => (
 						<Button
-							className={cn(
-								type.color,
-								"flex aspect-video w-full flex-col items-center justify-center gap-1.5 text-white",
-							)}
 							key={type.name}
-							variant="ghost"
+							className="size-full flex-col dark:bg-muted dark:hover:bg-muted/80 py-3 gap-1"
+							variant="outline"
 						>
-							{type.icon}
-							<p className="font-medium tracking-tight">{type.name}</p>
+							<div className="text-foreground">{type.icon}</div>
+							<p className="text-xs font-medium">{type.name}</p>
 						</Button>
 					))}
 				</div>

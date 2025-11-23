@@ -65,26 +65,41 @@ const LibraryList = ({ isSidebarOpen }: LibraryListProps) => {
 	}
 
 	if (library.data?.length === 0) {
-		return (
-			<div className="mt-1 flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-2">
-				<p className="text-muted-foreground text-xs opacity-50">
-					No items in your library
-				</p>
-			</div>
-		);
+		if (isSidebarOpen) {
+			return (
+				<div className="mt-1 flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-2">
+					<p className="text-muted-foreground text-xs opacity-50">
+						No items in your library
+					</p>
+				</div>
+			);
+		}
+		return null;
 	}
 
-	return library.data
-		?.sort((a, b) => b.likedAt.getTime() - a.likedAt.getTime())
-		.map((item) => (
+	return (
+		<>
 			<MediaItem
-				key={`${item.type}-${item.id}`}
-				href={item.type === "album" ? "/album/$id" : "/playlist/$id"}
-				params={{ id: item.id.toString() }}
-				description={item.type === "album" ? "Album" : "Playlist"}
-				image={item.image ?? undefined}
+				key="playlist-liked"
+				href="/playlist/liked"
+				description="Playlist"
+				image="https://cdn.opium.antoinejosset.fr/opium/playlists/liked_playlist.webp"
 				isExpanded={isSidebarOpen}
-				title={item.name}
+				title="Liked Tracks"
 			/>
-		));
+			{library.data
+				?.sort((a, b) => b.likedAt.getTime() - a.likedAt.getTime())
+				.map((item) => (
+					<MediaItem
+						key={`${item.type}-${item.id}`}
+						href={item.type === "album" ? "/album/$id" : "/playlist/$id"}
+						params={{ id: item.id.toString() }}
+						description={item.type === "album" ? "Album" : "Playlist"}
+						image={item.image ?? undefined}
+						isExpanded={isSidebarOpen}
+						title={item.name}
+					/>
+				))}
+		</>
+	);
 };

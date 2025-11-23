@@ -98,10 +98,7 @@ function PlaylistComponent() {
 			</CollectionNav>
 
 			<CollectionHero>
-				<CollectionHeroImage
-					imageSrc={playlist.image ?? undefined}
-					imageAlt={playlist.name}
-				/>
+				<CollectionHeroImage src={playlist.image} alt={playlist.name} />
 				<CollectionHeroInfo
 					title={playlist.name}
 					subtitle={`${playlist.visibility} Playlist`}

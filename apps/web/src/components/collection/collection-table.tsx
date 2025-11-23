@@ -34,7 +34,7 @@ type CollectionTableProps = {
 
 export const CollectionTable = ({
 	tracks,
-	isLoading,
+	isLoading = false,
 	showCover = false,
 	libraryId,
 }: CollectionTableProps) => {

@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { album, db, song } from "@opium/db";
-import { desc, eq } from "@opium/db/drizzle";
-import { artist } from "@opium/db/schema/music";
+import { and, desc, eq } from "@opium/db/drizzle";
+import { artist, interaction } from "@opium/db/schema/music";
 import type { CreateSongInput } from "./validation";
 
 export const songService = {
@@ -64,5 +64,33 @@ export const songService = {
 			.innerJoin(album, eq(song.albumId, album.id))
 			.orderBy(desc(song.createdAt))
 			.limit(limit);
+	},
+
+	async toggleLike(userId: string, songId: string) {
+		const [existing] = await db
+			.select()
+			.from(interaction)
+			.where(
+				and(eq(interaction.userId, userId), eq(interaction.songId, songId)),
+			);
+
+		if (existing) {
+			const newLikedState = !existing.liked;
+			await db
+				.update(interaction)
+				.set({ liked: newLikedState })
+				.where(
+					and(eq(interaction.userId, userId), eq(interaction.songId, songId)),
+				);
+			return newLikedState;
+		}
+
+		await db.insert(interaction).values({
+			userId,
+			songId,
+			liked: true,
+			playCount: 0,
+		});
+		return true;
 	},
 };
