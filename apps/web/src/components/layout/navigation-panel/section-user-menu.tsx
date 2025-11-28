@@ -18,13 +18,13 @@ import { cn } from "@opium/ui/lib/utils";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { LogOutIcon, Settings2Icon } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import { useSidebar } from "./sidebar-provider";
+import { useNavigationPanel } from "./provider";
 
-export const SidebarUserMenu = () => {
+export const NavigationPanelUserMenu = () => {
 	const navigate = useNavigate();
 	const { theme, setTheme } = useTheme();
 	const { data: session } = authClient.useSession();
-	const { open, toggleSidebar } = useSidebar();
+	const { open, toggleNavigationPanel } = useNavigationPanel();
 
 	const signOut = () => {
 		authClient.signOut({
@@ -51,7 +51,7 @@ export const SidebarUserMenu = () => {
 						render={
 							<Button
 								className={cn(!open && "mx-auto")}
-								onClick={toggleSidebar}
+								onClick={toggleNavigationPanel}
 								size="icon"
 								variant="ghost"
 							/>
@@ -60,7 +60,7 @@ export const SidebarUserMenu = () => {
 						<SidebarRightIcon className="size-4" />
 					</TooltipTrigger>
 					<TooltipPopup side="right" sideOffset={4}>
-						Open sidebar
+						Open navigation
 					</TooltipPopup>
 				</Tooltip>
 			)}
@@ -122,3 +122,5 @@ export const SidebarUserMenu = () => {
 		</div>
 	);
 };
+
+

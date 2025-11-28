@@ -7,9 +7,9 @@ import {
 } from "@opium/ui/components/tooltip";
 import { cn } from "@opium/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
-import { useSidebar } from "./sidebar-provider";
+import { useNavigationPanel } from "./provider";
 
-type SidebarNavigationProps = {
+type NavigationPanelNavigationProps = {
 	pathname: string;
 	isAdmin: boolean;
 };
@@ -17,20 +17,20 @@ type SidebarNavigationProps = {
 const NavigationItem = ({
 	icon: Icon,
 	label,
-	isSidebarOpen,
+	isPanelOpen,
 	to,
 	isActive,
 }: {
 	icon: React.ComponentType<{ className?: string }>;
 	label: string;
-	isSidebarOpen: boolean;
+	isPanelOpen: boolean;
 	to: string;
 	isActive: boolean;
 }) => {
 	const buttonContent = (
 		<Button
 			className={cn(
-				isSidebarOpen && "relative w-full justify-start",
+				isPanelOpen && "relative w-full justify-start",
 				"group items-center px-2 text-muted-foreground",
 			)}
 			render={
@@ -41,11 +41,11 @@ const NavigationItem = ({
 					}}
 				/>
 			}
-			size={isSidebarOpen ? "sm" : "icon-sm"}
+			size={isPanelOpen ? "sm" : "icon-sm"}
 			variant="ghost"
 		>
-			<Icon className={cn(isSidebarOpen, "size-3.5")} />
-			{isSidebarOpen && (
+			<Icon className={cn(isPanelOpen, "size-3.5")} />
+			{isPanelOpen && (
 				<p
 					className={cn(
 						"line-clamp-1 text-xs",
@@ -58,7 +58,7 @@ const NavigationItem = ({
 		</Button>
 	);
 
-	if (!isSidebarOpen) {
+	if (!isPanelOpen) {
 		return (
 			<Tooltip>
 				<TooltipTrigger render={buttonContent} />
@@ -72,11 +72,11 @@ const NavigationItem = ({
 	return buttonContent;
 };
 
-export function SidebarNavigation({
+export function NavigationPanelNavigation({
 	pathname,
 	isAdmin,
-}: SidebarNavigationProps) {
-	const { open } = useSidebar();
+}: NavigationPanelNavigationProps) {
+	const { open } = useNavigationPanel();
 
 	return (
 		<div
@@ -88,7 +88,7 @@ export function SidebarNavigation({
 				<div className="flex w-full flex-col gap-0.5 border-border/50">
 					<NavigationItem
 						icon={HomeIcon}
-						isSidebarOpen={open}
+						isPanelOpen={open}
 						label="Home"
 						to="/dashboard"
 						isActive={pathname === "/dashboard"}
@@ -96,7 +96,7 @@ export function SidebarNavigation({
 
 					<NavigationItem
 						icon={ExploreIcon}
-						isSidebarOpen={open}
+						isPanelOpen={open}
 						label="Explore"
 						to="/explore"
 						isActive={pathname === "/explore"}
@@ -105,7 +105,7 @@ export function SidebarNavigation({
 					{isAdmin && (
 						<NavigationItem
 							icon={AdminIcon}
-							isSidebarOpen={open}
+							isPanelOpen={open}
 							label="Admin"
 							to="/admin"
 							isActive={pathname.startsWith("/admin")}

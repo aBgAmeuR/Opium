@@ -1,7 +1,7 @@
 import { SearchIcon } from "@opium/icons";
 import { Button } from "@opium/ui/components/button";
 import { cn } from "@opium/ui/lib/utils";
-import { useSidebar } from "./sidebar-provider";
+import { useNavigationPanel } from "./provider";
 
 const CommandMenuKbd = ({
 	className,
@@ -16,8 +16,8 @@ const CommandMenuKbd = ({
 	/>
 );
 
-export const SidebarSearch = () => {
-	const { open } = useSidebar();
+export const NavigationPanelSearch = () => {
+	const { open } = useNavigationPanel();
 
 	return (
 		<div

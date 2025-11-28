@@ -17,7 +17,7 @@ import {
 } from "@opium/ui/components/field";
 import { Form } from "@opium/ui/components/form";
 import { Spinner } from "@opium/ui/components/spinner";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon } from "@opium/icons";
 import React from "react";
 import { orpc } from "@/utils/orpc";
 import { useQueryClient } from "@tanstack/react-query";

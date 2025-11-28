@@ -1,16 +1,16 @@
+import { ChevronRightIcon } from "@opium/icons";
 import { Button } from "@opium/ui/components/button";
 import { Skeleton } from "@opium/ui/components/skeleton";
 import { cn } from "@opium/ui/lib/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ChevronRightIcon } from "lucide-react";
 import { Suspense } from "react";
 import { MediaItem } from "@/components/media-item";
 import { orpc } from "@/utils/orpc";
-import { useSidebar } from "./sidebar-provider";
+import { useNavigationPanel } from "./provider";
 
-export const SidebarLibrary = () => {
-	const { open } = useSidebar();
+export const NavigationPanelLibrary = () => {
+	const { open } = useNavigationPanel();
 
 	return (
 		<div
@@ -31,7 +31,7 @@ export const SidebarLibrary = () => {
 				>
 					{open && "Your library"}
 					{open && <span className="inline-flex flex-1" />}
-					{open && <ChevronRightIcon size={14} strokeWidth={2} />}
+					{open && <ChevronRightIcon className="size-3.5" />}
 				</Button>
 			)}
 
@@ -42,7 +42,7 @@ export const SidebarLibrary = () => {
 				)}
 			>
 				<Suspense fallback={<Skeleton className="h-10 w-full" />}>
-					<LibraryList isSidebarOpen={open} />
+					<LibraryList isPanelOpen={open} />
 				</Suspense>
 			</div>
 		</div>
@@ -50,10 +50,10 @@ export const SidebarLibrary = () => {
 };
 
 type LibraryListProps = {
-	isSidebarOpen: boolean;
+	isPanelOpen: boolean;
 };
 
-const LibraryList = ({ isSidebarOpen }: LibraryListProps) => {
+const LibraryList = ({ isPanelOpen }: LibraryListProps) => {
 	const library = useSuspenseQuery(orpc.library.getLibrary.queryOptions());
 
 	if (library.isError) {
@@ -65,7 +65,7 @@ const LibraryList = ({ isSidebarOpen }: LibraryListProps) => {
 	}
 
 	if (library.data?.length === 0) {
-		if (isSidebarOpen) {
+		if (isPanelOpen) {
 			return (
 				<div className="mt-1 flex w-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed p-2">
 					<p className="text-muted-foreground text-xs opacity-50">
@@ -84,7 +84,7 @@ const LibraryList = ({ isSidebarOpen }: LibraryListProps) => {
 				href="/playlist/liked"
 				description="Playlist"
 				image="https://cdn.opium.antoinejosset.fr/opium/playlists/liked_playlist.webp"
-				isExpanded={isSidebarOpen}
+				isExpanded={isPanelOpen}
 				title="Liked Tracks"
 			/>
 			{library.data
@@ -96,7 +96,7 @@ const LibraryList = ({ isSidebarOpen }: LibraryListProps) => {
 						params={{ id: item.id.toString() }}
 						description={item.type === "album" ? "Album" : "Playlist"}
 						image={item.image ?? undefined}
-						isExpanded={isSidebarOpen}
+						isExpanded={isPanelOpen}
 						title={item.name}
 					/>
 				))}

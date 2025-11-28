@@ -1,7 +1,7 @@
 import { Button } from "@opium/ui/components/button";
 import { Particles } from "@opium/ui/components/particles";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronLeftIcon } from "lucide-react";
+import { ChevronLeftIcon } from "@opium/icons";
 import { Icon } from "@/components/icons";
 import { MagicLinkForm } from "@/components/magic-link-form";
 

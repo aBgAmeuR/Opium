@@ -3,12 +3,10 @@ import { Button } from "@opium/ui/components/button";
 import { Cover } from "@opium/ui/components/cover";
 import { useMemo } from "react";
 import { MediaItem } from "@/components/media-item";
+import { useInfoPanel } from "./provider";
 
-type NowPlayingViewProps = {
-	openQueue: () => void;
-};
-
-export function NowPlayingView({ openQueue }: NowPlayingViewProps) {
+export function SectionNowPlaying() {
+	const { setType } = useInfoPanel();
 	const currentTrack = useAudioStore((state) => state.currentTrack);
 	const queue = useAudioStore((state) => state.queue);
 	const currentQueueIndex = useAudioStore((state) => state.currentQueueIndex);
@@ -50,14 +48,14 @@ export function NowPlayingView({ openQueue }: NowPlayingViewProps) {
 							<span className="text-xs font-medium text-muted-foreground">
 								Title
 							</span>
-							<span className="text-sm">{currentTrack?.title}</span>
+							<span className="text-sm">{currentTrack?.title ?? "-"}</span>
 						</div>
 
 						<div className="flex flex-col gap-0.5">
 							<span className="text-xs font-medium text-muted-foreground">
 								Artist
 							</span>
-							<span className="text-sm">{currentTrack?.artist}</span>
+							<span className="text-sm">{currentTrack?.artist ?? "-"}</span>
 						</div>
 
 						<div className="flex flex-col gap-0.5">
@@ -71,7 +69,7 @@ export function NowPlayingView({ openQueue }: NowPlayingViewProps) {
 							<span className="text-xs font-medium text-muted-foreground">
 								Album
 							</span>
-							<span className="text-sm">{currentTrack?.album}</span>
+							<span className="text-sm">{currentTrack?.album ?? "-"}</span>
 						</div>
 
 						{currentTrack?.type && (
@@ -96,7 +94,7 @@ export function NowPlayingView({ openQueue }: NowPlayingViewProps) {
 									variant="link"
 									size="xs"
 									className="p-0"
-									onClick={openQueue}
+									onClick={() => setType("queue")}
 								>
 									Open Queue
 								</Button>

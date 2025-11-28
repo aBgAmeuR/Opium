@@ -1,6 +1,7 @@
 import { Menu as MenuPrimitive } from "@base-ui-components/react/menu";
+import { ChevronRightIcon } from "@opium/icons";
 import { cn } from "@opium/ui/lib/utils";
-import { CheckIcon, ChevronRightIcon } from "lucide-react";
+import { CheckIcon } from "lucide-react";
 import type * as React from "react";
 
 const Menu = MenuPrimitive.Root;

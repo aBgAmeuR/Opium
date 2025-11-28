@@ -8,10 +8,10 @@ import {
 import { cn } from "@opium/ui/lib/utils";
 import { Link } from "@tanstack/react-router";
 import { Icon } from "../../icons";
-import { useSidebar } from "./sidebar-provider";
+import { useNavigationPanel } from "./provider";
 
-export function SidebarHeader() {
-	const { open, toggleSidebar } = useSidebar();
+export function NavigationPanelHeader() {
+	const { open, toggleNavigationPanel } = useNavigationPanel();
 
 	return (
 		<div className="mb-3 flex w-full flex-row items-center justify-between">
@@ -35,7 +35,7 @@ export function SidebarHeader() {
 						render={
 							<Button
 								className={cn(!open && "mx-auto", "mr-2")}
-								onClick={toggleSidebar}
+								onClick={toggleNavigationPanel}
 								size="icon-sm"
 								variant="ghost"
 							/>
@@ -44,7 +44,7 @@ export function SidebarHeader() {
 						<SidebarLeftIcon className="size-4" />
 					</TooltipTrigger>
 					<TooltipPopup side="right" sideOffset={4}>
-						Close sidebar
+						Close navigation
 					</TooltipPopup>
 				</Tooltip>
 			)}

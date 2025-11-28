@@ -3,12 +3,10 @@ import { CrossIcon } from "@opium/icons";
 import { Button } from "@opium/ui/components/button";
 import { useMemo } from "react";
 import { MediaItem } from "@/components/media-item";
+import { useInfoPanel } from "./provider";
 
-type QueueViewProps = {
-	onClose: () => void;
-};
-
-export function QueueView({ onClose }: QueueViewProps) {
+export function SectionQueue() {
+    const { setType } = useInfoPanel();
 	const queue = useAudioStore((state) => state.queue);
 	const currentQueueIndex = useAudioStore((state) => state.currentQueueIndex);
 	const repeatMode = useAudioStore((state) => state.repeatMode);
@@ -28,7 +26,7 @@ export function QueueView({ onClose }: QueueViewProps) {
 		<div className="flex w-full flex-1 gap-2 flex-col overflow-hidden">
 			<div className="w-full flex justify-between items-center h-8 px-3">
 				<span className="text-sm font-semibold text-foreground">Queue</span>
-				<Button variant="ghost" size="icon-sm" onClick={onClose}>
+				<Button variant="ghost" size="icon-sm" onClick={() => setType("now-playing")}>
 					<CrossIcon />
 				</Button>
 			</div>

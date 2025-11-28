@@ -25,7 +25,7 @@ import {
 } from "@opium/ui/components/select";
 import { Spinner } from "@opium/ui/components/spinner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon } from "@opium/icons";
 import React from "react";
 import { orpc } from "@/utils/orpc";
 

@@ -1,16 +1,14 @@
 import { AngryIcon } from "lucide-react";
-import { type PropsWithChildren, useState } from "react";
+import type { PropsWithChildren } from "react";
 import { AudioPlayer } from "@/components/audio/audio-player";
-import { RightSidebar } from "./right-sidebar";
-import { Sidebar } from "./sidebar/sidebar";
+import { InfoPanel } from "./info-panel";
+import { NavigationPanel } from "./navigation-panel";
 
 type RootLayoutProps = PropsWithChildren<{
 	isAdmin?: boolean;
 }>;
 
 export const RootLayout = ({ children, isAdmin = false }: RootLayoutProps) => {
-	const [isQueueOpen, setIsQueueOpen] = useState(false);
-
 	return (
 		<div className="flex h-dvh w-full flex-col overflow-hidden bg-sidebar">
 			<div className="item-center fixed inset-0 z-99999 flex justify-center bg-background md:hidden">
@@ -28,7 +26,7 @@ export const RootLayout = ({ children, isAdmin = false }: RootLayoutProps) => {
 			</div>
 			<div className="flex flex-1 overflow-hidden">
 				<div className="hidden md:flex">
-					<Sidebar isAdmin={isAdmin} />
+					<NavigationPanel isAdmin={isAdmin} />
 				</div>
 
 				<div className="flex flex-1 overflow-hidden">
@@ -44,16 +42,13 @@ export const RootLayout = ({ children, isAdmin = false }: RootLayoutProps) => {
 				</div>
 
 				<div className="hidden md:flex">
-					<RightSidebar
-						isQueueOpen={isQueueOpen}
-						setIsQueueOpen={setIsQueueOpen}
-					/>
+					<InfoPanel />
 				</div>
 			</div>
 
 			<div className="hidden md:flex relative bottom-0 left-0 right-0">
 				<div className="z-50 bg-sidebar w-full">
-					<AudioPlayer onToggleQueue={() => setIsQueueOpen(!isQueueOpen)} />
+					<AudioPlayer />
 				</div>
 			</div>
 		</div>

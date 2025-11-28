@@ -1,33 +1,36 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { AudioProvider } from "@/components/audio/audio-provider";
+import { InfoPanelProvider } from "@/components/layout/info-panel";
+import { NavigationPanelProvider } from "@/components/layout/navigation-panel";
 import { RootLayout } from "@/components/layout/root";
-import { SidebarProvider } from "@/components/layout/sidebar/sidebar-provider";
 import { getUserFn } from "@/functions/auth";
-import { getSidebarStateFn } from "@/functions/sidebar";
+import { getNavigationPanelStateFn } from "@/functions/navigation-panel";
 
 export const Route = createFileRoute("/_app")({
 	component: RouteComponent,
 	beforeLoad: async () => {
 		const session = await getUserFn();
-		const sidebarOpen = await getSidebarStateFn();
+		const navigationPanelOpen = await getNavigationPanelStateFn();
 		return {
 			user: session?.user,
 			isAdmin: session?.user?.role === "admin",
-			sidebarOpen,
+			navigationPanelOpen,
 		};
 	},
 });
 
 function RouteComponent() {
-	const { isAdmin, sidebarOpen } = Route.useRouteContext();
+	const { isAdmin, navigationPanelOpen } = Route.useRouteContext();
 
 	return (
 		<AudioProvider>
-			<SidebarProvider defaultOpen={sidebarOpen}>
-				<RootLayout isAdmin={isAdmin}>
-					<Outlet />
-				</RootLayout>
-			</SidebarProvider>
+			<NavigationPanelProvider defaultOpen={navigationPanelOpen}>
+				<InfoPanelProvider>
+					<RootLayout isAdmin={isAdmin}>
+						<Outlet />
+					</RootLayout>
+				</InfoPanelProvider>
+			</NavigationPanelProvider>
 		</AudioProvider>
 	);
 }

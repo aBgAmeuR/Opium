@@ -1,3 +1,4 @@
+import { ChevronRightIcon } from "@opium/icons";
 import {
 	Card,
 	CardDescription,
@@ -5,7 +6,6 @@ import {
 	CardTitle,
 } from "@opium/ui/components/card";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/_app/admin/")({
 	component: RouteComponent,
@@ -44,7 +44,7 @@ function RouteComponent() {
 										<CardTitle>{section.title}</CardTitle>
 										<CardDescription>{section.description}</CardDescription>
 									</div>
-									<ChevronRight className="size-4" />
+									<ChevronRightIcon className="size-4" />
 								</CardHeader>
 							</Card>
 						</Link>
