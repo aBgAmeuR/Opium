@@ -1,11 +1,16 @@
 import { useAudioStore } from "@opium/audio";
+import { CrossIcon } from "@opium/icons";
 import { Button } from "@opium/ui/components/button";
 import { Cover } from "@opium/ui/components/cover";
-import { useMemo } from "react";
+import { Input } from "@opium/ui/components/input";
+import { CheckIcon, XIcon } from "lucide-react";
+import { useMemo, useState } from "react";
 import { MediaItem } from "@/components/media-item";
+import { Route } from "@/routes/_app";
 import { useInfoPanel } from "./provider";
 
 export function SectionNowPlaying() {
+	const { isAdmin } = Route.useRouteContext();
 	const { setType } = useInfoPanel();
 	const currentTrack = useAudioStore((state) => state.currentTrack);
 	const queue = useAudioStore((state) => state.queue);
@@ -65,11 +70,21 @@ export function SectionNowPlaying() {
 							<span className="text-sm">{`${Math.floor((currentTrack?.duration ?? 0) / 60)}:${((currentTrack?.duration ?? 0) % 60).toString().padStart(2, "0")}`}</span>
 						</div>
 
-						<div className="flex flex-col gap-0.5">
+						{/* <div className="flex flex-col gap-0.5">
 							<span className="text-xs font-medium text-muted-foreground">
 								Album
 							</span>
 							<span className="text-sm">{currentTrack?.album ?? "-"}</span>
+						</div> */}
+						<div className="flex flex-col gap-0.5">
+							<span className="text-xs font-medium text-muted-foreground">
+								Album
+							</span>
+							<EditableText
+								canEdit={isAdmin}
+								value={currentTrack?.album}
+								onChange={(value) => console.log(value)}
+							/>
 						</div>
 
 						{currentTrack?.type && (
@@ -117,3 +132,52 @@ export function SectionNowPlaying() {
 		</div>
 	);
 }
+
+type EditableTextProps = {
+	canEdit?: boolean;
+	value?: string;
+	onChange: (value: string | undefined) => void;
+};
+
+const EditableText = ({
+	canEdit = false,
+	value,
+	onChange,
+}: EditableTextProps) => {
+	const [newValue, setNewValue] = useState(value);
+
+	if (!canEdit) {
+		return <span className="text-sm">{value ?? "-"}</span>;
+	}
+
+	return (
+		<div className="flex items-center gap-2">
+			<input
+				value={newValue}
+				onChange={(e) => setNewValue(e.target.value)}
+				aria-label="Enter text"
+				placeholder="Enter text"
+				type="text"
+				className=" w-full text-sm outline-none focus:bg-muted/50 rounded-md -mx-1.5 px-1.5 -my-0.5 py-0.5"
+			/>
+			{newValue !== value && (
+				<div className="flex items-center -my-0.5">
+					<Button
+						variant="ghost"
+						size="icon-xs"
+						onClick={() => onChange(newValue)}
+					>
+						<CheckIcon />
+					</Button>
+					<Button
+						variant="ghost"
+						size="icon-xs"
+						onClick={() => setNewValue(value)}
+					>
+						<CrossIcon />
+					</Button>
+				</div>
+			)}
+		</div>
+	);
+};
