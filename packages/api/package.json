@@ -3,19 +3,13 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
+		"dev": "tsdown --watch",
 		"build": "tsdown",
-		"dev": "tsdown --watch --ignore-watch .turbo",
 		"clean": "git clean -xdf .cache .turbo dist node_modules"
 	},
 	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"default": "./src/index.ts"
-		},
-		"./context": {
-			"types": "./dist/context.d.ts",
-			"default": "./src/context.ts"
-		}
+		".": "./src/index.ts",
+		"./context": "./src/context.ts"
 	},
 	"dependencies": {
 		"@opium/auth": "workspace:*",

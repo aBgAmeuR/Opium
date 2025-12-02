@@ -3,7 +3,6 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "check-types": "tsc -b",
     "clean": "git clean -xdf .cache .turbo dist node_modules"
   },
   "exports": {

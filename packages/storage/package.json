@@ -2,18 +2,16 @@
 	"name": "@opium/storage",
 	"private": true,
 	"type": "module",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"default": "./src/index.ts"
-		}
-	},
 	"scripts": {
+		"dev": "tsdown --watch",
 		"build": "tsdown",
 		"clean": "git clean -xdf .cache .turbo dist node_modules"
 	},
+	"exports": {
+		".": "./src/index.ts"
+	},
 	"dependencies": {
-		"@aws-sdk/client-s3": "^3.932.0",
+		"@aws-sdk/client-s3": "^3.943.0",
 		"zod": "catalog:"
 	},
 	"devDependencies": {

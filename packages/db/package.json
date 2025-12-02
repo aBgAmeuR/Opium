@@ -3,6 +3,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
+		"dev": "tsdown --watch",
 		"build": "tsdown",
 		"db:push": "drizzle-kit push",
 		"db:studio": "drizzle-kit studio",
@@ -11,22 +12,10 @@
 		"clean": "git clean -xdf .cache .turbo dist node_modules"
 	},
 	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"default": "./src/index.ts"
-		},
-		"./drizzle": {
-			"types": "./dist/drizzle.d.ts",
-			"default": "./src/drizzle.ts"
-		},
-		"./pg-core": {
-			"types": "./dist/pg-core.d.ts",
-			"default": "./src/pg-core.ts"
-		},
-		"./*": {
-			"types": "./dist/*.d.ts",
-			"default": "./src/*.ts"
-		}
+		".": "./src/index.ts",
+		"./drizzle": "./src/drizzle.ts",
+		"./pg-core": "./src/pg-core.ts",
+		"./*": "./src/*.ts"
 	},
 	"dependencies": {
 		"@neondatabase/serverless": "^1.0.2",

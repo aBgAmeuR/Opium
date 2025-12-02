@@ -5,16 +5,11 @@
 	"envMode": "loose",
 	"tasks": {
 		"build": {
-			"cache": false,
 			"dependsOn": ["^build"],
-			"inputs": ["$TURBO_DEFAULT$", ".env*"],
-			"outputs": ["dist/**"]
+			"inputs": ["$TURBO_DEFAULT$", ".env*"]
 		},
 		"lint": {
 			"dependsOn": ["^lint"]
-		},
-		"check-types": {
-			"dependsOn": ["^check-types"]
 		},
 		"dev": {
 			"cache": false,

@@ -2,19 +2,17 @@
 	"name": "@opium/audio",
 	"private": true,
 	"type": "module",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"default": "./src/index.ts"
-		}
-	},
 	"scripts": {
+		"dev": "tsdown --watch",
 		"build": "tsdown",
 		"clean": "git clean -xdf .cache .turbo dist node_modules"
 	},
+	"exports": {
+		".": "./src/index.ts"
+	},
 	"dependencies": {
 		"howler": "^2.2.4",
-		"zustand": "^5.0.8"
+		"zustand": "^5.0.9"
 	},
 	"devDependencies": {
 		"@opium/tsconfig": "workspace:*",
