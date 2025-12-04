@@ -1,12 +1,13 @@
-import { useAudioStore } from "@opium/audio";
+import { formatDuration, useAudioStore } from "@opium/audio";
 import { CrossIcon } from "@opium/icons";
 import { Button } from "@opium/ui/components/button";
 import { Cover } from "@opium/ui/components/cover";
-import { Input } from "@opium/ui/components/input";
-import { CheckIcon, XIcon } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
+import { CheckIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { MediaItem } from "@/components/media-item";
 import { Route } from "@/routes/_app";
+import { orpc } from "@/utils/orpc";
 import { useInfoPanel } from "./provider";
 
 export function SectionNowPlaying() {
@@ -16,6 +17,7 @@ export function SectionNowPlaying() {
 	const queue = useAudioStore((state) => state.queue);
 	const currentQueueIndex = useAudioStore((state) => state.currentQueueIndex);
 	const repeatMode = useAudioStore((state) => state.repeatMode);
+	const editCurrentTrack = useAudioStore((state) => state.editCurrentTrack);
 
 	const reorderedQueue = useMemo(() => {
 		const previousTracks = queue.slice(0, currentQueueIndex);
@@ -29,6 +31,24 @@ export function SectionNowPlaying() {
 	}, [queue, currentQueueIndex, repeatMode]);
 
 	const nextTrack = reorderedQueue[1];
+
+	const editSongMutation = useMutation(orpc.song.edit.mutationOptions());
+
+	const handleEditSong = (
+		key: keyof Parameters<typeof editSongMutation.mutate>[0],
+		value: string | undefined,
+	) => {
+		if (!currentTrack?.id) return;
+		editSongMutation.mutate({
+			songId: currentTrack.id,
+			[key]: value,
+		});
+
+		editCurrentTrack({
+			...currentTrack,
+			[key]: value,
+		});
+	};
 
 	return (
 		<div className="flex w-full flex-1 gap-2 flex-col overflow-hidden">
@@ -53,7 +73,12 @@ export function SectionNowPlaying() {
 							<span className="text-xs font-medium text-muted-foreground">
 								Title
 							</span>
-							<span className="text-sm">{currentTrack?.title ?? "-"}</span>
+							<EditableText
+								key={currentTrack?.id}
+								canEdit={isAdmin}
+								value={currentTrack?.title}
+								onChange={(value) => handleEditSong("title", value)}
+							/>
 						</div>
 
 						<div className="flex flex-col gap-0.5">
@@ -67,7 +92,11 @@ export function SectionNowPlaying() {
 							<span className="text-xs font-medium text-muted-foreground">
 								Duration
 							</span>
-							<span className="text-sm">{`${Math.floor((currentTrack?.duration ?? 0) / 60)}:${((currentTrack?.duration ?? 0) % 60).toString().padStart(2, "0")}`}</span>
+							<span className="text-sm">
+								{currentTrack?.duration
+									? formatDuration(currentTrack.duration)
+									: "-"}
+							</span>
 						</div>
 
 						{/* <div className="flex flex-col gap-0.5">
@@ -81,6 +110,7 @@ export function SectionNowPlaying() {
 								Album
 							</span>
 							<EditableText
+								key={currentTrack?.id}
 								canEdit={isAdmin}
 								value={currentTrack?.album}
 								onChange={(value) => console.log(value)}
@@ -146,7 +176,7 @@ const EditableText = ({
 }: EditableTextProps) => {
 	const [newValue, setNewValue] = useState(value);
 
-	if (!canEdit) {
+	if (!canEdit || !value) {
 		return <span className="text-sm">{value ?? "-"}</span>;
 	}
 
@@ -159,6 +189,12 @@ const EditableText = ({
 				placeholder="Enter text"
 				type="text"
 				className=" w-full text-sm outline-none focus:bg-muted/50 rounded-md -mx-1.5 px-1.5 -my-0.5 py-0.5"
+				onKeyDown={(e) => {
+					if (e.key === "Enter") {
+						onChange(newValue);
+						(e.target as HTMLInputElement)?.blur();
+					}
+				}}
 			/>
 			{newValue !== value && (
 				<div className="flex items-center -my-0.5">

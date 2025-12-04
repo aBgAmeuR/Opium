@@ -57,6 +57,7 @@ type AudioStore = {
 
 	// State Actions
 	setCurrentTrack: (track: Track | null) => void;
+	editCurrentTrack: (track: Track) => void;
 	setError: (message: string | null) => void;
 };
 
@@ -546,6 +547,9 @@ const useAudioStore = create<AudioStore>()(
 				};
 
 				performSetCurrentTrack();
+			},
+			editCurrentTrack: (track: Track) => {
+				set({ currentTrack: track });
 			},
 			setError: (message) => {
 				set({

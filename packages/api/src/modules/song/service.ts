@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { album, db, song } from "@opium/db";
 import { and, desc, eq } from "@opium/db/drizzle";
 import { artist, interaction } from "@opium/db/schema/music";
-import type { CreateSongInput } from "./validation";
+import type { CreateSongInput, EditSongInput } from "./validation";
 
 export const songService = {
 	async create(data: CreateSongInput) {
@@ -92,5 +92,14 @@ export const songService = {
 			playCount: 0,
 		});
 		return true;
+	},
+
+	async edit(data: EditSongInput) {
+		const [updatedSong] = await db
+			.update(song)
+			.set(data)
+			.where(eq(song.id, data.songId))
+			.returning();
+		return updatedSong;
 	},
 };

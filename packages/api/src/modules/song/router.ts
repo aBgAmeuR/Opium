@@ -1,6 +1,15 @@
-import { adminProcedure, protectedProcedure, publicProcedure } from "../../procedures";
+import {
+	adminProcedure,
+	protectedProcedure,
+	publicProcedure,
+} from "../../procedures";
 import { songService } from "./service";
-import { createSongSchema, getLatestSongSchema, toggleLikeSchema } from "./validation";
+import {
+	createSongSchema,
+	editSongSchema,
+	getLatestSongSchema,
+	toggleLikeSchema,
+} from "./validation";
 
 export const songRouter = {
 	create: adminProcedure
@@ -19,4 +28,8 @@ export const songRouter = {
 			async ({ input, context }) =>
 				await songService.toggleLike(context.session.user.id, input.songId),
 		),
+
+	edit: adminProcedure
+		.input(editSongSchema)
+		.handler(async ({ input }) => await songService.edit(input)),
 };

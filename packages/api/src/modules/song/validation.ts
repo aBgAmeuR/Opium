@@ -35,3 +35,14 @@ export const toggleLikeSchema = z.object({
 });
 
 export type ToggleLikeInput = z.infer<typeof toggleLikeSchema>;
+
+export const editSongSchema = z.object({
+	songId: z.string(),
+	title: z.string().optional(),
+	artistId: z.number().int().positive().optional(),
+	albumId: z.number().int().positive().optional(),
+	type: z.enum(trackTypesEnum).optional(),
+	producers: z.array(z.string()).optional(),
+});
+
+export type EditSongInput = z.infer<typeof editSongSchema>;
