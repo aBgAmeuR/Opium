@@ -3,18 +3,13 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
+		"dev": "tsdown --watch",
 		"build": "tsdown",
 		"clean": "git clean -xdf .cache .turbo dist node_modules"
 	},
 	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"default": "./src/index.ts"
-		},
-		"./*": {
-			"types": "./dist/*.d.ts",
-			"default": "./src/*.ts"
-		}
+		".": "./src/index.ts",
+		"./*": "./src/*.ts"
 	},
 	"dependencies": {
 		"@react-email/render": "^1.4.0",
@@ -22,7 +17,7 @@
 		"react": "catalog:react",
 		"react-dom": "catalog:react",
 		"react-email": "4.2.12",
-		"resend": "^6.4.2"
+		"resend": "^6.5.2"
 	},
 	"devDependencies": {
 		"@opium/tsconfig": "workspace:*",

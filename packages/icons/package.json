@@ -3,14 +3,12 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
+		"dev": "tsdown --watch",
 		"build": "tsdown",
 		"clean": "git clean -xdf .cache .turbo dist node_modules"
 	},
 	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"default": "./src/index.tsx"
-		}
+		".": "./src/index.tsx"
 	},
 	"dependencies": {
 		"@phosphor-icons/react": "^2.1.10",
